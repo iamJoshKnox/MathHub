@@ -1,0 +1,22 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(claude mcp add:*)",
+      "Bash(start chrome \"C:\\Users\\iamjo\\OneDrive - iamjoshknox\\Documents\\1 Projects\\Math Application\\Claude\\MathAdventureHub.html\")",
+      "Bash(claude mcp list:*)",
+      "Bash(npx @playwright/mcp@latest --help)",
+      "Bash(node test-fieldgoal.js:*)",
+      "Bash(npm install:*)",
+      "Bash(npx playwright:*)",
+      "mcp__playwright__browser_navigate",
+      "mcp__playwright__browser_click",
+      "mcp__playwright__browser_take_screenshot",
+      "mcp__playwright__browser_snapshot",
+      "mcp__playwright__browser_close",
+      "Bash(git init:*)",
+      "Bash(git remote add:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)"
+    ]
+  }
+}

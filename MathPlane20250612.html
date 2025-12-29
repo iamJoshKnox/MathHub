@@ -1,0 +1,1480 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Math Paper Plane</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            background: linear-gradient(135deg, #87CEEB, #98FB98);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .game-container {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            max-width: 800px;
+            width: 100%;
+        }
+
+        .phase-header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .phase-title {
+            font-size: 2.5em;
+            color: #2c3e50;
+            margin: 0;
+        }
+
+        .timer {
+            font-size: 1.5em;
+            color: #e74c3c;
+            margin: 10px 0;
+        }
+
+        /* Math Phase Styles */
+        .math-phase {
+            text-align: center;
+        }
+
+        .problem-display {
+            font-size: 3em;
+            color: #2c3e50;
+            margin: 30px 0;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            position: relative;
+            transition: background-color 0.3s ease;
+        }
+
+        .problem-display.correct {
+            background-color: #d4edda;
+        }
+
+        .problem-display.incorrect {
+            background-color: #f8d7da;
+        }
+
+        .feedback-icon {
+            position: absolute;
+            top: 50%;
+            right: 20px;
+            transform: translateY(-50%);
+            font-size: 2em;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .feedback-icon.show {
+            opacity: 1;
+        }
+
+        .feedback-icon.correct {
+            color: #28a745;
+        }
+
+        .feedback-icon.incorrect {
+            color: #dc3545;
+        }
+
+        .input-section {
+            margin: 20px 0;
+        }
+
+        .answer-input {
+            font-size: 2em;
+            padding: 10px 20px;
+            border: 3px solid #3498db;
+            border-radius: 10px;
+            text-align: center;
+            width: 150px;
+            transition: border-color 0.3s ease;
+        }
+
+        .numberpad {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            max-width: 200px;
+            margin: 20px auto;
+        }
+
+        .numberpad button {
+            padding: 15px;
+            font-size: 1.5em;
+            border: none;
+            border-radius: 8px;
+            background: #3498db;
+            color: white;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .numberpad button:hover {
+            background: #2980b9;
+            transform: scale(1.05);
+        }
+
+        .numberpad button:active {
+            transform: scale(0.95);
+        }
+
+        .numberpad .wide {
+            grid-column: span 2;
+        }
+
+        .score-display {
+            display: flex;
+            justify-content: space-around;
+            margin: 20px 0;
+            font-size: 1.3em;
+        }
+
+        .wind-counter {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        #windDisplayMath, #windDisplay {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px;
+            max-width: 400px;
+        }
+
+        .wind-point {
+            width: 20px;
+            height: 20px;
+            background: #3498db;
+            border-radius: 50%;
+            display: inline-block;
+            margin: 2px;
+            animation: windPointDrop 0.5s ease-out;
+            border: 2px solid #2980b9;
+            position: relative;
+        }
+
+        .wind-point::after {
+            content: '';
+            width: 8px;
+            height: 8px;
+            background: #85C1E9;
+            border-radius: 50%;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .wind-point-large {
+            width: 30px;
+            height: 30px;
+            background: #2980b9;
+            border-radius: 50%;
+            display: inline-block;
+            margin: 2px;
+            animation: windPointDrop 0.5s ease-out;
+            position: relative;
+            border: 2px solid #1a5f8a;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .wind-point-large::after {
+            content: '10';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-size: 12px;
+            font-weight: bold;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+        }
+
+        @keyframes windPointDrop {
+            from { 
+                transform: translateY(-20px) rotate(0deg); 
+                opacity: 0; 
+            }
+            to { 
+                transform: translateY(0) rotate(360deg); 
+                opacity: 1; 
+            }
+        }
+
+        /* Flight Phase Styles */
+        .flight-phase {
+            text-align: center;
+        }
+
+        .game-canvas {
+            border: 3px solid #34495e;
+            border-radius: 10px;
+            background: linear-gradient(to bottom, #87CEEB 0%, #98FB98 100%);
+        }
+
+        .flight-controls {
+            margin: 20px 0;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            align-items: center;
+        }
+
+        .control-button {
+            padding: 15px 20px;
+            font-size: 1.2em;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .button-text {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            line-height: 1.2;
+        }
+
+        .button-label {
+            font-weight: bold;
+        }
+
+        .button-key {
+            font-size: 0.8em;
+            opacity: 0.8;
+        }
+
+        .wind-button {
+            background: #27ae60;
+            color: white;
+        }
+
+        .wind-button:hover:not(:disabled) {
+            background: #229954;
+        }
+
+        .wind-button:disabled {
+            background: #bdc3c7;
+            cursor: not-allowed;
+        }
+
+        .brake-button {
+            background: #e74c3c;
+            color: white;
+        }
+
+        .brake-button:hover {
+            background: #c0392b;
+        }
+
+        .gauge {
+            width: 120px;
+            height: 60px;
+            margin: 0 20px;
+            position: relative;
+        }
+
+        .gauge-label {
+            font-weight: bold;
+            font-size: 0.8em;
+            color: #2c3e50;
+            margin-top: 5px;
+        }
+
+        .speed-needle {
+            position: absolute;
+            bottom: 10px;
+            left: 50%;
+            transform-origin: bottom center;
+            width: 3px;
+            height: 40px;
+            background: #2c3e50;
+            transform: translateX(-50%) rotate(-90deg);
+            transition: transform 0.1s ease-out;
+            z-index: 10;
+            border-radius: 1px;
+        }
+
+        .altitude-indicator {
+            font-size: 1.1em;
+            color: #2c3e50;
+            font-weight: bold;
+        }
+
+        .phase-transition {
+            text-align: center;
+            padding: 40px;
+            font-size: 1.5em;
+            color: #2c3e50;
+        }
+
+        .start-button {
+            padding: 15px 40px;
+            font-size: 1.5em;
+            background: #27ae60;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+
+        .start-button:hover {
+            background: #229954;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        /* Sound toggle button */
+        .sound-toggle {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            padding: 8px 12px;
+            font-size: 1.2em;
+            background: #3498db;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .sound-toggle:hover {
+            background: #2980b9;
+        }
+
+        .sound-toggle.muted {
+            background: #95a5a6;
+        }
+
+        /* Airplane selection */
+        .airplane-selection {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin: 20px 0;
+        }
+
+        .airplane-option {
+            padding: 15px;
+            border: 3px solid transparent;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s;
+            background: #ecf0f1;
+        }
+
+        .airplane-option:hover {
+            transform: scale(1.05);
+            background: #e8f4f8;
+        }
+
+        .airplane-option.selected {
+            border-color: #3498db;
+            background: #e8f4f8;
+            box-shadow: 0 4px 12px rgba(52, 152, 219, 0.3);
+        }
+
+        .airplane-preview {
+            width: 80px;
+            height: 60px;
+            image-rendering: pixelated;
+            image-rendering: -moz-crisp-edges;
+            image-rendering: crisp-edges;
+            margin: 0 auto 10px;
+        }
+
+        .airplane-name {
+            text-align: center;
+            font-size: 0.9em;
+            color: #2c3e50;
+            font-weight: bold;
+        }
+
+        /* Wind display during flight */
+        .wind-display-flight {
+            margin: 10px 0;
+            padding: 10px 20px;
+            background: #3498db;
+            color: white;
+            border-radius: 10px;
+            font-weight: bold;
+            font-size: 1.2em;
+        }
+
+        .launch-indicator {
+            background: #f39c12;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            font-weight: bold;
+            animation: pulse 1s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <!-- Sound Toggle -->
+        <button class="sound-toggle" id="soundToggle" onclick="toggleSound()">🔊</button>
+
+        <!-- Start Screen -->
+        <div id="startScreen" class="phase-transition" style="position: relative;">
+            <button onclick="devMode()" style="position: absolute; top: 10px; right: 10px; padding: 5px 8px; font-size: 0.7em; background: #95a5a6; color: white; border: none; border-radius: 3px; cursor: pointer; opacity: 0.7;">DEV</button>
+            <h1>📄 Math Paper Plane ✈️</h1>
+            <p>Solve math problems to create wind power!</p>
+            <p>Master the glide - horizontal flight gives the best lift!</p>
+            
+            <div class="airplane-selection">
+                <div class="airplane-option selected" onclick="selectAirplane('red')">
+                    <canvas class="airplane-preview" id="redAirplanePreview" width="80" height="60"></canvas>
+                    <div class="airplane-name">Red Glider</div>
+                </div>
+                <div class="airplane-option" onclick="selectAirplane('blue')">
+                    <canvas class="airplane-preview" id="blueAirplanePreview" width="80" height="60"></canvas>
+                    <div class="airplane-name">Blue Flyer</div>
+                </div>
+            </div>
+            
+            <button class="start-button" onclick="startGame()">Take Flight!</button>
+        </div>
+
+        <!-- Math Phase -->
+        <div id="mathPhase" class="math-phase hidden">
+            <div class="phase-header">
+                <h2 class="phase-title">🧮 Math Workshop - Round <span id="roundNumber">1</span></h2>
+                <div class="timer" id="mathTimer">60</div>
+            </div>
+            
+            <div class="problem-display" id="problemDisplay">
+                <span id="problemText">5 + 3 = ?</span>
+                <div class="feedback-icon" id="feedbackIcon"></div>
+            </div>
+            
+            <div class="input-section">
+                <input type="text" class="answer-input" id="answerInput" readonly>
+                
+                <div class="numberpad">
+                    <button onclick="addDigit('1')">1</button>
+                    <button onclick="addDigit('2')">2</button>
+                    <button onclick="addDigit('3')">3</button>
+                    <button onclick="addDigit('4')">4</button>
+                    <button onclick="addDigit('5')">5</button>
+                    <button onclick="addDigit('6')">6</button>
+                    <button onclick="addDigit('7')">7</button>
+                    <button onclick="addDigit('8')">8</button>
+                    <button onclick="addDigit('9')">9</button>
+                    <button onclick="clearInput()" class="wide">Clear</button>
+                    <button onclick="addDigit('0')">0</button>
+                </div>
+            </div>
+
+            <div class="score-display">
+                <div>Math Score: <span id="mathScore">0</span></div>
+                <div class="wind-counter">
+                    Wind Points: <span id="windPoints">0</span>
+                    <div id="windDisplayMath"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Flight Phase -->
+        <div id="flightPhase" class="flight-phase hidden">
+            <div class="phase-header">
+                <h2 class="phase-title">✈️ Paper Plane Flight - Round <span id="flightRoundNumber">1</span></h2>
+                <div>Total Distance: <span id="totalDistance">0</span></div>
+                <div style="font-size: 0.9em; color: #27ae60; margin-top: 5px;">
+                    Next Trash Can in: <span id="distanceToTrashCan">200</span>
+                </div>
+            </div>
+            
+            <div id="launchIndicator" class="launch-indicator hidden">Press SPACE to Launch!</div>
+            
+            <canvas id="gameCanvas" class="game-canvas" width="800" height="400"></canvas>
+            
+            <div class="flight-controls">
+                <button class="control-button wind-button" id="windButton" onclick="useWind()">
+                    <span>💨</span>
+                    <div class="button-text">
+                        <span class="button-label">WIND BOOST</span>
+                        <span class="button-key">(Space)</span>
+                    </div>
+                </button>
+                
+                <div style="display: flex; flex-direction: column; align-items: center;">
+                    <div class="gauge">
+                        <svg width="120" height="60" viewBox="0 0 120 60">
+                            <!-- Red zone (slow) -->
+                            <path d="M 10 50 A 50 50 0 0 1 43.3 10.4" 
+                                  stroke="#e74c3c" stroke-width="6" fill="none"/>
+                            <!-- Yellow zone (medium) -->
+                            <path d="M 43.3 10.4 A 50 50 0 0 1 76.7 10.4" 
+                                  stroke="#f39c12" stroke-width="6" fill="none"/>
+                            <!-- Green zone (fast) -->
+                            <path d="M 76.7 10.4 A 50 50 0 0 1 110 50" 
+                                  stroke="#27ae60" stroke-width="6" fill="none"/>
+                            <!-- Center dot for needle -->
+                            <circle cx="60" cy="50" r="5" fill="#2c3e50"/>
+                        </svg>
+                        <div class="speed-needle" id="speedNeedle"></div>
+                    </div>
+                    <div class="gauge-label">SPEED</div>
+                </div>
+
+                <div class="altitude-indicator">
+                    Altitude: <span id="altitudeDisplay">150</span>
+                </div>
+                
+                <button class="control-button brake-button" id="brakeButton" onclick="airBrake()">
+                    <span>🛑</span>
+                    <div class="button-text">
+                        <span class="button-label">AIR BRAKE</span>
+                        <span class="button-key">(Enter)</span>
+                    </div>
+                </button>
+            </div>
+            
+            <div class="wind-display-flight">
+                Wind Points: <span id="windPointsFlight">0</span>
+            </div>
+            
+            <div class="wind-counter" style="justify-content: center; margin-top: 10px;">
+                <div id="windDisplay" style="justify-content: center;"></div>
+            </div>
+        </div>
+
+        <!-- Game Over Screen -->
+        <div id="gameOverScreen" class="phase-transition hidden">
+            <div style="text-align: center; margin-bottom: 20px;">
+                <div style="color: #e74c3c; font-size: 2.2em; margin-bottom: 5px;">GROUNDED!</div>
+                <div style="color: #e74c3c; font-size: 3em; font-weight: bold;">FLIGHT ENDED!</div>
+            </div>
+            <div class="score-display" style="flex-direction: column; gap: 15px; font-size: 1.5em;">
+                <div>Round Reached: <span id="finalRound">1</span></div>
+                <div>Math Score: <span id="finalMathScore">0</span></div>
+                <div style="color: #27ae60; font-weight: bold;">Total Distance: <span id="finalTotalDistance">0</span></div>
+            </div>
+            <button class="start-button" onclick="resetGame()" style="margin-top: 30px;">FLY AGAIN?</button>
+        </div>
+    </div>
+
+    <script>
+        // Sound system
+        const sounds = {
+            enabled: true,
+            audioContext: null,
+            
+            init() {
+                if (typeof AudioContext !== 'undefined') {
+                    this.audioContext = new AudioContext();
+                }
+            },
+            
+            playCorrect() {
+                if (!this.enabled || !this.audioContext) return;
+                
+                const oscillator = this.audioContext.createOscillator();
+                const gainNode = this.audioContext.createGain();
+                
+                oscillator.connect(gainNode);
+                gainNode.connect(this.audioContext.destination);
+                
+                oscillator.frequency.setValueAtTime(523.25, this.audioContext.currentTime);
+                oscillator.frequency.setValueAtTime(659.25, this.audioContext.currentTime + 0.1);
+                oscillator.frequency.setValueAtTime(783.99, this.audioContext.currentTime + 0.2);
+                
+                gainNode.gain.setValueAtTime(0.3, this.audioContext.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, this.audioContext.currentTime + 0.5);
+                
+                oscillator.start(this.audioContext.currentTime);
+                oscillator.stop(this.audioContext.currentTime + 0.5);
+            },
+            
+            playIncorrect() {
+                if (!this.enabled || !this.audioContext) return;
+                
+                const oscillator = this.audioContext.createOscillator();
+                const gainNode = this.audioContext.createGain();
+                
+                oscillator.connect(gainNode);
+                gainNode.connect(this.audioContext.destination);
+                
+                oscillator.frequency.setValueAtTime(300, this.audioContext.currentTime);
+                oscillator.frequency.setValueAtTime(200, this.audioContext.currentTime + 0.1);
+                
+                gainNode.gain.setValueAtTime(0.3, this.audioContext.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, this.audioContext.currentTime + 0.3);
+                
+                oscillator.start(this.audioContext.currentTime);
+                oscillator.stop(this.audioContext.currentTime + 0.3);
+            },
+            
+            playButtonClick() {
+                if (!this.enabled || !this.audioContext) return;
+                
+                const oscillator = this.audioContext.createOscillator();
+                const gainNode = this.audioContext.createGain();
+                
+                oscillator.connect(gainNode);
+                gainNode.connect(this.audioContext.destination);
+                
+                oscillator.frequency.setValueAtTime(800, this.audioContext.currentTime);
+                gainNode.gain.setValueAtTime(0.1, this.audioContext.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, this.audioContext.currentTime + 0.05);
+                
+                oscillator.start(this.audioContext.currentTime);
+                oscillator.stop(this.audioContext.currentTime + 0.05);
+            },
+            
+            playWhoosh() {
+                if (!this.enabled || !this.audioContext) return;
+                
+                const oscillator = this.audioContext.createOscillator();
+                const gainNode = this.audioContext.createGain();
+                
+                oscillator.connect(gainNode);
+                gainNode.connect(this.audioContext.destination);
+                
+                oscillator.frequency.setValueAtTime(600, this.audioContext.currentTime);
+                oscillator.frequency.setValueAtTime(800, this.audioContext.currentTime + 0.1);
+                oscillator.type = 'triangle';
+                
+                gainNode.gain.setValueAtTime(0.2, this.audioContext.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, this.audioContext.currentTime + 0.3);
+                
+                oscillator.start(this.audioContext.currentTime);
+                oscillator.stop(this.audioContext.currentTime + 0.3);
+            },
+            
+            playLanding() {
+                if (!this.enabled || !this.audioContext) return;
+                
+                const oscillator = this.audioContext.createOscillator();
+                const gainNode = this.audioContext.createGain();
+                
+                oscillator.connect(gainNode);
+                gainNode.connect(this.audioContext.destination);
+                
+                oscillator.frequency.setValueAtTime(150, this.audioContext.currentTime);
+                oscillator.type = 'square';
+                
+                gainNode.gain.setValueAtTime(0.3, this.audioContext.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, this.audioContext.currentTime + 0.2);
+                
+                oscillator.start(this.audioContext.currentTime);
+                oscillator.stop(this.audioContext.currentTime + 0.2);
+            }
+        };
+
+        sounds.init();
+
+        function toggleSound() {
+            sounds.enabled = !sounds.enabled;
+            const button = document.getElementById('soundToggle');
+            button.textContent = sounds.enabled ? '🔊' : '🔇';
+            button.classList.toggle('muted', !sounds.enabled);
+        }
+
+        // Visual feedback functions
+        function showFeedback(isCorrect) {
+            const problemDisplay = document.getElementById('problemDisplay');
+            const problemText = document.getElementById('problemText');
+            const feedbackIcon = document.getElementById('feedbackIcon');
+            
+            problemDisplay.classList.remove('correct', 'incorrect');
+            feedbackIcon.classList.remove('show', 'correct', 'incorrect');
+            feedbackIcon.textContent = '';
+            
+            if (isCorrect) {
+                problemText.textContent = `${gameState.currentProblem.question} = ${gameState.currentProblem.answer}`;
+                problemDisplay.classList.add('correct');
+                feedbackIcon.textContent = '✓';
+                feedbackIcon.classList.add('show', 'correct');
+                sounds.playCorrect();
+            } else {
+                problemDisplay.classList.add('incorrect');
+                feedbackIcon.textContent = '✗';
+                feedbackIcon.classList.add('show', 'incorrect');
+                sounds.playIncorrect();
+            }
+            
+            setTimeout(() => {
+                problemDisplay.classList.remove('correct', 'incorrect');
+                feedbackIcon.classList.remove('show', 'correct', 'incorrect');
+                feedbackIcon.textContent = '';
+            }, 800);
+        }
+
+        // Game State
+        const gameState = {
+            phase: 'start',
+            round: 1,
+            mathScore: 0,
+            totalDistance: 0,
+            currentRoundDistance: 0,
+            roundTargetDistance: 0,
+            windPoints: 0,
+            startingWindPoints: 0,
+            currentProblem: null,
+            mathTimer: 60,
+            mathInterval: null,
+            flightRunning: false,
+            launched: false,
+            airplaneType: 'red'
+        };
+
+        // Paper Airplane Physics
+        const airplane = {
+            x: 50,
+            y: 180, // Start higher
+            velocityX: 0,
+            velocityY: 0,
+            speed: 0,
+            altitude: 170,
+            onGround: false,
+            width: 40,
+            height: 20,
+            angle: 0
+        };
+
+        // Background elements
+        const background = {
+            clouds: [],
+            trees: []
+        };
+
+        // Canvas and context
+        let canvas, ctx;
+
+        function initializeBackground() {
+            // Generate clouds
+            background.clouds = [];
+            for (let i = 0; i < 8; i++) {
+                background.clouds.push({
+                    x: Math.random() * 1600,
+                    y: 20 + Math.random() * 100,
+                    width: 60 + Math.random() * 40,
+                    height: 30 + Math.random() * 20,
+                    speed: 0.1 + Math.random() * 0.2
+                });
+            }
+            
+            // Generate trees
+            background.trees = [];
+            for (let i = 0; i < 10; i++) {
+                background.trees.push({
+                    x: 200 + i * 200 + Math.random() * 100,
+                    y: 250,
+                    width: 60 + Math.random() * 20,
+                    height: 80 + Math.random() * 40
+                });
+            }
+        }
+
+        // Initialize game
+        function initGame() {
+            canvas = document.getElementById('gameCanvas');
+            ctx = canvas.getContext('2d');
+            
+            document.addEventListener('keydown', handleKeyPress);
+            
+            initializeBackground();
+            generateNewProblem();
+            
+            document.getElementById('roundNumber').textContent = '1';
+            drawAirplanePreviews();
+        }
+
+        // Keyboard controls
+        function handleKeyPress(e) {
+            if (gameState.phase === 'math') {
+                if (e.key >= '0' && e.key <= '9') {
+                    addDigit(e.key);
+                } else if (e.key === 'Backspace' || e.key === 'Delete') {
+                    clearInput();
+                }
+            } else if (gameState.phase === 'flight') {
+                if (e.key === ' ' || e.key === 'Spacebar') {
+                    e.preventDefault();
+                    useWind();
+                } else if (e.key === 'Enter') {
+                    airBrake();
+                }
+            }
+        }
+
+        // Math Phase Functions
+        function generateNewProblem() {
+            const a = Math.floor(Math.random() * 10) + 1;
+            const b = Math.floor(Math.random() * 10) + 1;
+            const answer = a + b;
+            gameState.currentProblem = {
+                question: `${a} + ${b}`,
+                answer: answer,
+                expectedDigits: answer.toString().length
+            };
+            const problemText = document.getElementById('problemText');
+            if (problemText) {
+                problemText.textContent = `${gameState.currentProblem.question} = ?`;
+            }
+        }
+
+        function addDigit(digit) {
+            const input = document.getElementById('answerInput');
+            input.value += digit;
+            sounds.playButtonClick();
+            
+            if (input.value.length >= gameState.currentProblem.expectedDigits) {
+                setTimeout(() => submitAnswer(), 100);
+            }
+        }
+
+        function clearInput() {
+            document.getElementById('answerInput').value = '';
+            sounds.playButtonClick();
+        }
+
+        function submitAnswer() {
+            const userAnswer = parseInt(document.getElementById('answerInput').value);
+            if (userAnswer === gameState.currentProblem.answer) {
+                showFeedback(true);
+                gameState.mathScore++;
+                gameState.windPoints++;
+                updateMathDisplay();
+                addWindPoint();
+                
+                setTimeout(() => {
+                    clearInput();
+                    generateNewProblem();
+                }, 500);
+            } else {
+                showFeedback(false);
+                setTimeout(() => {
+                    clearInput();
+                }, 500);
+            }
+        }
+
+        function addWindPoint() {
+            updateWindDisplay(true);
+        }
+
+        function updateWindDisplay(animate = false) {
+            const displays = ['windDisplayMath', 'windDisplay'].map(id => document.getElementById(id)).filter(el => el);
+            
+            displays.forEach(windDisplay => {
+                const currentBlocks = windDisplay.children.length;
+                
+                const largeBlocks = Math.floor(gameState.windPoints / 10);
+                const smallBlocks = gameState.windPoints % 10;
+                const totalBlocks = largeBlocks + smallBlocks;
+                
+                if (animate || currentBlocks !== totalBlocks || Math.floor(currentBlocks / 10) !== largeBlocks) {
+                    windDisplay.innerHTML = '';
+                    
+                    // Add large blocks
+                    for (let i = 0; i < largeBlocks; i++) {
+                        const block = document.createElement('div');
+                        block.className = 'wind-point-large';
+                        if (!animate) {
+                            block.style.animation = 'none';
+                        }
+                        windDisplay.appendChild(block);
+                    }
+                    
+                    // Add small blocks
+                    for (let i = 0; i < smallBlocks; i++) {
+                        const block = document.createElement('div');
+                        block.className = 'wind-point';
+                        if (!animate) {
+                            block.style.animation = 'none';
+                        }
+                        windDisplay.appendChild(block);
+                    }
+                }
+            });
+        }
+
+        function updateMathDisplay() {
+            document.getElementById('mathScore').textContent = gameState.mathScore;
+            document.getElementById('windPoints').textContent = gameState.windPoints;
+            updateWindDisplay();
+        }
+
+        function startMathTimer() {
+            gameState.mathTimer = 60;
+            updateTimerDisplay();
+            gameState.mathInterval = setInterval(() => {
+                gameState.mathTimer--;
+                updateTimerDisplay();
+                if (gameState.mathTimer <= 0) {
+                    endMathPhase();
+                }
+            }, 1000);
+        }
+
+        function updateTimerDisplay() {
+            document.getElementById('mathTimer').textContent = gameState.mathTimer;
+        }
+
+        function endMathPhase() {
+            clearInterval(gameState.mathInterval);
+            showFlightPhase();
+        }
+
+        // Flight Phase Functions
+        function showFlightPhase() {
+            gameState.phase = 'flight';
+            document.getElementById('mathPhase').classList.add('hidden');
+            document.getElementById('flightPhase').classList.remove('hidden');
+            
+            gameState.roundTargetDistance = gameState.round * 200;
+            gameState.currentRoundDistance = 0;
+            
+            document.getElementById('flightRoundNumber').textContent = gameState.round;
+            document.getElementById('totalDistance').textContent = gameState.totalDistance;
+            document.getElementById('distanceToTrashCan').textContent = gameState.roundTargetDistance;
+            document.getElementById('windPointsFlight').textContent = gameState.windPoints;
+            
+            updateWindDisplay();
+            
+            setTimeout(() => {
+                startFlight();
+            }, 500);
+        }
+
+        function startFlight() {
+            gameState.flightRunning = true;
+            gameState.startingWindPoints = gameState.windPoints;
+            gameState.launched = false;
+            
+            // Reset airplane position
+            airplane.x = 50;
+            airplane.y = 180; // Start a bit higher
+            airplane.velocityX = 0;
+            airplane.velocityY = 0;
+            airplane.speed = 0;
+            airplane.altitude = 170; // Adjusted for new start height
+            airplane.onGround = false;
+            airplane.angle = 0;
+            
+            // Show launch indicator
+            document.getElementById('launchIndicator').classList.remove('hidden');
+            
+            updateFlightControls();
+            gameLoop();
+        }
+
+        function useWind() {
+            if (gameState.windPoints > 0 && gameState.flightRunning) {
+                gameState.windPoints--;
+                
+                if (!gameState.launched) {
+                    // First use - launch the airplane with flatter trajectory
+                    gameState.launched = true;
+                    airplane.velocityX = 7;
+                    airplane.velocityY = -2; // Reduced vertical component
+                    document.getElementById('launchIndicator').classList.add('hidden');
+                } else {
+                    // Subsequent uses - boost amount depends on current speed
+                    const speedFactor = Math.max(0.5, 1 - (airplane.speed / 15)); // Reduce boost at high speeds
+                    airplane.velocityX += 3.5 * speedFactor;
+                    airplane.velocityY -= 0.3; // Very small upward component
+                }
+                
+                updateFlightControls();
+                updateWindDisplay();
+                sounds.playWhoosh();
+            }
+        }
+
+        function airBrake() {
+            if (gameState.flightRunning && gameState.launched) {
+                // Air brake reduces speed moderately
+                airplane.velocityX *= 0.8;
+                airplane.velocityY *= 0.85;
+                sounds.playButtonClick();
+            }
+        }
+
+        function updateFlightControls() {
+            const windButton = document.getElementById('windButton');
+            windButton.disabled = gameState.windPoints <= 0;
+            
+            document.getElementById('windPointsFlight').textContent = gameState.windPoints;
+            
+            // Update speed gauge
+            updateSpeedometer();
+            
+            // Update altitude display
+            document.getElementById('altitudeDisplay').textContent = Math.round(airplane.altitude);
+            
+            // Update lift efficiency indicator (visual feedback for angle)
+            if (gameState.launched) {
+                const angleOfAttack = Math.atan2(-airplane.velocityY, airplane.velocityX);
+                const liftEfficiency = Math.cos(angleOfAttack);
+                const altitudeIndicator = document.querySelector('.altitude-indicator');
+                
+                if (liftEfficiency > 0.8) {
+                    altitudeIndicator.style.color = '#27ae60'; // Green - excellent lift
+                } else if (liftEfficiency > 0.5) {
+                    altitudeIndicator.style.color = '#f39c12'; // Orange - moderate lift
+                } else {
+                    altitudeIndicator.style.color = '#e74c3c'; // Red - poor lift
+                }
+            }
+        }
+
+        function updateSpeedometer() {
+            const needle = document.getElementById('speedNeedle');
+            const maxSpeed = 12; // Increased to match new max velocity
+            const speed = Math.min(airplane.speed, maxSpeed);
+            const rotation = -90 + (speed / maxSpeed) * 180;
+            needle.style.transform = `translateX(-50%) rotate(${rotation}deg)`;
+        }
+
+        function gameLoop() {
+            if (!gameState.flightRunning) return;
+            
+            updateAirplanePhysics();
+            updateFlightControls();
+            renderFlight();
+            
+            // Check if airplane crashed or stopped
+            if ((airplane.onGround && airplane.speed < 0.5) || (airplane.altitude <= 0 && gameState.windPoints <= 0)) {
+                endFlightPhase();
+                return;
+            }
+            
+            requestAnimationFrame(gameLoop);
+        }
+
+        function updateAirplanePhysics() {
+            if (!gameState.launched) return;
+            
+            // Apply gravity
+            const gravity = 0.21; // Reduced for smoother flight
+            airplane.velocityY += gravity;
+            
+            // Total Velocity Lift System - calculates lift from total velocity and angle
+            const totalVelocity = Math.sqrt(airplane.velocityX * airplane.velocityX + 
+                                          airplane.velocityY * airplane.velocityY);
+            
+            if (totalVelocity > 2.5) {
+                const angleOfAttack = Math.atan2(-airplane.velocityY, airplane.velocityX);
+                const liftEfficiency = Math.cos(angleOfAttack); // Best at 0° (horizontal), worst at ±90° (vertical)
+                const liftCoefficient = 0.030; // Fine-tuned for smooth gliding
+                const lift = totalVelocity * liftCoefficient * liftEfficiency + .03;
+                airplane.velocityY -= lift;
+            }
+            
+            // Air resistance - optimized for longer glides
+            airplane.velocityX *= 0.997; // Very low horizontal drag
+            airplane.velocityY *= 0.985; // Moderate vertical drag
+            
+            // Update position
+            airplane.x += airplane.velocityX;
+            airplane.y += airplane.velocityY;
+            
+            // Cap velocities to prevent extreme behavior
+            const maxVelocityX = 12;
+            const maxVelocityY = 10;
+            airplane.velocityX = Math.max(-maxVelocityX, Math.min(maxVelocityX, airplane.velocityX));
+            airplane.velocityY = Math.max(-maxVelocityY, Math.min(maxVelocityY, airplane.velocityY));
+            
+            // Calculate speed and altitude
+            airplane.speed = Math.abs(totalVelocity); // Horizontal speed for display
+            airplane.altitude = Math.max(0, 350 - airplane.y);
+            
+            // Check ground collision
+            if (airplane.y >= 350) {
+                airplane.y = 350;
+                airplane.onGround = true;
+                airplane.velocityY = 0;
+                
+                // Friction on ground
+                airplane.velocityX *= 0.93; // Moderate ground friction
+            } else {
+                airplane.onGround = false;
+            }
+            
+            // Update angle based on velocity
+            airplane.angle = Math.atan2(airplane.velocityY, airplane.velocityX);
+            
+            // Update distance
+            gameState.currentRoundDistance = Math.floor(airplane.x / 20);
+            
+            document.getElementById('totalDistance').textContent = gameState.totalDistance + gameState.currentRoundDistance;
+            const remainingDistance = gameState.roundTargetDistance - gameState.currentRoundDistance;
+            document.getElementById('distanceToTrashCan').textContent = Math.max(0, remainingDistance);
+            
+            // Check if reached trash can
+            if (gameState.currentRoundDistance >= gameState.roundTargetDistance) {
+                landAtTrashCan();
+                return;
+            }
+        }
+
+        function renderFlight() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // Calculate camera offset
+            const cameraX = Math.max(0, airplane.x - canvas.width / 3);
+            
+            // Draw background
+            drawBackground(ctx, cameraX);
+            
+            // Draw trash can if approaching
+            const trashCanX = gameState.roundTargetDistance * 20;
+            if (trashCanX >= cameraX - 50 && trashCanX <= cameraX + canvas.width + 50) {
+                drawTrashCan(ctx, trashCanX - cameraX, 350);
+            }
+            
+            // Draw paper airplane
+            drawPaperAirplane(ctx, airplane.x - cameraX, airplane.y);
+            
+            // Draw wind effect at high speed
+            const totalSpeed = Math.sqrt(airplane.velocityX * airplane.velocityX + 
+                                       airplane.velocityY * airplane.velocityY);
+            if (totalSpeed > 7) {
+                drawWindEffect(ctx, airplane.x - cameraX, airplane.y);
+            }
+        }
+
+        function drawBackground(ctx, cameraX) {
+            // Sky gradient
+            const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
+            gradient.addColorStop(0, '#87CEEB');
+            gradient.addColorStop(0.8, '#98FB98');
+            gradient.addColorStop(1, '#8B7355');
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            // Draw clouds (background layer)
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
+            background.clouds.forEach(cloud => {
+                // Update cloud position
+                cloud.x += cloud.speed;
+                if (cloud.x > 1600) {
+                    cloud.x = -cloud.width;
+                }
+                
+                const x = cloud.x - cameraX * 0.3; // Parallax effect
+                if (x > -cloud.width && x < canvas.width) {
+                    // Draw fluffy cloud shape
+                    ctx.beginPath();
+                    ctx.arc(x, cloud.y, cloud.height/2, 0, Math.PI * 2);
+                    ctx.arc(x + cloud.width * 0.25, cloud.y - cloud.height * 0.2, cloud.height/2.5, 0, Math.PI * 2);
+                    ctx.arc(x + cloud.width * 0.5, cloud.y, cloud.height/2.2, 0, Math.PI * 2);
+                    ctx.arc(x + cloud.width * 0.75, cloud.y - cloud.height * 0.1, cloud.height/2.5, 0, Math.PI * 2);
+                    ctx.arc(x + cloud.width, cloud.y, cloud.height/2, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+            });
+            
+            // Draw trees (middle layer)
+            background.trees.forEach(tree => {
+                const x = tree.x - cameraX * 0.7; // Parallax
+                if (x > -tree.width && x < canvas.width) {
+                    // Tree trunk
+                    ctx.fillStyle = '#8B4513';
+                    ctx.fillRect(x + tree.width/3, tree.y, tree.width/3, tree.height);
+                    
+                    // Tree foliage (multiple circles for fuller look)
+                    ctx.fillStyle = '#228B22';
+                    ctx.beginPath();
+                    ctx.arc(x + tree.width/2, tree.y - 20, tree.width/2, 0, Math.PI * 2);
+                    ctx.arc(x + tree.width/3, tree.y - 10, tree.width/3, 0, Math.PI * 2);
+                    ctx.arc(x + tree.width * 2/3, tree.y - 10, tree.width/3, 0, Math.PI * 2);
+                    ctx.fill();
+                    
+                    // Tree shadow
+                    ctx.fillStyle = 'rgba(0, 0, 0, 0.1)';
+                    ctx.beginPath();
+                    ctx.ellipse(x + tree.width/2, tree.y + tree.height, tree.width/2, 5, 0, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+            });
+            
+            // Ground
+            ctx.fillStyle = '#8B7355';
+            ctx.fillRect(0, 350, canvas.width, 50);
+            
+            // Grass
+            ctx.fillStyle = '#228B22';
+            ctx.fillRect(0, 350, canvas.width, 5);
+            
+            // Add some texture to the ground
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.1)';
+            for (let x = -cameraX % 50; x < canvas.width; x += 50) {
+                ctx.fillRect(x, 355, 2, 45);
+            }
+        }
+
+        function drawTrashCan(ctx, x, y) {
+            // Landing zone indicator
+            ctx.fillStyle = 'rgba(46, 204, 113, 0.3)';
+            ctx.beginPath();
+            ctx.arc(x, y - 25, 50, 0, Math.PI * 2);
+            ctx.fill();
+            
+            // Trash can body
+            ctx.fillStyle = '#2c3e50';
+            ctx.fillRect(x - 25, y - 50, 50, 50);
+            
+            // Lid
+            ctx.fillStyle = '#34495e';
+            ctx.fillRect(x - 30, y - 60, 60, 15);
+            
+            // Handle
+            ctx.strokeStyle = '#7f8c8d';
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            ctx.arc(x, y - 52, 15, 0, Math.PI, true);
+            ctx.stroke();
+            
+            // Target text
+            ctx.fillStyle = '#ecf0f1';
+            ctx.font = 'bold 16px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText('TARGET', x, y - 70);
+        }
+
+        function drawPaperAirplane(ctx, x, y) {
+            ctx.save();
+            ctx.translate(x, y);
+            ctx.rotate(airplane.angle);
+            
+            // Paper airplane shape
+            const color = gameState.airplaneType === 'red' ? '#e74c3c' : '#3498db';
+            
+            ctx.fillStyle = color;
+            ctx.beginPath();
+            ctx.moveTo(20, 0);
+            ctx.lineTo(-15, -10);
+            ctx.lineTo(-10, 0);
+            ctx.lineTo(-15, 10);
+            ctx.closePath();
+            ctx.fill();
+            
+            // Paper fold details
+            ctx.strokeStyle = '#2c3e50';
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.moveTo(20, 0);
+            ctx.lineTo(-10, 0);
+            ctx.stroke();
+            
+            ctx.restore();
+        }
+
+        function drawWindEffect(ctx, x, y) {
+            // Wind streaks
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.5)';
+            ctx.lineWidth = 2;
+            
+            for (let i = 0; i < 3; i++) {
+                ctx.beginPath();
+                ctx.moveTo(x - 20 - i * 10, y - 5 + i * 5);
+                ctx.lineTo(x - 30 - i * 10, y - 5 + i * 5);
+                ctx.stroke();
+            }
+        }
+
+        function landAtTrashCan() {
+            gameState.flightRunning = false;
+            gameState.totalDistance += gameState.currentRoundDistance;
+            
+            sounds.playLanding();
+            
+            // Success! Start next round
+            setTimeout(() => {
+                gameState.round++;
+                gameState.phase = 'math';
+                
+                document.getElementById('flightPhase').classList.add('hidden');
+                document.getElementById('mathPhase').classList.remove('hidden');
+                
+                document.getElementById('roundNumber').textContent = gameState.round;
+                updateMathDisplay();
+                generateNewProblem();
+                clearInput();
+                startMathTimer();
+            }, 1500);
+        }
+
+        function endFlightPhase() {
+            gameState.flightRunning = false;
+            showGameOver();
+        }
+
+        function showGameOver() {
+            document.getElementById('flightPhase').classList.add('hidden');
+            document.getElementById('gameOverScreen').classList.remove('hidden');
+            document.getElementById('finalRound').textContent = gameState.round;
+            document.getElementById('finalMathScore').textContent = gameState.mathScore;
+            document.getElementById('finalTotalDistance').textContent = gameState.totalDistance + gameState.currentRoundDistance;
+        }
+
+        // Game Flow Functions
+        function startGame() {
+            gameState.phase = 'math';
+            gameState.round = 1;
+            gameState.mathScore = 0;
+            gameState.windPoints = 0;
+            gameState.totalDistance = 0;
+            
+            document.getElementById('startScreen').classList.add('hidden');
+            document.getElementById('mathPhase').classList.remove('hidden');
+            document.getElementById('roundNumber').textContent = '1';
+            
+            updateMathDisplay();
+            startMathTimer();
+            
+            if (sounds.audioContext && sounds.audioContext.state === 'suspended') {
+                sounds.audioContext.resume();
+            }
+        }
+
+        function devMode() {
+            gameState.phase = 'flight';
+            gameState.mathScore = 0;
+            gameState.windPoints = 10;
+            gameState.round = 1;
+            gameState.totalDistance = 0;
+            
+            console.log("=== MATH PAPER PLANE DEV MODE ===");
+            console.log("Starting with 10 wind points for testing");
+            console.log("TOTAL VELOCITY LIFT: Lift based on speed AND angle!");
+            console.log("Best lift at horizontal flight (0°)");
+            console.log("Space = Launch/Wind Boost, Enter = Air Brake");
+            console.log("Land in the trash can to complete the round");
+            console.log("================================");
+            
+            document.getElementById('startScreen').classList.add('hidden');
+            showFlightPhase();
+            
+            if (sounds.audioContext && sounds.audioContext.state === 'suspended') {
+                sounds.audioContext.resume();
+            }
+        }
+
+        function selectAirplane(type) {
+            gameState.airplaneType = type;
+            
+            document.querySelectorAll('.airplane-option').forEach(option => {
+                option.classList.remove('selected');
+            });
+            
+            if (type === 'red') {
+                document.querySelectorAll('.airplane-option')[0].classList.add('selected');
+            } else {
+                document.querySelectorAll('.airplane-option')[1].classList.add('selected');
+            }
+        }
+
+        function drawAirplanePreviews() {
+            // Draw red airplane preview
+            const redCanvas = document.getElementById('redAirplanePreview');
+            if (redCanvas) {
+                const redCtx = redCanvas.getContext('2d');
+                redCtx.imageSmoothingEnabled = false;
+                drawAirplanePreview(redCtx, 40, 30, 'red');
+            }
+            
+            // Draw blue airplane preview
+            const blueCanvas = document.getElementById('blueAirplanePreview');
+            if (blueCanvas) {
+                const blueCtx = blueCanvas.getContext('2d');
+                blueCtx.imageSmoothingEnabled = false;
+                drawAirplanePreview(blueCtx, 40, 30, 'blue');
+            }
+        }
+
+        function drawAirplanePreview(ctx, x, y, type) {
+            const color = type === 'red' ? '#e74c3c' : '#3498db';
+            
+            ctx.fillStyle = color;
+            ctx.beginPath();
+            ctx.moveTo(x + 15, y);
+            ctx.lineTo(x - 10, y - 8);
+            ctx.lineTo(x - 5, y);
+            ctx.lineTo(x - 10, y + 8);
+            ctx.closePath();
+            ctx.fill();
+            
+            ctx.strokeStyle = '#2c3e50';
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.moveTo(x + 15, y);
+            ctx.lineTo(x - 5, y);
+            ctx.stroke();
+        }
+
+        function resetGame() {
+            gameState.phase = 'start';
+            gameState.round = 1;
+            gameState.mathScore = 0;
+            gameState.totalDistance = 0;
+            gameState.currentRoundDistance = 0;
+            gameState.windPoints = 0;
+            gameState.mathTimer = 60;
+            gameState.launched = false;
+            gameState.airplaneType = 'red';
+            
+            airplane.x = 50;
+            airplane.y = 180;
+            airplane.velocityX = 0;
+            airplane.velocityY = 0;
+            airplane.speed = 0;
+            airplane.onGround = false;
+            
+            document.querySelectorAll('.airplane-option').forEach(option => {
+                option.classList.remove('selected');
+            });
+            document.querySelectorAll('.airplane-option')[0].classList.add('selected');
+            
+            document.getElementById('gameOverScreen').classList.add('hidden');
+            document.getElementById('startScreen').classList.remove('hidden');
+            
+            const mathDisplay = document.getElementById('windDisplayMath');
+            const flightDisplay = document.getElementById('windDisplay');
+            if (mathDisplay) mathDisplay.innerHTML = '';
+            if (flightDisplay) flightDisplay.innerHTML = '';
+            
+            document.getElementById('answerInput').value = '';
+            
+            updateMathDisplay();
+            generateNewProblem();
+            drawAirplanePreviews();
+        }
+
+        window.addEventListener('load', initGame);
+    </script>
+</body>
+</html>

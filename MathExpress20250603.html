@@ -1,0 +1,2050 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Math Express - MVP</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            background: linear-gradient(135deg, #87CEEB, #98FB98);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .game-container {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            max-width: 800px;
+            width: 100%;
+        }
+
+        .phase-header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .phase-title {
+            font-size: 2.5em;
+            color: #2c3e50;
+            margin: 0;
+        }
+
+        .timer {
+            font-size: 1.5em;
+            color: #e74c3c;
+            margin: 10px 0;
+        }
+
+        /* Math Phase Styles */
+        .math-phase {
+            text-align: center;
+        }
+
+        .problem-display {
+            font-size: 3em;
+            color: #2c3e50;
+            margin: 30px 0;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            position: relative;
+            transition: background-color 0.3s ease;
+        }
+
+        .problem-display.correct {
+            background-color: #d4edda;
+        }
+
+        .problem-display.incorrect {
+            background-color: #f8d7da;
+        }
+
+        .feedback-icon {
+            position: absolute;
+            top: 50%;
+            right: 20px;
+            transform: translateY(-50%);
+            font-size: 2em;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .feedback-icon.show {
+            opacity: 1;
+        }
+
+        .feedback-icon.correct {
+            color: #28a745;
+        }
+
+        .feedback-icon.incorrect {
+            color: #dc3545;
+        }
+
+        .input-section {
+            margin: 20px 0;
+        }
+
+        .answer-input {
+            font-size: 2em;
+            padding: 10px 20px;
+            border: 3px solid #3498db;
+            border-radius: 10px;
+            text-align: center;
+            width: 150px;
+            transition: border-color 0.3s ease;
+        }
+
+        .numberpad {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            max-width: 200px;
+            margin: 20px auto;
+        }
+
+        .numberpad button {
+            padding: 15px;
+            font-size: 1.5em;
+            border: none;
+            border-radius: 8px;
+            background: #3498db;
+            color: white;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .numberpad button:hover {
+            background: #2980b9;
+            transform: scale(1.05);
+        }
+
+        .numberpad button:active {
+            transform: scale(0.95);
+        }
+
+        .numberpad .wide {
+            grid-column: span 2;
+        }
+
+        .score-display {
+            display: flex;
+            justify-content: space-around;
+            margin: 20px 0;
+            font-size: 1.3em;
+        }
+
+        .coal-counter {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .coal-chunk {
+            width: 20px;
+            height: 20px;
+            background: #2c3e50;
+            border-radius: 4px;
+            display: inline-block;
+            margin: 2px;
+            animation: coalDrop 0.5s ease-out;
+        }
+
+        @keyframes coalDrop {
+            from { 
+                transform: translateY(-20px) rotate(0deg); 
+                opacity: 0; 
+            }
+            to { 
+                transform: translateY(0) rotate(360deg); 
+                opacity: 1; 
+            }
+        }
+
+        /* Train Phase Styles */
+        .train-phase {
+            text-align: center;
+        }
+
+        .game-canvas {
+            border: 3px solid #34495e;
+            border-radius: 10px;
+            background: linear-gradient(to bottom, #87CEEB 0%, #98FB98 70%, #8B4513 100%);
+        }
+
+        .train-controls {
+            margin: 20px 0;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            align-items: center;
+        }
+
+        .control-button {
+            padding: 15px 20px;
+            font-size: 1.2em;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s; /* Smooth transitions for all changes */
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .button-text {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            line-height: 1.2;
+        }
+
+        .button-label {
+            font-weight: bold;
+        }
+
+        .button-key {
+            font-size: 0.8em;
+            opacity: 0.8;
+        }
+
+        .boost-button {
+            background: #27ae60;
+            color: white;
+            transition: all 0.3s; /* Added transition for smooth color changes */
+        }
+
+        .boost-button:hover:not(:disabled) {
+            background: #229954;
+        }
+
+        .boost-button:disabled {
+            background: #bdc3c7;
+            cursor: not-allowed;
+        }
+
+        .brake-button {
+            background: #e74c3c;
+            color: white;
+            transition: all 0.3s; /* Added transition for smooth changes */
+        }
+
+        .brake-button:hover {
+            background: #c0392b;
+        }
+
+        .speedometer {
+            width: 120px;
+            height: 60px;
+            margin: 0 20px;
+            position: relative;
+        }
+
+        .speedometer-label {
+            font-weight: bold;
+            font-size: 0.8em;
+            color: #2c3e50;
+            margin-top: 5px;
+        }
+
+        .speed-needle {
+            position: absolute;
+            bottom: 10px;
+            left: 50%;
+            transform-origin: bottom center;
+            width: 3px;
+            height: 40px;
+            background: #2c3e50;
+            transform: translateX(-50%) rotate(-90deg);
+            transition: transform 0.1s ease-out, background-color 0.2s;
+            z-index: 10;
+            border-radius: 1px;
+        }
+
+        .speed-needle.redline {
+            background: #e74c3c;
+            animation: needleOscillate 0.1s ease-in-out infinite alternate;
+        }
+
+        @keyframes needleOscillate {
+            from { transform: translateX(-50%) rotate(85deg); }
+            to { transform: translateX(-50%) rotate(95deg); }
+        }
+
+        .phase-transition {
+            text-align: center;
+            padding: 40px;
+            font-size: 1.5em;
+            color: #2c3e50;
+        }
+
+        .start-button {
+            padding: 15px 40px;
+            font-size: 1.5em;
+            background: #27ae60;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+
+        .start-button:hover {
+            background: #229954;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        /* Sound toggle button */
+        .sound-toggle {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            padding: 8px 12px;
+            font-size: 1.2em;
+            background: #3498db;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .sound-toggle:hover {
+            background: #2980b9;
+        }
+
+        .sound-toggle.muted {
+            background: #95a5a6;
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <!-- Sound Toggle -->
+        <button class="sound-toggle" id="soundToggle" onclick="toggleSound()">🔊</button>
+
+        <!-- Start Screen -->
+        <div id="startScreen" class="phase-transition" style="position: relative;">
+            <button onclick="devMode()" style="position: absolute; top: 10px; right: 10px; padding: 5px 8px; font-size: 0.7em; background: #95a5a6; color: white; border: none; border-radius: 3px; cursor: pointer; opacity: 0.7;">DEV</button>
+            <h1>🚂 Math Express 🚂</h1>
+            <p>Solve math problems to fuel your train!</p>
+            <button class="start-button" onclick="startGame()">All Aboard!</button>
+        </div>
+
+        <!-- Math Phase -->
+        <div id="mathPhase" class="math-phase hidden">
+            <div class="phase-header">
+                <h2 class="phase-title">🧮 Math Station - Round <span id="roundNumber">1</span></h2>
+                <div class="timer" id="mathTimer">60</div>
+            </div>
+            
+            <div class="problem-display" id="problemDisplay">
+                <span id="problemText">5 + 3 = ?</span>
+                <div class="feedback-icon" id="feedbackIcon"></div>
+            </div>
+            
+            <div class="input-section">
+                <input type="text" class="answer-input" id="answerInput" readonly>
+                
+                <div class="numberpad">
+                    <button onclick="addDigit('1')">1</button>
+                    <button onclick="addDigit('2')">2</button>
+                    <button onclick="addDigit('3')">3</button>
+                    <button onclick="addDigit('4')">4</button>
+                    <button onclick="addDigit('5')">5</button>
+                    <button onclick="addDigit('6')">6</button>
+                    <button onclick="addDigit('7')">7</button>
+                    <button onclick="addDigit('8')">8</button>
+                    <button onclick="addDigit('9')">9</button>
+                    <button onclick="clearInput()" class="wide">Clear</button>
+                    <button onclick="addDigit('0')">0</button>
+                </div>
+            </div>
+
+            <div class="score-display">
+                <div>Math Score: <span id="mathScore">0</span></div>
+                <div class="coal-counter">
+                    Steam Points: <span id="steamPoints">0</span>
+                    <div id="coalDisplay"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Train Phase -->
+        <div id="trainPhase" class="train-phase hidden">
+            <div class="phase-header">
+                <h2 class="phase-title">🚂 Train Run - Round <span id="trainRoundNumber">1</span></h2>
+                <div>Total Distance: <span id="totalDistance">0</span></div>
+                <div style="font-size: 0.9em; color: #27ae60; margin-top: 5px;">
+                    Next Station in: <span id="distanceToStation">200</span>
+                </div>
+                <div style="font-size: 0.8em; color: #7f8c8d; margin-top: 5px;">
+                    <span id="difficultyIndicator"></span>
+                </div>
+            </div>
+            
+            <canvas id="gameCanvas" class="game-canvas" width="800" height="300"></canvas>
+            
+            <div class="train-controls">
+                <button class="control-button boost-button" id="boostButton" onclick="boost()">
+                    🚀 BOOST (Space)
+                </button>
+                
+                <div style="display: flex; flex-direction: column; align-items: center;">
+                    <div class="speedometer">
+                        <svg width="120" height="60" viewBox="0 0 120 60">
+                            <!-- Red zone (slow) -->
+                            <path d="M 10 50 A 50 50 0 0 1 43.3 10.4" 
+                                  stroke="#e74c3c" stroke-width="6" fill="none"/>
+                            <!-- Yellow zone (medium) -->
+                            <path d="M 43.3 10.4 A 50 50 0 0 1 76.7 10.4" 
+                                  stroke="#f39c12" stroke-width="6" fill="none"/>
+                            <!-- Green zone (fast) -->
+                            <path d="M 76.7 10.4 A 50 50 0 0 1 110 50" 
+                                  stroke="#27ae60" stroke-width="6" fill="none"/>
+                            <!-- Center dot for needle -->
+                            <circle cx="60" cy="50" r="5" fill="#2c3e50"/>
+                        </svg>
+                        <div class="speed-needle" id="speedNeedle"></div>
+                    </div>
+                    <div class="speedometer-label">SPEED</div>
+                </div>
+                
+                <button class="control-button brake-button" id="brakeButton" onclick="brake()">
+                    <span>🛑</span>
+                    <div class="button-text">
+                        <span class="button-label">BRAKE</span>
+                        <span class="button-key">(Enter)</span>
+                    </div>
+                </button>
+            </div>
+            
+            <div style="height: 20px;"></div>
+        </div>
+
+        <!-- Game Over Screen -->
+        <div id="gameOverScreen" class="phase-transition hidden">
+            <div style="text-align: center; margin-bottom: 20px;">
+                <div style="color: #e74c3c; font-size: 2.2em; margin-bottom: 5px;">END OF</div>
+                <div style="color: #e74c3c; font-size: 3em; font-weight: bold;">THE LINE!</div>
+            </div>
+            <div class="score-display" style="flex-direction: column; gap: 15px; font-size: 1.5em;">
+                <div>Round Reached: <span id="finalRound">1</span></div>
+                <div>Math Score: <span id="finalMathScore">0</span></div>
+                <div style="color: #27ae60; font-weight: bold;">Total Distance: <span id="finalTotalDistance">0</span></div>
+            </div>
+            <button class="start-button" onclick="resetGame()" style="margin-top: 30px;">TRY AGAIN?</button>
+        </div>
+    </div>
+
+    <script>
+        // Sound system
+        const sounds = {
+            enabled: true,
+            audioContext: null,
+            
+            init() {
+                if (typeof AudioContext !== 'undefined') {
+                    this.audioContext = new AudioContext();
+                }
+            },
+            
+            playCorrect() {
+                if (!this.enabled || !this.audioContext) return;
+                
+                const oscillator = this.audioContext.createOscillator();
+                const gainNode = this.audioContext.createGain();
+                
+                oscillator.connect(gainNode);
+                gainNode.connect(this.audioContext.destination);
+                
+                oscillator.frequency.setValueAtTime(523.25, this.audioContext.currentTime); // C5
+                oscillator.frequency.setValueAtTime(659.25, this.audioContext.currentTime + 0.1); // E5
+                oscillator.frequency.setValueAtTime(783.99, this.audioContext.currentTime + 0.2); // G5
+                
+                gainNode.gain.setValueAtTime(0.3, this.audioContext.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, this.audioContext.currentTime + 0.5);
+                
+                oscillator.start(this.audioContext.currentTime);
+                oscillator.stop(this.audioContext.currentTime + 0.5);
+            },
+            
+            playIncorrect() {
+                if (!this.enabled || !this.audioContext) return;
+                
+                const oscillator = this.audioContext.createOscillator();
+                const gainNode = this.audioContext.createGain();
+                
+                oscillator.connect(gainNode);
+                gainNode.connect(this.audioContext.destination);
+                
+                oscillator.frequency.setValueAtTime(300, this.audioContext.currentTime);
+                oscillator.frequency.setValueAtTime(200, this.audioContext.currentTime + 0.1);
+                
+                gainNode.gain.setValueAtTime(0.3, this.audioContext.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, this.audioContext.currentTime + 0.3);
+                
+                oscillator.start(this.audioContext.currentTime);
+                oscillator.stop(this.audioContext.currentTime + 0.3);
+            },
+            
+            playButtonClick() {
+                if (!this.enabled || !this.audioContext) return;
+                
+                const oscillator = this.audioContext.createOscillator();
+                const gainNode = this.audioContext.createGain();
+                
+                oscillator.connect(gainNode);
+                gainNode.connect(this.audioContext.destination);
+                
+                oscillator.frequency.setValueAtTime(800, this.audioContext.currentTime);
+                gainNode.gain.setValueAtTime(0.1, this.audioContext.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, this.audioContext.currentTime + 0.05);
+                
+                oscillator.start(this.audioContext.currentTime);
+                oscillator.stop(this.audioContext.currentTime + 0.05);
+            },
+            
+            playTrainWhistle() {
+                if (!this.enabled || !this.audioContext) return;
+                
+                const oscillator1 = this.audioContext.createOscillator();
+                const oscillator2 = this.audioContext.createOscillator();
+                const gainNode = this.audioContext.createGain();
+                
+                oscillator1.connect(gainNode);
+                oscillator2.connect(gainNode);
+                gainNode.connect(this.audioContext.destination);
+                
+                oscillator1.frequency.setValueAtTime(311.13, this.audioContext.currentTime); // Eb4
+                oscillator2.frequency.setValueAtTime(415.30, this.audioContext.currentTime); // Ab4
+                
+                gainNode.gain.setValueAtTime(0.3, this.audioContext.currentTime);
+                gainNode.gain.setValueAtTime(0.4, this.audioContext.currentTime + 0.1);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, this.audioContext.currentTime + 1);
+                
+                oscillator1.start(this.audioContext.currentTime);
+                oscillator2.start(this.audioContext.currentTime);
+                oscillator1.stop(this.audioContext.currentTime + 1);
+                oscillator2.stop(this.audioContext.currentTime + 1);
+            }
+        };
+
+        // Initialize sound system
+        sounds.init();
+
+        function toggleSound() {
+            sounds.enabled = !sounds.enabled;
+            const button = document.getElementById('soundToggle');
+            button.textContent = sounds.enabled ? '🔊' : '🔇';
+            button.classList.toggle('muted', !sounds.enabled);
+        }
+
+        // Visual feedback functions
+        function showFeedback(isCorrect) {
+            const problemDisplay = document.getElementById('problemDisplay');
+            const problemText = document.getElementById('problemText');
+            const feedbackIcon = document.getElementById('feedbackIcon');
+            
+            // Remove any existing classes
+            problemDisplay.classList.remove('correct', 'incorrect');
+            feedbackIcon.classList.remove('show', 'correct', 'incorrect');
+            feedbackIcon.textContent = '';
+            
+            if (isCorrect) {
+                // Show the answer in place of the ?
+                problemText.textContent = `${gameState.currentProblem.question} = ${gameState.currentProblem.answer}`;
+                
+                // Turn background green
+                problemDisplay.classList.add('correct');
+                
+                // Show checkmark on the right
+                feedbackIcon.textContent = '✓';
+                feedbackIcon.classList.add('show', 'correct');
+                
+                // Play sound
+                sounds.playCorrect();
+            } else {
+                // Turn background red
+                problemDisplay.classList.add('incorrect');
+                
+                // Show X on the right
+                feedbackIcon.textContent = '✗';
+                feedbackIcon.classList.add('show', 'incorrect');
+                
+                // Play sound
+                sounds.playIncorrect();
+            }
+            
+            // Reset after a short delay
+            setTimeout(() => {
+                problemDisplay.classList.remove('correct', 'incorrect');
+                feedbackIcon.classList.remove('show', 'correct', 'incorrect');
+                feedbackIcon.textContent = '';
+            }, 800);
+        }
+
+        // Game State
+        const gameState = {
+            phase: 'start',
+            round: 1, // Track current round
+            mathScore: 0,
+            totalDistance: 0, // Total distance across all rounds
+            currentRoundDistance: 0, // Distance traveled in current round only
+            roundTargetDistance: 0, // Target distance for current round
+            steamPoints: 0,
+            startingSteamPoints: 0, // Track starting steam for efficiency calculation
+            currentProblem: null,
+            mathTimer: 60,
+            mathInterval: null,
+            trainRunning: false
+        };
+
+        // Train Physics and Terrain
+        const train = {
+            x: 50,
+            y: 200,
+            velocityX: 0, // Start at 0, not 2
+            velocityY: 0,
+            speed: 0,
+            onGround: true,
+            width: 60,
+            height: 30,
+            momentum: 0, // New: momentum tracking
+            wasAirborne: false, // Track for landing bonus
+            airTime: 0, // Track how long we've been airborne
+            brakingBeforeLanding: false // Track if brake was used strategically
+        };
+
+        // Train cars with path following and wheel rotation
+        const trainCars = [
+            { x: 50, y: 200, angle: 0, type: 'engine', wheelRotation: 0 },
+            { x: -15, y: 200, angle: 0, type: 'boxcar1', wheelRotation: 0 },
+            { x: -80, y: 200, angle: 0, type: 'boxcar2', wheelRotation: 0 },
+            { x: -145, y: 200, angle: 0, type: 'caboose', wheelRotation: 0 }
+        ];
+
+        // Path history for tail following
+        const pathHistory = [];
+        const pathHistorySize = 200;
+
+        const carPhysics = {
+            spacing: 65,  // Fixed distance between pivot points
+            carLength: 60,
+            mass: 1, // Base mass per car
+            wheelRadius: 8 // For rotation calculation
+        };
+
+        // Terrain generation with gentle, spaced curves
+        const terrain = {
+            segments: [],
+            segmentWidth: 30, // Wider segments for smoother terrain
+            lookAhead: 40,
+            baseHeight: 250,
+            lastX: 0,
+            lastHeight: 250, // Track last height for slope continuity
+            hillState: {
+                currentPhase: 0,
+                hillLength: 800, // Minimum distance between hill peaks
+                amplitude: 60,
+                nextHillDistance: 800
+            },
+            constraints: {
+                maxUphillChange: 4, // Maximum upward height change per segment (prevents walls)
+                minHeight: 200, // Minimum terrain height (keeps train visible)
+                maxHeight: 300  // Maximum terrain height
+            }
+        };
+
+        function initializeTerrain() {
+            terrain.segments = [];
+            terrain.lastX = 0;
+            terrain.lastHeight = terrain.baseHeight;
+            terrain.hillState.currentPhase = 0;
+            terrain.hillState.nextHillDistance = 600 + Math.random() * 400; // 600-1000 pixels between hills
+            
+            // Generate initial segments
+            for (let i = 0; i < terrain.lookAhead; i++) {
+                generateNextTerrainSegment();
+            }
+        }
+
+        function generateNextTerrainSegment() {
+            const x = terrain.lastX + terrain.segmentWidth;
+            
+            // Calculate target height based on hill generation
+            let targetHeight = terrain.baseHeight;
+            
+            // Check if we should start a new hill
+            if (x >= terrain.hillState.nextHillDistance) {
+                terrain.hillState.currentPhase = 0;
+                terrain.hillState.amplitude = 40 + Math.random() * 80; // Back to 40-120 pixel hills
+                terrain.hillState.hillLength = 600 + Math.random() * 800; // 600-1400 pixel wide hills
+                terrain.hillState.nextHillDistance = x + terrain.hillState.hillLength + 400 + Math.random() * 600;
+            }
+            
+            // Generate hill if we're in hill phase
+            if (x >= terrain.hillState.nextHillDistance - terrain.hillState.hillLength && x < terrain.hillState.nextHillDistance) {
+                const hillProgress = (x - (terrain.hillState.nextHillDistance - terrain.hillState.hillLength)) / terrain.hillState.hillLength;
+                // Use smooth cosine curve for gentle hills
+                const hillHeight = Math.cos(hillProgress * Math.PI * 2) * terrain.hillState.amplitude;
+                targetHeight = terrain.baseHeight - hillHeight; // Negative because cos starts at 1
+            }
+            
+            // Apply slope continuity constraint - ONLY for upward slopes
+            const heightDifference = targetHeight - terrain.lastHeight;
+            
+            let actualHeight;
+            if (heightDifference > 0) {
+                // Going upward - limit the change to prevent walls
+                const maxUphillChange = terrain.constraints.maxUphillChange;
+                if (heightDifference > maxUphillChange) {
+                    actualHeight = terrain.lastHeight + maxUphillChange;
+                } else {
+                    actualHeight = targetHeight;
+                }
+            } else {
+                // Going downward - allow any slope (steep drops are fun!)
+                actualHeight = targetHeight;
+            }
+            
+            // Apply height bounds to keep terrain visible
+            actualHeight = Math.max(terrain.constraints.minHeight, 
+                          Math.min(terrain.constraints.maxHeight, actualHeight));
+            
+            terrain.segments.push({
+                x: x,
+                y: actualHeight
+            });
+            
+            terrain.lastX = x;
+            terrain.lastHeight = actualHeight;
+        }
+
+        function updateTerrain() {
+            const trainProgress = train.x;
+            const neededSegments = Math.floor(trainProgress / terrain.segmentWidth) + terrain.lookAhead;
+            
+            while (terrain.segments.length < neededSegments) {
+                generateNextTerrainSegment();
+            }
+            
+            // Clean up old segments
+            const minSegmentsToKeep = Math.max(0, Math.floor(trainProgress / terrain.segmentWidth) - 20);
+            if (terrain.segments.length > minSegmentsToKeep + terrain.lookAhead + 20) {
+                terrain.segments.splice(0, terrain.segments.length - (terrain.lookAhead + 40));
+            }
+        }
+
+        function getTerrainHeightAt(x) {
+            const segmentIndex = Math.floor(x / terrain.segmentWidth);
+            
+            if (segmentIndex >= terrain.segments.length - 1 || segmentIndex < 0) {
+                return terrain.baseHeight;
+            }
+            
+            const segment1 = terrain.segments[segmentIndex];
+            const segment2 = terrain.segments[segmentIndex + 1];
+            
+            if (!segment1 || !segment2) return terrain.baseHeight;
+            
+            // Simple linear interpolation for smooth but not overly complex curves
+            const localX = x - segment1.x;
+            const t = localX / terrain.segmentWidth;
+            
+            return segment1.y + (segment2.y - segment1.y) * t;
+        }
+
+        function getTerrainSlopeAt(x) {
+            // Calculate slope by sampling nearby points
+            const h1 = getTerrainHeightAt(x - 10);
+            const h2 = getTerrainHeightAt(x + 10);
+            return (h1 - h2) / 20; // Slope calculation
+        }
+
+        // Canvas and rendering
+        let canvas, ctx;
+
+        // Parallax background elements
+        const background = {
+            clouds: [],
+            trees: [],
+            mountains: []
+        };
+
+        function initializeBackground() {
+            // Generate clouds
+            background.clouds = [];
+            for (let i = 0; i < 8; i++) {
+                background.clouds.push({
+                    x: Math.random() * 1600,
+                    y: 20 + Math.random() * 80,
+                    width: 60 + Math.random() * 40,
+                    height: 30 + Math.random() * 20,
+                    speed: 0.2 + Math.random() * 0.3
+                });
+            }
+
+            // Generate mountains
+            background.mountains = [];
+            for (let i = 0; i < 5; i++) {
+                background.mountains.push({
+                    x: i * 300,
+                    width: 200 + Math.random() * 100,
+                    height: 80 + Math.random() * 40
+                });
+            }
+
+            // Generate trees
+            background.trees = [];
+            for (let i = 0; i < 20; i++) {
+                background.trees.push({
+                    x: i * 100 + Math.random() * 50,
+                    height: 40 + Math.random() * 30,
+                    width: 30 + Math.random() * 20
+                });
+            }
+        }
+
+        function updateBackground(cameraX) {
+            // Update clouds (they wrap around)
+            background.clouds.forEach(cloud => {
+                cloud.x -= cloud.speed;
+                if (cloud.x + cloud.width < 0) {
+                    cloud.x = 1600;
+                }
+            });
+        }
+
+        function drawBackground(ctx, cameraX) {
+            // Draw sky gradient
+            const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
+            gradient.addColorStop(0, '#87CEEB');
+            gradient.addColorStop(0.7, '#98FB98');
+            gradient.addColorStop(1, '#8B4513');
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Draw clouds (furthest back)
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
+            background.clouds.forEach(cloud => {
+                // Draw fluffy cloud shape
+                const x = cloud.x - cameraX * 0.1; // Slow parallax
+                ctx.beginPath();
+                ctx.arc(x, cloud.y, cloud.height/2, 0, Math.PI * 2);
+                ctx.arc(x + cloud.width * 0.25, cloud.y - cloud.height * 0.2, cloud.height/2.5, 0, Math.PI * 2);
+                ctx.arc(x + cloud.width * 0.5, cloud.y, cloud.height/2.2, 0, Math.PI * 2);
+                ctx.arc(x + cloud.width * 0.75, cloud.y - cloud.height * 0.1, cloud.height/2.5, 0, Math.PI * 2);
+                ctx.arc(x + cloud.width, cloud.y, cloud.height/2, 0, Math.PI * 2);
+                ctx.fill();
+            });
+
+            // Draw mountains (mid-distance)
+            background.mountains.forEach((mountain, i) => {
+                const x = mountain.x - cameraX * 0.3; // Medium parallax
+                
+                // Mountain shape
+                ctx.fillStyle = '#8B7355';
+                ctx.beginPath();
+                ctx.moveTo(x, 200);
+                ctx.lineTo(x + mountain.width/2, 200 - mountain.height);
+                ctx.lineTo(x + mountain.width, 200);
+                ctx.closePath();
+                ctx.fill();
+
+                // Snow cap
+                ctx.fillStyle = 'white';
+                ctx.beginPath();
+                ctx.moveTo(x + mountain.width/2 - 20, 200 - mountain.height + 20);
+                ctx.lineTo(x + mountain.width/2, 200 - mountain.height);
+                ctx.lineTo(x + mountain.width/2 + 20, 200 - mountain.height + 20);
+                ctx.closePath();
+                ctx.fill();
+            });
+
+            // Draw trees (closest background layer)
+            background.trees.forEach(tree => {
+                const x = tree.x - cameraX * 0.5; // Faster parallax
+                
+                // Tree trunk
+                ctx.fillStyle = '#8B4513';
+                ctx.fillRect(x, 220 - tree.height, tree.width * 0.3, tree.height);
+                
+                // Tree foliage (simple triangle)
+                ctx.fillStyle = '#228B22';
+                ctx.beginPath();
+                ctx.moveTo(x - tree.width/2, 220 - tree.height * 0.6);
+                ctx.lineTo(x + tree.width * 0.15, 220 - tree.height - 10);
+                ctx.lineTo(x + tree.width/2 + tree.width * 0.3, 220 - tree.height * 0.6);
+                ctx.closePath();
+                ctx.fill();
+            });
+        }
+
+        // Initialize game
+        function initGame() {
+            canvas = document.getElementById('gameCanvas');
+            ctx = canvas.getContext('2d');
+            
+            // Add keyboard listeners
+            document.addEventListener('keydown', handleKeyPress);
+            
+            // Initialize terrain
+            initializeTerrain();
+            
+            // Initialize background
+            initializeBackground();
+            
+            // Generate first problem
+            generateNewProblem();
+            
+            // Initialize round display
+            document.getElementById('roundNumber').textContent = '1';
+        }
+
+        // Keyboard controls
+        function handleKeyPress(e) {
+            if (gameState.phase === 'math') {
+                if (e.key >= '0' && e.key <= '9') {
+                    addDigit(e.key);
+                } else if (e.key === 'Backspace' || e.key === 'Delete') {
+                    clearInput();
+                }
+            } else if (gameState.phase === 'train') {
+                if (e.key === ' ' || e.key === 'Spacebar') {
+                    e.preventDefault();
+                    boost();
+                } else if (e.key === 'Enter') {
+                    brake();
+                }
+            }
+        }
+
+        // Math Phase Functions
+        function generateNewProblem() {
+            const a = Math.floor(Math.random() * 10) + 1;
+            const b = Math.floor(Math.random() * 10) + 1;
+            const answer = a + b;
+            gameState.currentProblem = {
+                question: `${a} + ${b}`,
+                answer: answer,
+                expectedDigits: answer.toString().length
+            };
+            const problemText = document.getElementById('problemText');
+            if (problemText) {
+                problemText.textContent = `${gameState.currentProblem.question} = ?`;
+            }
+        }
+
+        function addDigit(digit) {
+            const input = document.getElementById('answerInput');
+            input.value += digit;
+            
+            // Play button click sound
+            sounds.playButtonClick();
+            
+            // Check if we have enough digits to auto-submit
+            if (input.value.length >= gameState.currentProblem.expectedDigits) {
+                setTimeout(() => submitAnswer(), 100); // Small delay for visual feedback
+            }
+        }
+
+        function clearInput() {
+            document.getElementById('answerInput').value = '';
+            sounds.playButtonClick();
+        }
+
+        function submitAnswer() {
+            const userAnswer = parseInt(document.getElementById('answerInput').value);
+            if (userAnswer === gameState.currentProblem.answer) {
+                // Correct answer
+                showFeedback(true);
+                gameState.mathScore++;
+                gameState.steamPoints++;
+                updateMathDisplay();
+                addCoalChunk();
+                
+                // Clear input and generate new problem after animation
+                setTimeout(() => {
+                    clearInput();
+                    generateNewProblem();
+                }, 500);
+            } else {
+                // Wrong answer
+                showFeedback(false);
+                setTimeout(() => {
+                    clearInput();
+                }, 500);
+            }
+        }
+
+        function addCoalChunk() {
+            const coalDisplay = document.getElementById('coalDisplay');
+            const chunk = document.createElement('div');
+            chunk.className = 'coal-chunk';
+            coalDisplay.appendChild(chunk);
+        }
+
+        function updateMathDisplay() {
+            document.getElementById('mathScore').textContent = gameState.mathScore;
+            document.getElementById('steamPoints').textContent = gameState.steamPoints;
+        }
+
+        function startMathTimer() {
+            gameState.mathTimer = 60;
+            updateTimerDisplay();
+            gameState.mathInterval = setInterval(() => {
+                gameState.mathTimer--;
+                updateTimerDisplay();
+                if (gameState.mathTimer <= 0) {
+                    endMathPhase();
+                }
+            }, 1000);
+        }
+
+        function updateTimerDisplay() {
+            document.getElementById('mathTimer').textContent = gameState.mathTimer;
+        }
+
+        function endMathPhase() {
+            clearInterval(gameState.mathInterval);
+            showTrainPhase();
+        }
+
+        // Train Phase Functions
+        function showTrainPhase() {
+            gameState.phase = 'train';
+            document.getElementById('mathPhase').classList.add('hidden');
+            document.getElementById('trainPhase').classList.remove('hidden');
+            
+            // Calculate target distance for this round: round * 200
+            gameState.roundTargetDistance = gameState.round * 200;
+            gameState.currentRoundDistance = 0; // Reset current round distance
+            
+            // Update train phase UI with round info
+            document.getElementById('trainRoundNumber').textContent = gameState.round;
+            document.getElementById('totalDistance').textContent = gameState.totalDistance;
+            document.getElementById('distanceToStation').textContent = gameState.roundTargetDistance;
+            
+            // Play train whistle sound
+            setTimeout(() => {
+                sounds.playTrainWhistle();
+                
+                // Show countdown instead of alert
+                const trainPhaseDiv = document.getElementById('trainPhase');
+                const countdownDiv = document.createElement('div');
+                countdownDiv.style.cssText = `
+                    position: absolute;
+                    top: 50%;
+                    left: 50%;
+                    transform: translate(-50%, -50%);
+                    font-size: 4em;
+                    font-weight: bold;
+                    color: #e74c3c;
+                    text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+                    z-index: 100;
+                `;
+                countdownDiv.textContent = 'ALL ABOARD! 🚂';
+                trainPhaseDiv.appendChild(countdownDiv);
+                
+                setTimeout(() => {
+                    countdownDiv.textContent = 'Ready...';
+                    setTimeout(() => {
+                        countdownDiv.textContent = 'GO!';
+                        setTimeout(() => {
+                            countdownDiv.remove();
+                            startTrainRun();
+                        }, 500);
+                    }, 800);
+                }, 1000);
+            }, 500);
+        }
+
+        function startTrainRun() {
+            gameState.trainRunning = true;
+            gameState.startingSteamPoints = gameState.steamPoints; // Track starting steam
+            
+            // FULLY reset train to starting position
+            train.x = 50;
+            train.y = 200;
+            train.velocityX = 0;
+            train.velocityY = 0;
+            train.speed = 0;
+            train.momentum = 0;
+            train.onGround = true;
+            train.wasAirborne = false;
+            train.airTime = 0;
+            train.brakingBeforeLanding = false;
+            
+            // Reset terrain completely for fresh start
+            initializeTerrain();
+            
+            // Clear path history
+            pathHistory.length = 0;
+            
+            // Reset train cars positions and wheel rotations
+            trainCars[0] = { x: train.x, y: train.y, angle: 0, type: 'engine', wheelRotation: 0 };
+            for (let i = 1; i < trainCars.length; i++) {
+                trainCars[i].x = train.x - (i * carPhysics.spacing);
+                trainCars[i].y = getTerrainHeightAt(trainCars[i].x) - train.height;
+                trainCars[i].angle = 0;
+                trainCars[i].wheelRotation = 0;
+                
+                // Pre-fill path history for initial positions
+                pathHistory.push({ x: trainCars[i].x, y: trainCars[i].y });
+            }
+            
+            updateBoostButton();
+            
+            // Start game loop
+            gameLoop();
+        }
+
+        function boost() {
+            if (gameState.steamPoints > 0 && gameState.trainRunning) {
+                gameState.steamPoints--;
+                
+                // If train is stopped, give it a direct velocity boost
+                if (Math.abs(train.velocityX) < 0.1) {
+                    train.velocityX = 1.5; // Good initial push to start
+                }
+                
+                // Check upcoming terrain for strategic boost bonus
+                let boostMultiplier = 1.0;
+                const lookAheadDistance = 100; // Look 100 pixels ahead
+                const currentHeight = getTerrainHeightAt(train.x + train.width/2);
+                const aheadHeight = getTerrainHeightAt(train.x + train.width/2 + lookAheadDistance);
+                
+                // If there's an incline ahead, give bonus boost power
+                if (aheadHeight < currentHeight - 10) { // Going uphill soon
+                    boostMultiplier = 1.5; // 50% bonus for strategic timing
+                    
+                    // Visual feedback for strategic boost
+                    const button = document.getElementById('boostButton');
+                    button.style.backgroundColor = '#f39c12'; // Flash orange
+                    setTimeout(() => {
+                        button.style.backgroundColor = gameState.steamPoints > 0 ? '#27ae60' : '#bdc3c7';
+                    }, 300);
+                }
+                
+                // Add thrust to momentum instead of directly to velocity
+                const baseBoostPower = 3.5; // Slightly reduced for easier beginning
+                train.momentum += baseBoostPower * boostMultiplier;
+                
+                // Cap maximum momentum
+                const maxMomentum = 4.5; // Slightly increased
+                if (train.momentum > maxMomentum) {
+                    train.momentum = maxMomentum;
+                }
+                
+                updateBoostButton();
+                sounds.playButtonClick();
+            }
+        }
+
+        function brake() {
+            if (gameState.trainRunning) {
+                // Check if we're about to land for strategic braking
+                let strategicBrake = false;
+                if (!train.onGround && train.velocityY > 0 && Math.abs(train.velocityX) > 9) { // High speed threshold
+                    // Check if we'll land soon
+                    const futureY = train.y + train.velocityY * 10; // Look 10 frames ahead
+                    const terrainHeight = getTerrainHeightAt(train.x + train.width/2);
+                    
+                    if (futureY + train.height >= terrainHeight - 20) {
+                        // We're about to land at high speed - strategic brake!
+                        strategicBrake = true;
+                        train.brakingBeforeLanding = true;
+                        
+                        // Visual feedback for strategic brake
+                        const button = document.getElementById('brakeButton');
+                        button.style.backgroundColor = '#f39c12'; // Flash orange
+                        setTimeout(() => {
+                            button.style.backgroundColor = '#e74c3c';
+                        }, 300);
+                    }
+                }
+                
+                // Enhanced brake with different effects for ground vs air
+                if (!train.onGround) {
+                    // Air brake: control your landing
+                    train.velocityY += 2.5; // Moderate downward pull
+                    if (!strategicBrake) {
+                        train.velocityX *= 0.98; // Only slight air control if not strategic
+                    }
+                } else {
+                    // Ground brake: strong stopping power
+                    train.momentum *= 0.4; // Strong momentum reduction
+                    train.velocityX *= 0.85; // Direct velocity reduction
+                }
+                sounds.playButtonClick();
+            }
+        }
+
+        function updateBoostButton() {
+            const button = document.getElementById('boostButton');
+            button.disabled = gameState.steamPoints <= 0;
+            button.innerHTML = `
+                <span>🚀</span>
+                <div class="button-text">
+                    <span class="button-label">STEAM (${gameState.steamPoints})</span>
+                    <span class="button-key">(Space)</span>
+                </div>
+            `;
+        }
+
+        function updateSpeedometer() {
+            const needle = document.getElementById('speedNeedle');
+            // Use actual train velocityX for more responsive speed reading
+            const currentSpeed = Math.abs(train.velocityX);
+            
+            if (currentSpeed > 10) {
+                // Redline: needle turns red and oscillates at far right
+                needle.classList.add('redline');
+                // Don't set transform here - let CSS animation handle oscillation
+            } else {
+                // Normal operation: map speed to angle
+                needle.classList.remove('redline');
+                const maxDisplaySpeed = 10;
+                const clampedSpeed = Math.min(currentSpeed, maxDisplaySpeed);
+                const rotation = -90 + (clampedSpeed / maxDisplaySpeed) * 180;
+                needle.style.transform = `translateX(-50%) rotate(${rotation}deg)`;
+            }
+        }
+
+        // Simple train physics and rendering
+        function gameLoop() {
+            if (!gameState.trainRunning) return;
+            
+            // Update terrain (generate new segments as needed)
+            updateTerrain();
+            
+            // Update train physics
+            updateTrainPhysics();
+            
+            // Check if brake button should be highlighted for strategic landing
+            if (!train.onGround && train.velocityY > 0 && Math.abs(train.velocityX) > 9) { // Only show at very high speed
+                const futureY = train.y + train.velocityY * 10;
+                const terrainHeight = getTerrainHeightAt(train.x + train.width/2);
+                const brakeButton = document.getElementById('brakeButton');
+                
+                if (futureY + train.height >= terrainHeight - 20) {
+                    // Show brake opportunity
+                    if (!brakeButton.classList.contains('brake-opportunity')) {
+                        brakeButton.classList.add('brake-opportunity');
+                        brakeButton.style.boxShadow = '0 0 10px #f39c12';
+                    }
+                } else {
+                    brakeButton.classList.remove('brake-opportunity');
+                    brakeButton.style.boxShadow = '';
+                }
+            } else {
+                const brakeButton = document.getElementById('brakeButton');
+                brakeButton.classList.remove('brake-opportunity');
+                brakeButton.style.boxShadow = '';
+            }
+            
+            // Update speedometer to reflect current speed
+            updateSpeedometer();
+            
+            // Render
+            renderTrain();
+            
+            // Check if train stopped (no velocity, no momentum, and no steam to boost)
+            if (Math.abs(train.velocityX) <= 0.1 && Math.abs(train.momentum) <= 0.1 && train.onGround && gameState.steamPoints <= 0) {
+                endTrainPhase();
+                return;
+            }
+            
+            // Continue loop
+            requestAnimationFrame(gameLoop);
+        }
+
+        function updateTrainPhysics() {
+            // Calculate total mass (engine + cars)
+            const totalMass = 1 + (trainCars.length - 1) * 0.3; // Engine mass 1, each car adds 0.3
+            
+            // Apply momentum to velocity BEFORE position update
+            if (Math.abs(train.momentum) > 0) {
+                // Momentum affects velocity based on mass
+                train.velocityX += (train.momentum / totalMass) * 0.2; // Increased for better response
+                
+                // Cap maximum velocity
+                const maxVelocity = train.brakingBeforeLanding ? 13 : 11; // Higher cap with strategic brake
+                if (Math.abs(train.velocityX) > maxVelocity) {
+                    train.velocityX = Math.sign(train.velocityX) * maxVelocity;
+                }
+                
+                // Momentum decays naturally - progressive decay
+                const distanceFactor = Math.min(gameState.totalDistance / 5000, 0.5);
+                train.momentum *= (0.96 - distanceFactor * 0.02); // 4% to 6% decay
+                
+                // Stop momentum when very small
+                if (Math.abs(train.momentum) < 0.01) {
+                    train.momentum = 0;
+                }
+            }
+            
+            // Cap momentum if needed
+            const maxMomentum = 4.5;
+            if (train.momentum > maxMomentum) {
+                train.momentum = maxMomentum;
+            }
+            
+            // Update position
+            train.x += train.velocityX;
+            train.y += train.velocityY;
+            
+            // Get terrain info
+            const terrainHeight = getTerrainHeightAt(train.x + train.width/2);
+            const terrainSlope = getTerrainSlopeAt(train.x + train.width/2);
+            
+            // Check ground collision for engine
+            if (train.y + train.height >= terrainHeight) {
+                train.y = terrainHeight - train.height;
+                
+                // Landing bonus - if we were airborne and land successfully
+                if (!train.onGround && train.wasAirborne) {
+                    // Bonus momentum for good landing
+                    train.momentum += 0.3;
+                    train.wasAirborne = false;
+                }
+                
+                train.onGround = true;
+                
+                // Moon-like physics: automatic launch when going fast over hill crests
+                if (Math.abs(train.velocityX) > 3 && terrainSlope > 1.0) { // Even lower thresholds
+                    // Launch with speed-based force
+                    const launchPower = Math.min(train.velocityX * 0.6, 7); // More launch power
+                    train.velocityY = -launchPower;
+                    train.onGround = false;
+                    train.wasAirborne = true;
+                    train.brakingBeforeLanding = false; // Reset strategic brake flag
+                    
+                    // Bonus momentum for successful jumps
+                    train.momentum += 0.3; // Jump launch bonus
+                } else {
+                    // Normal ground contact
+                    train.velocityY = 0;
+                    
+                    // Slope effects with momentum consideration
+                    if (Math.abs(train.velocityX) > 0.5) {
+                        // Heavier trains (more cars) are less affected by slopes
+                        const slopeEffect = terrainSlope * 0.15 / totalMass;
+                        
+                        // Going downhill - small momentum boost
+                        if (terrainSlope > 0) {
+                            train.momentum += slopeEffect * 0.1; // Small downhill boost
+                            // Cap momentum
+                            const maxMomentum = 4.5;
+                            if (train.momentum > maxMomentum) {
+                                train.momentum = maxMomentum;
+                            }
+                        } else {
+                            // Going uphill - resistance increases with distance
+                            const distanceFactor = Math.min(gameState.totalDistance / 5000, 0.5); // 0 to 0.5 over 5000 total distance
+                            
+                            train.velocityX += slopeEffect * (3 + distanceFactor * 2); // 3x to 5x resistance
+                            // Progressive extra friction on uphills
+                            train.velocityX *= (0.99 - distanceFactor * 0.01); // 1% to 2% friction
+                            // Also reduce momentum on uphills
+                            train.momentum *= (0.94 - distanceFactor * 0.02); // 6% to 8% decay
+                            
+                            // Clamp velocity to prevent runaway on steep uphills
+                            if (Math.abs(train.velocityX) > 8 && !train.brakingBeforeLanding) {
+                                train.velocityX = Math.sign(train.velocityX) * 8;
+                            }
+                            // Stop if too slow on uphill
+                            if (Math.abs(train.velocityX) < 1 && terrainSlope < -0.5) {
+                                train.velocityX *= 0.9; // Extra 10% reduction when slow on steep uphill
+                            }
+                        }
+                    }
+                }
+            } else {
+                train.onGround = false;
+                train.wasAirborne = true; // Mark that we're airborne
+                train.airTime++; // Track air time
+                // Moon-like gravity: floaty for fun jumps
+                train.velocityY += 0.16; // Slightly reduced for more air time
+            }
+            
+            // Apply air resistance and ground friction - progressive difficulty
+            if (Math.abs(train.velocityX) > 0.1) {
+                // Progressive friction based on total distance (across all rounds)
+                const distanceFactor = Math.min(gameState.totalDistance / 5000, 0.5); // 0 to 0.5 over 5000 total distance
+                
+                // Base friction starts easier, gets harder with distance
+                const baseFriction = train.onGround ? 
+                    (0.997 - distanceFactor * 0.005) : // Ground: 0.997 to 0.992 (0.3% to 0.8%)
+                    (1.0 - distanceFactor * 0.004);     // Air: 1.0 to 0.996 (0% to 0.4%)
+                
+                const massFriction = 1 - ((1 - baseFriction) / totalMass);
+                train.velocityX *= massFriction;
+            } else if (Math.abs(train.momentum) <= 0.1) {
+                train.velocityX = 0;
+            }
+            
+            // Final velocity cap check and minimum speed threshold
+            const maxVelocity = train.brakingBeforeLanding ? 13 : 11; // Higher cap with strategic brake
+            if (Math.abs(train.velocityX) > maxVelocity) {
+                train.velocityX = Math.sign(train.velocityX) * maxVelocity;
+            }
+            
+            // Stop completely if going too slow
+            if (Math.abs(train.velocityX) < 0.3 && Math.abs(train.momentum) < 0.1) {
+                train.velocityX = 0;
+                train.momentum = 0;
+            }
+            
+            train.speed = Math.abs(train.velocityX);
+            
+            // Update wheel rotations for all cars
+            const wheelCircumference = 2 * Math.PI * carPhysics.wheelRadius;
+            const rotationDelta = (train.velocityX / wheelCircumference) * Math.PI * 2;
+            
+            // Update engine car
+            trainCars[0].x = train.x;
+            trainCars[0].y = train.y;
+            trainCars[0].angle = Math.atan(getTerrainSlopeAt(train.x + train.width/2)) * 0.5;
+            trainCars[0].wheelRotation += rotationDelta;
+            
+            // Add current engine position to path history
+            pathHistory.push({ x: train.x, y: train.y });
+            if (pathHistory.length > pathHistorySize) {
+                pathHistory.shift();
+            }
+            
+            // Update other cars to follow the exact path
+            for (let i = 1; i < trainCars.length; i++) {
+                const car = trainCars[i];
+                
+                // Calculate how far back in the path this car should be
+                const pathOffset = i * carPhysics.spacing;
+                const currentDistance = train.x;
+                const targetDistance = currentDistance - pathOffset;
+                
+                // Find the position in the path history
+                let foundPosition = false;
+                for (let j = pathHistory.length - 1; j >= 0; j--) {
+                    const pathPoint = pathHistory[j];
+                    if (pathPoint.x <= targetDistance) {
+                        // Found the right position in history
+                        car.x = pathPoint.x;
+                        car.y = pathPoint.y;
+                        foundPosition = true;
+                        
+                        // Calculate angle based on path direction
+                        if (j > 0) {
+                            const prevPoint = pathHistory[j - 1];
+                            const dx = pathPoint.x - prevPoint.x;
+                            const dy = pathPoint.y - prevPoint.y;
+                            car.angle = Math.atan2(dy, dx);
+                        }
+                        break;
+                    }
+                }
+                
+                // If we don't have enough path history, just place behind previous car
+                if (!foundPosition) {
+                    const prevCar = trainCars[i - 1];
+                    car.x = prevCar.x - carPhysics.spacing;
+                    car.y = prevCar.y;
+                    car.angle = prevCar.angle;
+                }
+                
+                // Update wheel rotation for this car
+                car.wheelRotation += rotationDelta;
+            }
+            
+            // Update distance tracking - track current round distance separately
+            gameState.currentRoundDistance = Math.floor(train.x / 20);
+            
+            // Update displays
+            document.getElementById('totalDistance').textContent = gameState.totalDistance + gameState.currentRoundDistance;
+            const remainingDistance = gameState.roundTargetDistance - gameState.currentRoundDistance;
+            document.getElementById('distanceToStation').textContent = Math.max(0, remainingDistance);
+            
+            // Check if we've reached the station for this round
+            if (gameState.currentRoundDistance >= gameState.roundTargetDistance) {
+                arriveAtStation();
+                return; // Stop the game loop
+            }
+            
+            // Update difficulty indicator
+            const distanceFactor = Math.min(train.x / 100000, 0.5);
+            const difficultyPercent = Math.floor(distanceFactor * 200); // 0-100%
+            const difficultyIndicator = document.getElementById('difficultyIndicator');
+            if (difficultyIndicator) {
+                if (difficultyPercent < 25) {
+                    difficultyIndicator.textContent = 'Warming Up';
+                } else if (difficultyPercent < 50) {
+                    difficultyIndicator.textContent = 'Getting Harder';
+                } else if (difficultyPercent < 75) {
+                    difficultyIndicator.textContent = 'Challenging';
+                } else if (difficultyPercent < 90) {
+                    difficultyIndicator.textContent = 'Very Difficult';
+                } else {
+                    difficultyIndicator.textContent = 'Maximum Resistance!';
+                }
+            }
+        }
+
+        function renderTrain() {
+            // Clear canvas
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // Calculate camera offset to follow train
+            const cameraX = Math.max(0, train.x - canvas.width / 3);
+            
+            // Update and draw background
+            updateBackground(cameraX);
+            drawBackground(ctx, cameraX);
+            
+            // Draw terrain with smooth curves
+            ctx.fillStyle = '#8B4513';
+            ctx.strokeStyle = '#654321';
+            ctx.lineWidth = 2;
+            
+            ctx.beginPath();
+            ctx.moveTo(-cameraX, canvas.height);
+            
+            // Draw smooth terrain curve
+            const startSegment = Math.max(0, Math.floor(cameraX / terrain.segmentWidth) - 2);
+            const endSegment = Math.min(terrain.segments.length - 1, Math.floor((cameraX + canvas.width) / terrain.segmentWidth) + 2);
+            
+            for (let i = startSegment; i <= endSegment; i++) {
+                if (terrain.segments[i]) {
+                    const segment = terrain.segments[i];
+                    if (i === startSegment) {
+                        ctx.lineTo(segment.x - cameraX, segment.y);
+                    } else {
+                        // Create smooth curves between points
+                        const prevSegment = terrain.segments[i - 1];
+                        const controlX1 = prevSegment.x + terrain.segmentWidth * 0.3 - cameraX;
+                        const controlY1 = prevSegment.y;
+                        const controlX2 = segment.x - terrain.segmentWidth * 0.3 - cameraX;
+                        const controlY2 = segment.y;
+                        
+                        ctx.bezierCurveTo(controlX1, controlY1, controlX2, controlY2, segment.x - cameraX, segment.y);
+                    }
+                }
+            }
+            
+            ctx.lineTo(canvas.width + 100, canvas.height);
+            ctx.lineTo(-cameraX, canvas.height);
+            ctx.closePath();
+            ctx.fill();
+            ctx.stroke();
+            
+            // Draw grass on top of terrain with curves
+            ctx.fillStyle = '#228B22';
+            ctx.beginPath();
+            
+            for (let i = startSegment; i <= endSegment; i++) {
+                if (terrain.segments[i]) {
+                    const segment = terrain.segments[i];
+                    if (i === startSegment) {
+                        ctx.moveTo(segment.x - cameraX, segment.y - 5);
+                    } else {
+                        const prevSegment = terrain.segments[i - 1];
+                        const controlX1 = prevSegment.x + terrain.segmentWidth * 0.3 - cameraX;
+                        const controlY1 = prevSegment.y - 5;
+                        const controlX2 = segment.x - terrain.segmentWidth * 0.3 - cameraX;
+                        const controlY2 = segment.y - 5;
+                        
+                        ctx.bezierCurveTo(controlX1, controlY1, controlX2, controlY2, segment.x - cameraX, segment.y - 5);
+                    }
+                }
+            }
+            
+            // Close the grass shape
+            for (let i = endSegment; i >= startSegment; i--) {
+                if (terrain.segments[i]) {
+                    const segment = terrain.segments[i];
+                    ctx.lineTo(segment.x - cameraX, segment.y);
+                }
+            }
+            
+            ctx.closePath();
+            ctx.fill();
+            
+            // Draw station indicator if approaching (station is at the target distance for this round)
+            const stationX = gameState.roundTargetDistance * 20; // Convert to pixels
+            if (stationX > 0 && stationX >= cameraX - 100 && stationX <= cameraX + canvas.width + 100) {
+                // Draw station
+                ctx.save();
+                const stationScreenX = stationX - cameraX;
+                const stationY = getTerrainHeightAt(stationX);
+                
+                // Station building
+                ctx.fillStyle = '#c0392b';
+                ctx.fillRect(stationScreenX - 60, stationY - 80, 120, 80);
+                
+                // Roof
+                ctx.fillStyle = '#7f8c8d';
+                ctx.beginPath();
+                ctx.moveTo(stationScreenX - 70, stationY - 80);
+                ctx.lineTo(stationScreenX, stationY - 110);
+                ctx.lineTo(stationScreenX + 70, stationY - 80);
+                ctx.closePath();
+                ctx.fill();
+                
+                // Windows
+                ctx.fillStyle = '#f39c12';
+                ctx.fillRect(stationScreenX - 40, stationY - 60, 20, 20);
+                ctx.fillRect(stationScreenX - 10, stationY - 60, 20, 20);
+                ctx.fillRect(stationScreenX + 20, stationY - 60, 20, 20);
+                
+                // Door
+                ctx.fillStyle = '#34495e';
+                ctx.fillRect(stationScreenX - 15, stationY - 40, 30, 40);
+                
+                // Sign
+                ctx.fillStyle = '#ecf0f1';
+                ctx.fillRect(stationScreenX - 50, stationY - 100, 100, 20);
+                ctx.fillStyle = '#2c3e50';
+                ctx.font = 'bold 14px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText(`STATION ${gameState.round}`, stationScreenX, stationY - 85);
+                
+                // Platform
+                ctx.fillStyle = '#95a5a6';
+                ctx.fillRect(stationScreenX - 80, stationY - 5, 160, 5);
+                
+                ctx.restore();
+            }
+            
+            // Draw the train (engine + cars)
+            drawTrain(ctx, train.x - cameraX, train.y);
+            
+            // Draw jump trail effect when airborne or going fast
+            if ((!train.onGround && Math.abs(train.velocityX) > 3) || Math.abs(train.velocityX) > 8) {
+                ctx.save();
+                const trailX = train.x - cameraX;
+                const trailY = train.y + train.height;
+                
+                // Create sparkle trail - more intense at higher speeds
+                const trailIntensity = Math.min(Math.abs(train.velocityX) / 10, 1);
+                const particleCount = Math.floor(5 + trailIntensity * 5);
+                
+                for (let i = 0; i < particleCount; i++) {
+                    const offset = i * 10;
+                    const alpha = (0.6 - (i * 0.1)) * trailIntensity;
+                    
+                    // Speed lines when on ground, sparkles when jumping
+                    if (train.onGround) {
+                        // Speed lines
+                        ctx.strokeStyle = `rgba(255,255,100,${alpha})`;
+                        ctx.lineWidth = Math.max(0.5, 2 - i * 0.3); // Ensure positive line width
+                        ctx.beginPath();
+                        ctx.moveTo(trailX - offset, trailY);
+                        ctx.lineTo(trailX - offset - 20, trailY);
+                        ctx.stroke();
+                    } else {
+                        // Sparkles
+                        const radius = Math.max(0.5, 3 - i * 0.5); // Ensure positive radius
+                        if (alpha > 0) {
+                            ctx.fillStyle = `rgba(255,255,100,${Math.max(0, alpha)})`;
+                            ctx.beginPath();
+                            ctx.arc(trailX - offset, trailY + offset * 0.5, radius, 0, Math.PI * 2);
+                            ctx.fill();
+                        }
+                    }
+                }
+                ctx.restore();
+            }
+        }
+
+        function drawTrain(ctx, x, y) {
+            // Draw cars from back to front with individual positions
+            for (let i = trainCars.length - 1; i >= 0; i--) {
+                const car = trainCars[i];
+                const carX = car.x - (train.x - x); // Adjust for camera
+                const carY = car.y;
+                
+                ctx.save();
+                ctx.translate(carX + train.width/2, carY + train.height/2);
+                ctx.rotate(car.angle);
+                ctx.translate(-(carX + train.width/2), -(carY + train.height/2));
+                
+                // Draw based on car type
+                switch(car.type) {
+                    case 'engine':
+                        drawSteamEngine(ctx, carX, carY, car.wheelRotation);
+                        break;
+                    case 'boxcar1':
+                        drawBoxCar(ctx, carX, carY, '#3498db', car.wheelRotation);
+                        break;
+                    case 'boxcar2':
+                        drawBoxCar(ctx, carX, carY, '#e74c3c', car.wheelRotation);
+                        break;
+                    case 'caboose':
+                        drawCaboose(ctx, carX, carY, car.wheelRotation);
+                        break;
+                }
+                
+                ctx.restore();
+                
+                // Draw rigid coupler to next car
+                if (i > 0) {
+                    const nextCar = trainCars[i - 1];
+                    const nextCarX = nextCar.x - (train.x - x);
+                    const nextCarY = nextCar.y;
+                    drawRigidCoupler(ctx, nextCarX - 5, nextCarY + train.height - 8, carX + train.width + 5, carY + train.height - 8);
+                }
+            }
+            
+            // Draw smoke/steam (not rotated) for engine
+            if (train.velocityX > 2) {
+                drawSmoke(ctx, x, y);
+            }
+        }
+
+        function drawSteamEngine(ctx, x, y, wheelRotation) {
+            // Main boiler (cylindrical body)
+            ctx.fillStyle = '#2c3e50';
+            ctx.fillRect(x + 10, y + 8, 50, 22);
+            
+            // Cab (now on the left)
+            ctx.fillStyle = '#34495e';
+            ctx.fillRect(x, y, 25, 25);
+            
+            // Smokestack (now on the right)
+            ctx.fillStyle = '#1a1a1a';
+            ctx.fillRect(x + 44, y, 8, 15);
+            ctx.fillRect(x + 42, y - 3, 12, 6);
+            
+            // Cow catcher (on the right/front)
+            ctx.fillStyle = '#7f8c8d';
+            ctx.beginPath();
+            ctx.moveTo(x + 60, y + 25);
+            ctx.lineTo(x + 68, y + 32);
+            ctx.lineTo(x + 60, y + 32);
+            ctx.closePath();
+            ctx.fill();
+            
+            // Windows in cab
+            ctx.fillStyle = '#5dade2';
+            ctx.fillRect(x + 4, y + 5, 8, 8);
+            ctx.fillRect(x + 14, y + 5, 8, 8);
+            
+            // Details
+            ctx.fillStyle = '#f39c12';
+            ctx.fillRect(x + 28, y + 12, 12, 3);
+            ctx.fillRect(x + 15, y + 20, 30, 2);
+            
+            // Wheels with rotation
+            drawWheel(ctx, x + 12, y + train.height + 5, 8, wheelRotation);
+            drawWheel(ctx, x + 30, y + train.height + 5, 8, wheelRotation);
+            drawWheel(ctx, x + 48, y + train.height + 5, 8, wheelRotation);
+        }
+
+        function drawBoxCar(ctx, x, y, color, wheelRotation) {
+            // Main body
+            ctx.fillStyle = color;
+            ctx.fillRect(x + 5, y + 5, 50, 25);
+            
+            // Roof
+            ctx.fillStyle = '#2c3e50';
+            ctx.fillRect(x + 3, y + 2, 54, 5);
+            
+            // Door lines
+            ctx.strokeStyle = 'rgba(0,0,0,0.3)';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(x + 30, y + 8);
+            ctx.lineTo(x + 30, y + 28);
+            ctx.stroke();
+            
+            // Details
+            ctx.fillStyle = 'rgba(255,255,255,0.3)';
+            ctx.fillRect(x + 10, y + 12, 8, 8);
+            ctx.fillRect(x + 42, y + 12, 8, 8);
+            
+            // Wheels with rotation
+            drawWheel(ctx, x + 15, y + train.height + 5, 7, wheelRotation);
+            drawWheel(ctx, x + 45, y + train.height + 5, 7, wheelRotation);
+        }
+
+        function drawCaboose(ctx, x, y, wheelRotation) {
+            // Main body
+            ctx.fillStyle = '#c0392b';
+            ctx.fillRect(x + 10, y + 8, 40, 22);
+            
+            // Cupola (top cabin)
+            ctx.fillStyle = '#e74c3c';
+            ctx.fillRect(x + 20, y, 20, 12);
+            
+            // Windows
+            ctx.fillStyle = '#f39c12';
+            ctx.fillRect(x + 23, y + 3, 6, 6);
+            ctx.fillRect(x + 31, y + 3, 6, 6);
+            ctx.fillRect(x + 15, y + 14, 6, 8);
+            ctx.fillRect(x + 39, y + 14, 6, 8);
+            
+            // Platform
+            ctx.fillStyle = '#7f8c8d';
+            ctx.fillRect(x + 5, y + 28, 50, 3);
+            
+            // Wheels with rotation
+            drawWheel(ctx, x + 18, y + train.height + 5, 7, wheelRotation);
+            drawWheel(ctx, x + 42, y + train.height + 5, 7, wheelRotation);
+        }
+
+        function drawWheel(ctx, x, y, radius, rotation) {
+            ctx.save();
+            ctx.translate(x, y);
+            ctx.rotate(rotation);
+            
+            // Outer wheel
+            ctx.fillStyle = '#2c3e50';
+            ctx.beginPath();
+            ctx.arc(0, 0, radius, 0, Math.PI * 2);
+            ctx.fill();
+            
+            // Inner hub
+            ctx.fillStyle = '#7f8c8d';
+            ctx.beginPath();
+            ctx.arc(0, 0, radius * 0.4, 0, Math.PI * 2);
+            ctx.fill();
+            
+            // Spokes
+            ctx.strokeStyle = '#7f8c8d';
+            ctx.lineWidth = 1;
+            for (let i = 0; i < 4; i++) {
+                const angle = (i * Math.PI) / 2;
+                ctx.beginPath();
+                ctx.moveTo(0, 0);
+                ctx.lineTo(Math.cos(angle) * radius * 0.8, Math.sin(angle) * radius * 0.8);
+                ctx.stroke();
+            }
+            
+            ctx.restore();
+        }
+
+        function drawRigidCoupler(ctx, x1, y1, x2, y2) {
+            // Draw a rigid coupler bar between cars
+            ctx.strokeStyle = '#2c3e50';
+            ctx.lineWidth = 4;
+            ctx.beginPath();
+            ctx.moveTo(x1, y1);
+            ctx.lineTo(x2, y2);
+            ctx.stroke();
+            
+            // Draw pivot points
+            ctx.fillStyle = '#2c3e50';
+            ctx.beginPath();
+            ctx.arc(x1, y1, 4, 0, Math.PI * 2);
+            ctx.arc(x2, y2, 4, 0, Math.PI * 2);
+            ctx.fill();
+            
+            // Draw center joint
+            const midX = (x1 + x2) / 2;
+            const midY = (y1 + y2) / 2;
+            ctx.beginPath();
+            ctx.arc(midX, midY, 3, 0, Math.PI * 2);
+            ctx.fill();
+        }
+
+        function drawSmoke(ctx, x, y) {
+            const time = Date.now() * 0.001;
+            
+            // Check if we just got a boost bonus (momentum is high)
+            const isBoostBonusActive = train.momentum > 4;
+            
+            for (let i = 0; i < 8; i++) {
+                const age = i * 0.2;
+                const smokeX = x + 48 - (train.velocityX * age * 8) + Math.sin(time + i) * 5;
+                const smokeY = y - 5 - (age * 20) + Math.cos(time + i) * 3;
+                const size = 6 + age * 4;
+                const alpha = 0.6 - age * 0.15;
+                
+                // Change smoke color when boost bonus is active
+                if (isBoostBonusActive) {
+                    ctx.fillStyle = `rgba(255,200,100,${alpha})`; // Golden smoke for power boost
+                } else {
+                    ctx.fillStyle = `rgba(200,200,200,${alpha})`; // Normal gray smoke
+                }
+                
+                ctx.beginPath();
+                ctx.arc(smokeX, smokeY, size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        function endTrainPhase() {
+            gameState.trainRunning = false;
+            
+            // Calculate efficiency
+            const steamUsed = gameState.startingSteamPoints - gameState.steamPoints;
+            const efficiency = steamUsed > 0 ? Math.floor((gameState.totalDistance + gameState.currentRoundDistance) / steamUsed) : 0;
+            console.log(`Run complete! Distance: ${gameState.totalDistance + gameState.currentRoundDistance}, Steam used: ${steamUsed}, Efficiency: ${efficiency} distance/steam`);
+            console.log(`Pro tip: Use brake before landing at high speed to preserve velocity!`);
+            
+            showGameOver();
+        }
+
+        function arriveAtStation() {
+            gameState.trainRunning = false;
+            
+            // Update total distance with this round's progress
+            gameState.totalDistance += gameState.currentRoundDistance;
+            
+            // Show arrival message with manual progression
+            const trainPhaseDiv = document.getElementById('trainPhase');
+            const arrivalDiv = document.createElement('div');
+            arrivalDiv.style.cssText = `
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                background: rgba(255,255,255,0.95);
+                padding: 30px;
+                border-radius: 15px;
+                text-align: center;
+                box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+                z-index: 100;
+            `;
+            arrivalDiv.innerHTML = `
+                <h2 style="color: #27ae60; font-size: 2.5em; margin: 0;">🚉 Station Reached! 🚉</h2>
+                <p style="font-size: 1.5em; color: #2c3e50; margin: 15px 0;">Round ${gameState.round} Complete!</p>
+                <p style="font-size: 1.2em; color: #7f8c8d;">Distance This Round: ${gameState.currentRoundDistance}</p>
+                <p style="font-size: 1.2em; color: #7f8c8d;">Total Distance: ${gameState.totalDistance}</p>
+                <p style="font-size: 1.2em; color: #7f8c8d;">Steam Remaining: ${gameState.steamPoints}</p>
+                <button class="start-button" onclick="startNextRound()" style="margin-top: 20px;">Next Round</button>
+            `;
+            trainPhaseDiv.appendChild(arrivalDiv);
+            
+            // Play train whistle
+            sounds.playTrainWhistle();
+        }
+
+        function startNextRound() {
+            // Remove arrival message
+            const arrivalDiv = document.querySelector('#trainPhase div[style*="absolute"]');
+            if (arrivalDiv) arrivalDiv.remove();
+            
+            // Increment round
+            gameState.round++;
+            
+            // Reset for next math phase (steam points carry over!)
+            gameState.phase = 'math';
+            gameState.mathTimer = 60;
+            gameState.currentRoundDistance = 0;
+            
+            // Update UI
+            document.getElementById('roundNumber').textContent = gameState.round;
+            document.getElementById('mathScore').textContent = gameState.mathScore;
+            document.getElementById('steamPoints').textContent = gameState.steamPoints;
+            document.getElementById('answerInput').value = '';
+            
+            // Hide train phase, show math phase
+            document.getElementById('trainPhase').classList.add('hidden');
+            document.getElementById('mathPhase').classList.remove('hidden');
+            
+            // Generate new problem and start timer
+            generateNewProblem();
+            startMathTimer();
+        }
+
+        // Game Flow Functions
+        function showGameOver() {
+            document.getElementById('trainPhase').classList.add('hidden');
+            document.getElementById('gameOverScreen').classList.remove('hidden');
+            document.getElementById('finalRound').textContent = gameState.round;
+            document.getElementById('finalMathScore').textContent = gameState.mathScore;
+            document.getElementById('finalTotalDistance').textContent = gameState.totalDistance + gameState.currentRoundDistance;
+        }
+
+        function startGame() {
+            gameState.phase = 'math';
+            gameState.round = 1;
+            document.getElementById('startScreen').classList.add('hidden');
+            document.getElementById('mathPhase').classList.remove('hidden');
+            document.getElementById('roundNumber').textContent = '1';
+            startMathTimer();
+            
+            // Initialize audio context with user interaction
+            if (sounds.audioContext && sounds.audioContext.state === 'suspended') {
+                sounds.audioContext.resume();
+            }
+        }
+
+        function devMode() {
+            // Skip math phase, go straight to train with different steam amounts for testing
+            gameState.phase = 'train';
+            gameState.mathScore = 0;
+            gameState.steamPoints = 10; // 10 steam for testing
+            
+            // Add debug info
+            console.log("Dev Mode: Starting with 10 steam.");
+            console.log(`Round ${gameState.round}: Need to travel ${gameState.round * 200} distance`);
+            console.log("Rounds: 200, 400, 600, 800, etc. distance per round");
+            console.log("TIP: Brake before landing at high speed (>9) to preserve velocity!");
+            
+            document.getElementById('startScreen').classList.add('hidden');
+            showTrainPhase();
+        }
+
+        function resetGame() {
+            // Reset game state
+            gameState.phase = 'start';
+            gameState.round = 1;
+            gameState.mathScore = 0;
+            gameState.totalDistance = 0;
+            gameState.currentRoundDistance = 0;
+            gameState.roundTargetDistance = 0;
+            gameState.steamPoints = 0;
+            gameState.startingSteamPoints = 0;
+            gameState.mathTimer = 60;
+            
+            // Reset train
+            train.x = 50;
+            train.y = 200;
+            train.velocityX = 0; // Start at 0
+            train.velocityY = 0;
+            train.speed = 0;
+            train.momentum = 0;
+            train.onGround = true;
+            train.wasAirborne = false;
+            train.airTime = 0;
+            train.brakingBeforeLanding = false;
+            
+            // Reset train cars
+            trainCars[0] = { x: train.x, y: train.y, angle: 0, type: 'engine', wheelRotation: 0 };
+            for (let i = 1; i < trainCars.length; i++) {
+                trainCars[i].x = train.x - (i * carPhysics.spacing);
+                trainCars[i].y = 200;
+                trainCars[i].angle = 0;
+                trainCars[i].wheelRotation = 0;
+            }
+            
+            // Generate new terrain
+            initializeTerrain();
+            
+            // Reset UI
+            document.getElementById('gameOverScreen').classList.add('hidden');
+            document.getElementById('startScreen').classList.remove('hidden');
+            document.getElementById('coalDisplay').innerHTML = '';
+            document.getElementById('answerInput').value = '';
+            
+            updateMathDisplay();
+            generateNewProblem();
+        }
+
+        // Initialize when page loads
+        window.addEventListener('load', initGame);
+    </script>
+</body>
+</html>

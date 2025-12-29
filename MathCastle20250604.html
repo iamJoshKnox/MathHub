@@ -1,0 +1,1886 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Math Cannon - MVP</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            background: linear-gradient(135deg, #3498db, #e8f6f3);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .game-container {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            max-width: 800px;
+            width: 100%;
+        }
+
+        .phase-header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .phase-title {
+            font-size: 2.5em;
+            color: #2c3e50;
+            margin: 0;
+        }
+
+        .timer {
+            font-size: 1.5em;
+            color: #e74c3c;
+            margin: 10px 0;
+        }
+
+        /* Math Phase Styles */
+        .math-phase {
+            text-align: center;
+        }
+
+        .problem-display {
+            font-size: 3em;
+            color: #2c3e50;
+            margin: 30px 0;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            position: relative;
+            transition: background-color 0.3s ease;
+        }
+
+        .problem-display.correct {
+            background-color: #d4edda;
+        }
+
+        .problem-display.incorrect {
+            background-color: #f8d7da;
+        }
+
+        .feedback-icon {
+            position: absolute;
+            top: 50%;
+            right: 20px;
+            transform: translateY(-50%);
+            font-size: 2em;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .feedback-icon.show {
+            opacity: 1;
+        }
+
+        .feedback-icon.correct {
+            color: #28a745;
+        }
+
+        .feedback-icon.incorrect {
+            color: #dc3545;
+        }
+
+        .input-section {
+            margin: 20px 0;
+        }
+
+        .answer-input {
+            font-size: 2em;
+            padding: 10px 20px;
+            border: 3px solid #3498db;
+            border-radius: 10px;
+            text-align: center;
+            width: 150px;
+            transition: border-color 0.3s ease;
+        }
+
+        .numberpad {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            max-width: 200px;
+            margin: 20px auto;
+        }
+
+        .numberpad button {
+            padding: 15px;
+            font-size: 1.5em;
+            border: none;
+            border-radius: 8px;
+            background: #3498db;
+            color: white;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .numberpad button:hover {
+            background: #2980b9;
+            transform: scale(1.05);
+        }
+
+        .numberpad button:active {
+            transform: scale(0.95);
+        }
+
+        .numberpad .wide {
+            grid-column: span 2;
+        }
+
+        .score-display {
+            display: flex;
+            justify-content: space-around;
+            margin: 20px 0;
+            font-size: 1.3em;
+        }
+
+        .cannon-counter {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        #cannonDisplayMath, #cannonDisplay {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px;
+            max-width: 400px;
+        }
+
+        .cannon-point {
+            width: 20px;
+            height: 20px;
+            background: #2c3e50;
+            border-radius: 50%;
+            display: inline-block;
+            margin: 2px;
+            animation: cannonPointDrop 0.5s ease-out;
+            border: 2px solid #1a1a1a;
+            position: relative;
+        }
+
+        .cannon-point::after {
+            content: '';
+            width: 6px;
+            height: 6px;
+            background: #7f8c8d;
+            border-radius: 50%;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .cannon-point-large {
+            width: 30px;
+            height: 30px;
+            background: #1a1a1a;
+            border-radius: 50%;
+            display: inline-block;
+            margin: 2px;
+            animation: cannonPointDrop 0.5s ease-out;
+            position: relative;
+            border: 2px solid #000;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .cannon-point-large::after {
+            content: '10';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-size: 12px;
+            font-weight: bold;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+        }
+
+        @keyframes cannonPointDrop {
+            from { 
+                transform: translateY(-20px) rotate(0deg); 
+                opacity: 0; 
+            }
+            to { 
+                transform: translateY(0) rotate(360deg); 
+                opacity: 1; 
+            }
+        }
+
+        /* Cannon Phase Styles */
+        .cannon-phase {
+            text-align: center;
+        }
+
+        .game-canvas {
+            border: 3px solid #34495e;
+            border-radius: 10px;
+            background: linear-gradient(to bottom, #87CEEB 0%, #98FB98 70%, #3498db 100%);
+        }
+
+        .cannon-controls {
+            margin: 20px 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+
+        /* Gauge Styles */
+        .gauges-row {
+            display: flex;
+            gap: 40px;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .speedometer {
+            width: 120px;
+            height: 60px;
+            position: relative;
+        }
+        
+        .angle-speedometer {
+            width: 120px;
+            height: 65px;
+            position: relative;
+        }
+
+        .speedometer-label {
+            text-align: center;
+            font-weight: bold;
+            font-size: 0.9em;
+            color: #2c3e50;
+            margin-top: 5px;
+        }
+
+        .speed-needle {
+            position: absolute;
+            bottom: 10px;
+            left: 50%;
+            transform-origin: bottom center;
+            width: 3px;
+            height: 40px;
+            background: #2c3e50;
+            transform: translateX(-50%) rotate(-90deg);
+            transition: transform 0.2s ease-out;
+            z-index: 10;
+            border-radius: 1px;
+        }
+        
+        .angle-needle {
+            position: absolute;
+            bottom: 10px;
+            left: 50%;
+            transform-origin: bottom center;
+            width: 3px;
+            height: 45px;
+            background: #2c3e50;
+            transform: translateX(-50%) rotate(45deg); /* Start at 45 degrees (90 - 45) */
+            transition: transform 0.2s ease-out;
+            z-index: 10;
+            border-radius: 1px;
+        }
+
+        /* Button Styles */
+        .buttons-row {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .control-button {
+            padding: 15px 20px;
+            font-size: 1.2em;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .button-text {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            line-height: 1.2;
+        }
+
+        .button-label {
+            font-weight: bold;
+        }
+
+        .button-key {
+            font-size: 0.8em;
+            opacity: 0.8;
+        }
+
+        .angle-button {
+            background: #3498db;
+            color: white;
+            transition: all 0.3s;
+        }
+
+        .angle-button:hover {
+            background: #2980b9;
+        }
+
+        .power-button {
+            background: #9b59b6;
+            color: white;
+            transition: all 0.3s;
+        }
+
+        .power-button:hover {
+            background: #8e44ad;
+        }
+
+        .fire-button {
+            background: #27ae60;
+            color: white;
+            transition: all 0.3s;
+            font-size: 1.4em;
+            padding: 20px 30px;
+        }
+
+        .fire-button:hover:not(:disabled) {
+            background: #229954;
+        }
+
+        .fire-button:disabled {
+            background: #bdc3c7;
+            cursor: not-allowed;
+        }
+
+        .fire-button.firing {
+            background: #f39c12;
+            box-shadow: 0 0 15px rgba(243, 156, 18, 0.6);
+            transform: scale(1.05);
+        }
+
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .control-label {
+            font-weight: bold;
+            color: #2c3e50;
+        }
+
+        .control-value {
+            font-size: 1.1em;
+            color: #e74c3c;
+            min-width: 60px;
+        }
+
+        .cannon-info {
+            margin: 20px 0;
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            font-size: 1.2em;
+        }
+
+        .cannon-points-display {
+            background: #e74c3c;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-weight: bold;
+        }
+
+        /* Phase Transition */
+        .phase-transition {
+            text-align: center;
+            padding: 40px;
+            font-size: 1.5em;
+            color: #2c3e50;
+        }
+
+        /* Animations */
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .phase-transition h2 {
+            margin-bottom: 20px;
+            color: #27ae60;
+        }
+
+        #roundCompleteScreen h2 {
+            animation: bounce 0.5s ease-in-out infinite;
+        }
+
+        .start-button {
+            padding: 15px 40px;
+            font-size: 1.5em;
+            background: #27ae60;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+
+        .start-button:hover {
+            background: #229954;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        /* Sound toggle */
+        .sound-toggle {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            padding: 8px 12px;
+            font-size: 1.2em;
+            background: #3498db;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .sound-toggle:hover {
+            background: #2980b9;
+        }
+
+        .sound-toggle.muted {
+            background: #95a5a6;
+        }
+
+        .instructions {
+            margin: 15px 0;
+            color: #7f8c8d;
+            font-size: 0.9em;
+        }
+
+        /* Castle selection */
+        .castle-selection {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            margin: 30px 0;
+        }
+
+        .castle-option {
+            padding: 20px;
+            border: 3px solid transparent;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.2s;
+            background: #ecf0f1;
+        }
+
+        .castle-option:hover {
+            transform: scale(1.05);
+            background: #e8f4f8;
+        }
+
+        .castle-option.selected {
+            border-color: #3498db;
+            background: #e8f4f8;
+            box-shadow: 0 4px 12px rgba(52, 152, 219, 0.3);
+        }
+
+        .castle-preview {
+            width: 150px;
+            height: 150px;
+            border-radius: 10px;
+            border: 2px solid #34495e;
+            background: linear-gradient(to bottom, #87CEEB 0%, #98FB98 60%, #3498db 100%);
+        }
+
+        .castle-name {
+            text-align: center;
+            font-size: 1.1em;
+            margin-top: 10px;
+            color: #2c3e50;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <!-- Sound Toggle -->
+        <button class="sound-toggle" id="soundToggle" onclick="toggleSound()">🔊</button>
+
+        <!-- Start Screen -->
+        <div id="startScreen" class="phase-transition" style="position: relative;">
+            <button onclick="devMode()" style="position: absolute; top: 10px; right: 10px; padding: 5px 8px; font-size: 0.7em; background: #95a5a6; color: white; border: none; border-radius: 3px; cursor: pointer; opacity: 0.7;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.7'">DEV</button>
+            <h1>🏰 Math Cannon 🏰</h1>
+            <p>Solve math problems to earn cannon points!</p>
+            <p>Then aim your cannon to destroy floating targets!</p>
+            <button class="start-button" onclick="showCastleSelection()">Start Battle!</button>
+        </div>
+
+        <!-- Castle Selection Screen -->
+        <div id="castleSelectionScreen" class="phase-transition hidden">
+            <h1>Choose Your Castle</h1>
+            <p>Select the castle you will defend!</p>
+            
+            <div class="castle-selection">
+                <div class="castle-option selected" onclick="selectCastle('red')">
+                    <canvas class="castle-preview" id="redCastlePreview" width="150" height="150"></canvas>
+                    <div class="castle-name">Red Kingdom</div>
+                </div>
+                <div class="castle-option" onclick="selectCastle('blue')">
+                    <canvas class="castle-preview" id="blueCastlePreview" width="150" height="150"></canvas>
+                    <div class="castle-name">Blue Kingdom</div>
+                </div>
+            </div>
+            
+            <button class="start-button" onclick="startGame()">Defend Castle!</button>
+        </div>
+
+        <!-- Math Phase -->
+        <div id="mathPhase" class="math-phase hidden">
+            <div class="phase-header">
+                <h2 class="phase-title">🧮 Math Armory - Round <span id="roundNumber">1</span></h2>
+                <div class="timer" id="mathTimer">60</div>
+            </div>
+            
+            <div class="problem-display" id="problemDisplay">
+                <span id="problemText">5 + 3 = ?</span>
+                <div class="feedback-icon" id="feedbackIcon"></div>
+            </div>
+            
+            <div class="input-section">
+                <input type="text" class="answer-input" id="answerInput" readonly>
+                
+                <div class="numberpad">
+                    <button onclick="addDigit('1')">1</button>
+                    <button onclick="addDigit('2')">2</button>
+                    <button onclick="addDigit('3')">3</button>
+                    <button onclick="addDigit('4')">4</button>
+                    <button onclick="addDigit('5')">5</button>
+                    <button onclick="addDigit('6')">6</button>
+                    <button onclick="addDigit('7')">7</button>
+                    <button onclick="addDigit('8')">8</button>
+                    <button onclick="addDigit('9')">9</button>
+                    <button onclick="clearInput()" class="wide">Clear</button>
+                    <button onclick="addDigit('0')">0</button>
+                </div>
+            </div>
+
+            <div class="score-display">
+                <div>Math Score: <span id="mathScore">0</span></div>
+                <div class="cannon-counter">
+                    Cannon Points: <span id="cannonPoints">0</span>
+                    <div id="cannonDisplayMath"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Cannon Phase -->
+        <div id="cannonPhase" class="cannon-phase hidden">
+            <div class="phase-header">
+                <h2 class="phase-title">🏰 Cannon Range - Round <span id="cannonRoundNumber">1</span></h2>
+                <div style="font-size: 0.9em; color: #27ae60; margin-top: 5px;">
+                    Targets Remaining: <span id="targetsRemaining">1</span>
+                </div>
+            </div>
+            
+            <canvas id="gameCanvas" class="game-canvas" width="800" height="400"></canvas>
+            
+            <div class="cannon-controls">
+                <!-- Gauges Row -->
+                <div class="gauges-row">
+                    <div style="display: flex; flex-direction: column; align-items: center;">
+                        <div class="angle-speedometer">
+                            <svg width="120" height="65" viewBox="0 0 120 65">
+                                <!-- Quarter circle arc from right (0°) to top (90°) -->
+                                <path d="M 110 55 A 50 50 0 0 0 60 5" 
+                                      stroke="#3498db" stroke-width="6" fill="none"/>
+                                <!-- Center dot for needle -->
+                                <circle cx="60" cy="55" r="5" fill="#2c3e50"/>
+                            </svg>
+                            <div class="angle-needle" id="angleNeedle"></div>
+                        </div>
+                        <div class="speedometer-label">
+                            <span>ANGLE</span>
+                            <div class="control-value" id="angleDisplay">45°</div>
+                        </div>
+                    </div>
+                    
+                    <div style="display: flex; flex-direction: column; align-items: center;">
+                        <div class="speedometer">
+                            <svg width="120" height="60" viewBox="0 0 120 60">
+                                <!-- Red zone (low power) -->
+                                <path d="M 10 50 A 50 50 0 0 1 43.3 10.4" 
+                                      stroke="#e74c3c" stroke-width="6" fill="none"/>
+                                <!-- Yellow zone (medium power) -->
+                                <path d="M 43.3 10.4 A 50 50 0 0 1 76.7 10.4" 
+                                      stroke="#f39c12" stroke-width="6" fill="none"/>
+                                <!-- Green zone (high power) -->
+                                <path d="M 76.7 10.4 A 50 50 0 0 1 110 50" 
+                                      stroke="#27ae60" stroke-width="6" fill="none"/>
+                                <!-- Center dot for needle -->
+                                <circle cx="60" cy="50" r="5" fill="#2c3e50"/>
+                            </svg>
+                            <div class="speed-needle" id="powerNeedle"></div>
+                        </div>
+                        <div class="speedometer-label">
+                            <span>POWER</span>
+                            <div class="control-value" id="powerDisplay">50%</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Buttons Row -->
+                <div class="buttons-row">
+                    <button class="control-button fire-button" id="fireButton" onclick="fireCannon()">
+                        <span>🎯</span>
+                        <div class="button-text">
+                            <span class="button-label">CANNON (<span id="cannonCount">0</span>)</span>
+                            <span class="button-key">(Space)</span>
+                        </div>
+                    </button>
+                    
+                    <button class="control-button angle-button" onclick="adjustAngle(2)">
+                        <span>▲</span>
+                        <div class="button-text">
+                            <span class="button-label">UP</span>
+                            <span class="button-key">(↑)</span>
+                        </div>
+                    </button>
+                    
+                    <button class="control-button angle-button" onclick="adjustAngle(-2)">
+                        <span>▼</span>
+                        <div class="button-text">
+                            <span class="button-label">DOWN</span>
+                            <span class="button-key">(↓)</span>
+                        </div>
+                    </button>
+                    
+                    <button class="control-button power-button" onclick="adjustPower(-5)">
+                        <span>◀</span>
+                        <div class="button-text">
+                            <span class="button-label">LESS</span>
+                            <span class="button-key">(←)</span>
+                        </div>
+                    </button>
+                    
+                    <button class="control-button power-button" onclick="adjustPower(5)">
+                        <span>▶</span>
+                        <div class="button-text">
+                            <span class="button-label">MORE</span>
+                            <span class="button-key">(→)</span>
+                        </div>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="instructions">
+                Aim with controls above or arrow keys, fire with button or spacebar. Hit all targets to advance!
+            </div>
+        </div>
+
+        <!-- Round Complete Screen -->
+        <div id="roundCompleteScreen" class="phase-transition hidden">
+            <h2>🎯 All Targets Hit! 🎯</h2>
+            <div style="margin: 20px 0;">
+                <p>Round <span id="completedRound">1</span> Complete!</p>
+                <p>Targets destroyed this round: <span id="roundTargets">1</span></p>
+                <p>Total targets destroyed: <span id="totalTargetsDestroyed">1</span></p>
+                <p>Cannon points remaining: <span id="remainingPoints">0</span></p>
+            </div>
+            <button class="start-button" onclick="continueToNextRound()">Continue to next round?</button>
+        </div>
+
+        <!-- Game Over Screen -->
+        <div id="gameOverScreen" class="phase-transition hidden">
+            <h2>🏰 Battle Complete! 🏰</h2>
+            <div class="score-display" style="flex-direction: column; gap: 15px;">
+                <div>Total Math Score: <span id="finalMathScore">0</span></div>
+                <div>Total Targets Destroyed: <span id="finalTargets">0</span></div>
+                <div>Round Reached: <span id="finalRound">1</span></div>
+            </div>
+            <button class="start-button" onclick="resetGame()">Battle Again</button>
+        </div>
+    </div>
+
+    <script>
+        // Sound system
+        const sounds = {
+            enabled: true,
+            audioContext: null,
+            
+            init() {
+                if (typeof AudioContext !== 'undefined') {
+                    this.audioContext = new AudioContext();
+                }
+            },
+            
+            playCorrect() {
+                if (!this.enabled || !this.audioContext) return;
+                
+                const oscillator = this.audioContext.createOscillator();
+                const gainNode = this.audioContext.createGain();
+                
+                oscillator.connect(gainNode);
+                gainNode.connect(this.audioContext.destination);
+                
+                oscillator.frequency.setValueAtTime(523.25, this.audioContext.currentTime);
+                oscillator.frequency.setValueAtTime(659.25, this.audioContext.currentTime + 0.1);
+                oscillator.frequency.setValueAtTime(783.99, this.audioContext.currentTime + 0.2);
+                
+                gainNode.gain.setValueAtTime(0.3, this.audioContext.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, this.audioContext.currentTime + 0.5);
+                
+                oscillator.start(this.audioContext.currentTime);
+                oscillator.stop(this.audioContext.currentTime + 0.5);
+            },
+            
+            playIncorrect() {
+                if (!this.enabled || !this.audioContext) return;
+                
+                const oscillator = this.audioContext.createOscillator();
+                const gainNode = this.audioContext.createGain();
+                
+                oscillator.connect(gainNode);
+                gainNode.connect(this.audioContext.destination);
+                
+                oscillator.frequency.setValueAtTime(300, this.audioContext.currentTime);
+                oscillator.frequency.setValueAtTime(200, this.audioContext.currentTime + 0.1);
+                
+                gainNode.gain.setValueAtTime(0.3, this.audioContext.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, this.audioContext.currentTime + 0.3);
+                
+                oscillator.start(this.audioContext.currentTime);
+                oscillator.stop(this.audioContext.currentTime + 0.3);
+            },
+            
+            playCannon() {
+                if (!this.enabled || !this.audioContext) return;
+                
+                const oscillator = this.audioContext.createOscillator();
+                const gainNode = this.audioContext.createGain();
+                
+                oscillator.connect(gainNode);
+                gainNode.connect(this.audioContext.destination);
+                
+                oscillator.frequency.setValueAtTime(80, this.audioContext.currentTime);
+                oscillator.frequency.setValueAtTime(60, this.audioContext.currentTime + 0.1);
+                oscillator.type = 'square';
+                
+                gainNode.gain.setValueAtTime(0.4, this.audioContext.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, this.audioContext.currentTime + 0.3);
+                
+                oscillator.start(this.audioContext.currentTime);
+                oscillator.stop(this.audioContext.currentTime + 0.3);
+            },
+            
+            playTargetHit() {
+                if (!this.enabled || !this.audioContext) return;
+                
+                const oscillator = this.audioContext.createOscillator();
+                const gainNode = this.audioContext.createGain();
+                
+                oscillator.connect(gainNode);
+                gainNode.connect(this.audioContext.destination);
+                
+                oscillator.frequency.setValueAtTime(800, this.audioContext.currentTime);
+                oscillator.frequency.setValueAtTime(1200, this.audioContext.currentTime + 0.1);
+                
+                gainNode.gain.setValueAtTime(0.3, this.audioContext.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, this.audioContext.currentTime + 0.4);
+                
+                oscillator.start(this.audioContext.currentTime);
+                oscillator.stop(this.audioContext.currentTime + 0.4);
+            },
+            
+            playWaterSplash() {
+                if (!this.enabled || !this.audioContext) return;
+                
+                const oscillator = this.audioContext.createOscillator();
+                const gainNode = this.audioContext.createGain();
+                
+                oscillator.connect(gainNode);
+                gainNode.connect(this.audioContext.destination);
+                
+                oscillator.frequency.setValueAtTime(400, this.audioContext.currentTime);
+                oscillator.frequency.setValueAtTime(200, this.audioContext.currentTime + 0.1);
+                oscillator.type = 'triangle';
+                
+                gainNode.gain.setValueAtTime(0.2, this.audioContext.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, this.audioContext.currentTime + 0.5);
+                
+                oscillator.start(this.audioContext.currentTime);
+                oscillator.stop(this.audioContext.currentTime + 0.5);
+            },
+
+            playBell() {
+                if (!this.enabled || !this.audioContext) return;
+                
+                const oscillator = this.audioContext.createOscillator();
+                const gainNode = this.audioContext.createGain();
+                
+                oscillator.connect(gainNode);
+                gainNode.connect(this.audioContext.destination);
+                
+                oscillator.frequency.setValueAtTime(800, this.audioContext.currentTime);
+                oscillator.frequency.setValueAtTime(1200, this.audioContext.currentTime + 0.1);
+                
+                gainNode.gain.setValueAtTime(0.3, this.audioContext.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, this.audioContext.currentTime + 0.5);
+                
+                oscillator.start(this.audioContext.currentTime);
+                oscillator.stop(this.audioContext.currentTime + 0.5);
+            }
+        };
+
+        // Initialize sound
+        sounds.init();
+
+        function toggleSound() {
+            sounds.enabled = !sounds.enabled;
+            const button = document.getElementById('soundToggle');
+            button.textContent = sounds.enabled ? '🔊' : '🔇';
+            button.classList.toggle('muted', !sounds.enabled);
+        }
+
+        // Game State
+        const gameState = {
+            phase: 'start',
+            mathScore: 0,
+            cannonPoints: 0,
+            currentRound: 1,
+            roundTargetsDestroyed: 0,
+            totalTargetsDestroyed: 0,
+            totalTargets: 1,
+            currentProblem: null,
+            mathTimer: 60,
+            mathInterval: null,
+            cannonRunning: false,
+            devMode: false,
+            castleFlagColor: 'red' // Default to red flag
+        };
+
+        // Cannon and Physics
+        const cannon = {
+            x: 120,
+            y: 300,
+            angle: 45, // degrees, 0 is horizontal, 90 is vertical UP
+            power: 50, // 0-100%
+            minAngle: 0,
+            maxAngle: 90,
+            minPower: 10,
+            maxPower: 100
+        };
+
+        const projectiles = [];
+        const targets = [];
+        const particles = [];
+
+        // Canvas and context
+        let canvas, ctx;
+
+        // Background elements
+        const background = {
+            clouds: []
+        };
+
+        function initializeBackground() {
+            background.clouds = [];
+            for (let i = 0; i < 6; i++) {
+                background.clouds.push({
+                    x: Math.random() * 1000,
+                    y: 20 + Math.random() * 80,
+                    width: 60 + Math.random() * 40,
+                    height: 30 + Math.random() * 20,
+                    speed: 0.1 + Math.random() * 0.2
+                });
+            }
+        }
+
+        // Visual feedback functions
+        function showFeedback(isCorrect) {
+            const problemDisplay = document.getElementById('problemDisplay');
+            const problemText = document.getElementById('problemText');
+            const feedbackIcon = document.getElementById('feedbackIcon');
+            
+            problemDisplay.classList.remove('correct', 'incorrect');
+            feedbackIcon.classList.remove('show', 'correct', 'incorrect');
+            feedbackIcon.textContent = '';
+            
+            if (isCorrect) {
+                problemText.textContent = `${gameState.currentProblem.question} = ${gameState.currentProblem.answer}`;
+                problemDisplay.classList.add('correct');
+                feedbackIcon.textContent = '✓';
+                feedbackIcon.classList.add('show', 'correct');
+                sounds.playCorrect();
+            } else {
+                problemDisplay.classList.add('incorrect');
+                feedbackIcon.textContent = '✗';
+                feedbackIcon.classList.add('show', 'incorrect');
+                sounds.playIncorrect();
+            }
+            
+            setTimeout(() => {
+                problemDisplay.classList.remove('correct', 'incorrect');
+                feedbackIcon.classList.remove('show', 'correct', 'incorrect');
+                feedbackIcon.textContent = '';
+            }, 800);
+        }
+
+        // Math Phase Functions
+        function generateNewProblem() {
+            const a = Math.floor(Math.random() * 10) + 1;
+            const b = Math.floor(Math.random() * 10) + 1;
+            const answer = a + b;
+            gameState.currentProblem = {
+                question: `${a} + ${b}`,
+                answer: answer,
+                expectedDigits: answer.toString().length
+            };
+            const problemText = document.getElementById('problemText');
+            if (problemText) {
+                problemText.textContent = `${gameState.currentProblem.question} = ?`;
+            }
+        }
+
+        function addDigit(digit) {
+            const input = document.getElementById('answerInput');
+            input.value += digit;
+            
+            if (input.value.length >= gameState.currentProblem.expectedDigits) {
+                setTimeout(() => submitAnswer(), 100);
+            }
+        }
+
+        function clearInput() {
+            document.getElementById('answerInput').value = '';
+        }
+
+        function submitAnswer() {
+            const userAnswer = parseInt(document.getElementById('answerInput').value);
+            if (userAnswer === gameState.currentProblem.answer) {
+                showFeedback(true);
+                gameState.mathScore++;
+                gameState.cannonPoints++;
+                
+                updateMathDisplay();
+                addCannonPoint();
+                
+                setTimeout(() => {
+                    clearInput();
+                    generateNewProblem();
+                }, 500);
+            } else {
+                showFeedback(false);
+                setTimeout(() => {
+                    clearInput();
+                }, 500);
+            }
+        }
+
+        function addCannonPoint() {
+            updateCannonDisplay(true);
+        }
+
+        function updateCannonDisplay(animate = false) {
+            const displays = ['cannonDisplayMath'].map(id => document.getElementById(id)).filter(el => el);
+            
+            displays.forEach(cannonDisplay => {
+                const currentBlocks = cannonDisplay.children.length;
+                
+                // Calculate large blocks (10 points) and small blocks (1 point)
+                const largeBlocks = Math.floor(gameState.cannonPoints / 10);
+                const smallBlocks = gameState.cannonPoints % 10;
+                const totalBlocks = largeBlocks + smallBlocks;
+                
+                // Only rebuild if the structure changed significantly
+                if (animate || currentBlocks !== totalBlocks || Math.floor(currentBlocks / 10) !== largeBlocks) {
+                    cannonDisplay.innerHTML = ''; // Clear current display
+                    
+                    // Add large blocks
+                    for (let i = 0; i < largeBlocks; i++) {
+                        const block = document.createElement('div');
+                        block.className = 'cannon-point-large';
+                        if (!animate) {
+                            block.style.animation = 'none';
+                        }
+                        cannonDisplay.appendChild(block);
+                    }
+                    
+                    // Add small blocks
+                    for (let i = 0; i < smallBlocks; i++) {
+                        const block = document.createElement('div');
+                        block.className = 'cannon-point';
+                        if (!animate) {
+                            block.style.animation = 'none';
+                        }
+                        cannonDisplay.appendChild(block);
+                    }
+                }
+            });
+        }
+
+        function updateMathDisplay() {
+            document.getElementById('mathScore').textContent = gameState.mathScore;
+            document.getElementById('cannonPoints').textContent = gameState.cannonPoints;
+            updateCannonDisplay();
+        }
+
+        function startMathTimer() {
+            gameState.mathTimer = 60;
+            updateTimerDisplay();
+            gameState.mathInterval = setInterval(() => {
+                gameState.mathTimer--;
+                updateTimerDisplay();
+                if (gameState.mathTimer <= 0) {
+                    endMathPhase();
+                }
+            }, 1000);
+        }
+
+        function updateTimerDisplay() {
+            document.getElementById('mathTimer').textContent = gameState.mathTimer;
+        }
+
+        function endMathPhase() {
+            clearInterval(gameState.mathInterval);
+            showCannonPhase();
+        }
+
+        // Cannon Phase Functions
+        function showCannonPhase() {
+            gameState.phase = 'cannon';
+            document.getElementById('mathPhase').classList.add('hidden');
+            document.getElementById('cannonPhase').classList.remove('hidden');
+            
+            sounds.playBell();
+            
+            updateCannonDisplay();
+            
+            setTimeout(() => {
+                startCannon();
+            }, 100);
+        }
+
+        function startCannon() {
+            gameState.cannonRunning = true;
+            gameState.roundTargetsDestroyed = 0;
+            
+            // Set total targets for this round
+            gameState.totalTargets = gameState.currentRound;
+            
+            // Generate targets
+            generateTargets();
+            updateCannonDisplay();
+            
+            // Initialize controls
+            updateCannonControls();
+            
+            // Start game loop
+            gameLoop();
+        }
+
+        function generateTargets() {
+            targets.length = 0;
+            
+            const minX = 300;
+            const maxX = 750;
+            const minY = 80;
+            const maxY = 280;
+            
+            for (let i = 0; i < gameState.totalTargets; i++) {
+                let x, y;
+                let validPosition = false;
+                let attempts = 0;
+                
+                // Try to place target with some spacing
+                while (!validPosition && attempts < 50) {
+                    x = minX + Math.random() * (maxX - minX);
+                    y = minY + Math.random() * (maxY - minY);
+                    
+                    validPosition = true;
+                    for (let j = 0; j < targets.length; j++) {
+                        const dist = Math.sqrt((x - targets[j].x) ** 2 + (y - targets[j].y) ** 2);
+                        if (dist < 80) { // Minimum 80 pixel spacing
+                            validPosition = false;
+                            break;
+                        }
+                    }
+                    attempts++;
+                }
+                
+                targets.push({
+                    x: x,
+                    y: y,
+                    radius: 25,
+                    hit: false,
+                    particles: []
+                });
+            }
+        }
+
+        // Control functions for buttons
+        function adjustAngle(delta) {
+            cannon.angle = Math.max(cannon.minAngle, Math.min(cannon.maxAngle, cannon.angle + delta));
+            updateCannonControls();
+        }
+
+        function adjustPower(delta) {
+            cannon.power = Math.max(cannon.minPower, Math.min(cannon.maxPower, cannon.power + delta));
+            updateCannonControls();
+        }
+
+        function updateCannonControls() {
+            document.getElementById('angleDisplay').textContent = `${Math.round(cannon.angle)}°`;
+            document.getElementById('powerDisplay').textContent = `${cannon.power}%`;
+            document.getElementById('targetsRemaining').textContent = targets.filter(t => !t.hit).length;
+            document.getElementById('cannonRoundNumber').textContent = gameState.currentRound;
+            
+            // Update speedometer needles
+            updateAngleNeedle();
+            updatePowerNeedle();
+            
+            // Update fire button and cannon count
+            const fireButton = document.getElementById('fireButton');
+            const cannonCount = document.getElementById('cannonCount');
+            fireButton.disabled = gameState.cannonPoints <= 0;
+            cannonCount.textContent = gameState.cannonPoints;
+        }
+
+        function updateAngleNeedle() {
+            const needle = document.getElementById('angleNeedle');
+            // The needle starts pointing up (at bottom of gauge pointing up)
+            // For 0° cannon angle: needle should point right = 90° rotation
+            // For 90° cannon angle: needle should point up = 0° rotation
+            const rotation = 90 - cannon.angle;
+            needle.style.transform = `translateX(-50%) rotate(${rotation}deg)`;
+        }
+
+        function updatePowerNeedle() {
+            const needle = document.getElementById('powerNeedle');
+            // Map power (10-100%) to needle rotation (-90° to 90°)
+            const normalizedPower = (cannon.power - cannon.minPower) / (cannon.maxPower - cannon.minPower);
+            const rotation = -90 + normalizedPower * 180;
+            needle.style.transform = `translateX(-50%) rotate(${rotation}deg)`;
+        }
+
+        function handleKeyPress(e) {
+            if (gameState.phase === 'math') {
+                if (e.key >= '0' && e.key <= '9') {
+                    addDigit(e.key);
+                } else if (e.key === 'Backspace' || e.key === 'Delete') {
+                    clearInput();
+                }
+            } else if (gameState.phase === 'cannon' && gameState.cannonRunning) {
+                switch(e.key) {
+                    case 'ArrowUp':
+                        e.preventDefault();
+                        adjustAngle(2); // Up arrow increases angle (more vertical)
+                        break;
+                    case 'ArrowDown':
+                        e.preventDefault();
+                        adjustAngle(-2); // Down arrow decreases angle (more horizontal)
+                        break;
+                    case 'ArrowLeft':
+                        e.preventDefault();
+                        adjustPower(-5); // Left arrow decreases power
+                        break;
+                    case 'ArrowRight':
+                        e.preventDefault();
+                        adjustPower(5); // Right arrow increases power
+                        break;
+                    case ' ':
+                        e.preventDefault();
+                        fireCannon();
+                        break;
+                }
+            }
+        }
+
+        function fireCannon() {
+            if (gameState.cannonPoints <= 0) return;
+            
+            gameState.cannonPoints--;
+            sounds.playCannon();
+            
+            // Flash fire button
+            const fireButton = document.getElementById('fireButton');
+            fireButton.classList.add('firing');
+            setTimeout(() => {
+                fireButton.classList.remove('firing');
+            }, 300);
+            
+            // Convert angle to radians - note that 0° is horizontal right, 90° is vertical up
+            const angleRad = (cannon.angle * Math.PI) / 180;
+            const velocity = (cannon.power / 100) * 15; // Max velocity of 15
+            
+            // Calculate starting position at the end of the cannon barrel
+            const barrelLength = 45; // Length of cannon barrel
+            const startX = cannon.x + Math.cos(angleRad) * barrelLength;
+            const startY = cannon.y - Math.sin(angleRad) * barrelLength;
+            
+            projectiles.push({
+                x: startX,
+                y: startY,
+                vx: Math.cos(angleRad) * velocity,
+                vy: -Math.sin(angleRad) * velocity, // Negative because Y increases downward
+                radius: 8,
+                gravity: 0.2,
+                trail: []
+            });
+            
+            updateCannonControls();
+            updateCannonDisplay();
+        }
+
+        function updateProjectiles() {
+            for (let i = projectiles.length - 1; i >= 0; i--) {
+                const proj = projectiles[i];
+                
+                // Add to trail
+                proj.trail.push({ x: proj.x, y: proj.y });
+                if (proj.trail.length > 8) {
+                    proj.trail.shift();
+                }
+                
+                // Update position
+                proj.x += proj.vx;
+                proj.y += proj.vy;
+                proj.vy += proj.gravity;
+                
+                // Check target collisions
+                for (let j = 0; j < targets.length; j++) {
+                    const target = targets[j];
+                    if (!target.hit) {
+                        const dist = Math.sqrt((proj.x - target.x) ** 2 + (proj.y - target.y) ** 2);
+                        if (dist < proj.radius + target.radius) {
+                            // Hit target!
+                            target.hit = true;
+                            gameState.roundTargetsDestroyed++;
+                            gameState.totalTargetsDestroyed++;
+                            sounds.playTargetHit();
+                            
+                            // Create hit particles
+                            for (let k = 0; k < 12; k++) {
+                                particles.push({
+                                    x: target.x,
+                                    y: target.y,
+                                    vx: (Math.random() - 0.5) * 8,
+                                    vy: (Math.random() - 0.5) * 8,
+                                    life: 30,
+                                    color: Math.random() > 0.5 ? '#e74c3c' : '#ecf0f1'
+                                });
+                            }
+                            
+                            // Don't remove projectile - let it continue!
+                            break;
+                        }
+                    }
+                }
+                
+                // Remove if out of bounds
+                if (proj.x > 850 || proj.y > 450 || (proj.y > 320 && proj.x > 200)) {
+                    if (proj.y > 320 && proj.x > 200) {
+                        sounds.playWaterSplash();
+                        // Create splash particles
+                        for (let k = 0; k < 8; k++) {
+                            particles.push({
+                                x: proj.x,
+                                y: 320,
+                                vx: (Math.random() - 0.5) * 6,
+                                vy: Math.random() * -4 - 2,
+                                life: 20,
+                                color: '#3498db'
+                            });
+                        }
+                    }
+                    projectiles.splice(i, 1);
+                }
+            }
+        }
+
+        function updateParticles() {
+            for (let i = particles.length - 1; i >= 0; i--) {
+                const particle = particles[i];
+                particle.x += particle.vx;
+                particle.y += particle.vy;
+                particle.vy += 0.3;
+                particle.life--;
+                
+                if (particle.life <= 0) {
+                    particles.splice(i, 1);
+                }
+            }
+        }
+
+        function gameLoop() {
+            if (!gameState.cannonRunning) return;
+            
+            updateProjectiles();
+            updateParticles();
+            updateCannonControls();
+            
+            render();
+            
+            // Check win condition
+            const remainingTargets = targets.filter(t => !t.hit).length;
+            if (remainingTargets === 0) {
+                endRound(true);
+                return;
+            }
+            
+            // Check lose condition
+            if (gameState.cannonPoints <= 0 && projectiles.length === 0) {
+                endRound(false);
+                return;
+            }
+            
+            requestAnimationFrame(gameLoop);
+        }
+
+        function render() {
+            if (!ctx) return;
+            
+            // Clear canvas
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // Draw sky gradient
+            const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
+            gradient.addColorStop(0, '#87CEEB');
+            gradient.addColorStop(0.7, '#98FB98');
+            gradient.addColorStop(1, '#3498db');
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            // Draw clouds
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
+            background.clouds.forEach(cloud => {
+                cloud.x += cloud.speed;
+                if (cloud.x > canvas.width + cloud.width) {
+                    cloud.x = -cloud.width;
+                }
+                
+                // Draw fluffy cloud
+                ctx.beginPath();
+                ctx.arc(cloud.x, cloud.y, cloud.height/2, 0, Math.PI * 2);
+                ctx.arc(cloud.x + cloud.width * 0.3, cloud.y - cloud.height * 0.2, cloud.height/2.5, 0, Math.PI * 2);
+                ctx.arc(cloud.x + cloud.width * 0.7, cloud.y + cloud.height * 0.1, cloud.height/2.2, 0, Math.PI * 2);
+                ctx.arc(cloud.x + cloud.width, cloud.y, cloud.height/2, 0, Math.PI * 2);
+                ctx.fill();
+            });
+            
+            // Draw water
+            ctx.fillStyle = '#2980b9';
+            ctx.fillRect(180, 320, canvas.width - 180, canvas.height - 320);
+            
+            // Draw water waves
+            ctx.strokeStyle = '#3498db';
+            ctx.lineWidth = 2;
+            const time = Date.now() * 0.002;
+            for (let i = 0; i < 5; i++) {
+                ctx.beginPath();
+                for (let x = 180; x < canvas.width; x += 10) {
+                    const y = 325 + Math.sin(x * 0.02 + time + i * 0.5) * 3;
+                    if (x === 180) {
+                        ctx.moveTo(x, y);
+                    } else {
+                        ctx.lineTo(x, y);
+                    }
+                }
+                ctx.stroke();
+            }
+            
+            // Draw castle island
+            drawCastle();
+            
+            // Draw targets
+            targets.forEach(target => {
+                if (!target.hit) {
+                    drawTarget(target.x, target.y, target.radius);
+                }
+            });
+            
+            // Draw projectiles with trails
+            projectiles.forEach(proj => {
+                // Draw trail
+                if (proj.trail.length > 1) {
+                    ctx.strokeStyle = 'rgba(100, 100, 100, 0.5)';
+                    ctx.lineWidth = 3;
+                    ctx.beginPath();
+                    ctx.moveTo(proj.trail[0].x, proj.trail[0].y);
+                    for (let i = 1; i < proj.trail.length; i++) {
+                        ctx.lineTo(proj.trail[i].x, proj.trail[i].y);
+                    }
+                    ctx.stroke();
+                }
+                
+                // Draw projectile
+                ctx.fillStyle = '#2c3e50';
+                ctx.beginPath();
+                ctx.arc(proj.x, proj.y, proj.radius, 0, Math.PI * 2);
+                ctx.fill();
+                
+                // Highlight
+                ctx.fillStyle = '#7f8c8d';
+                ctx.beginPath();
+                ctx.arc(proj.x - 2, proj.y - 2, proj.radius * 0.4, 0, Math.PI * 2);
+                ctx.fill();
+            });
+            
+            // Draw particles
+            particles.forEach(particle => {
+                const alpha = particle.life / 30;
+                ctx.fillStyle = particle.color + Math.floor(alpha * 255).toString(16).padStart(2, '0');
+                ctx.fillRect(particle.x - 2, particle.y - 2, 4, 4);
+            });
+        }
+
+        function drawCastle() {
+            // Island base
+            ctx.fillStyle = '#8B4513';
+            ctx.beginPath();
+            ctx.ellipse(90, 340, 80, 40, 0, 0, Math.PI * 2);
+            ctx.fill();
+            
+            // Grass on island
+            ctx.fillStyle = '#228B22';
+            ctx.beginPath();
+            ctx.ellipse(90, 330, 75, 35, 0, 0, Math.PI * 2);
+            ctx.fill();
+            
+            // Castle walls
+            ctx.fillStyle = '#7f8c8d';
+            ctx.fillRect(30, 280, 120, 60);
+            
+            // Castle towers
+            ctx.fillRect(20, 250, 30, 90);
+            ctx.fillRect(130, 250, 30, 90);
+            ctx.fillRect(70, 240, 40, 100);
+            
+            // Tower tops
+            ctx.fillStyle = '#34495e';
+            ctx.beginPath();
+            ctx.moveTo(15, 250);
+            ctx.lineTo(35, 230);
+            ctx.lineTo(55, 250);
+            ctx.closePath();
+            ctx.fill();
+            
+            ctx.beginPath();
+            ctx.moveTo(125, 250);
+            ctx.lineTo(145, 230);
+            ctx.lineTo(165, 250);
+            ctx.closePath();
+            ctx.fill();
+            
+            ctx.beginPath();
+            ctx.moveTo(65, 240);
+            ctx.lineTo(90, 220);
+            ctx.lineTo(115, 240);
+            ctx.closePath();
+            ctx.fill();
+            
+            // Windows
+            ctx.fillStyle = '#f39c12';
+            ctx.fillRect(32, 270, 8, 12);
+            ctx.fillRect(142, 270, 8, 12);
+            ctx.fillRect(83, 260, 12, 15);
+            
+            // Gate
+            ctx.fillStyle = '#2c3e50';
+            ctx.fillRect(75, 310, 30, 30);
+            ctx.beginPath();
+            ctx.arc(90, 310, 15, 0, Math.PI, true);
+            ctx.fill();
+            
+            // Draw flag on center tower
+            drawFlag(90, 220, gameState.castleFlagColor);
+            
+            // Draw cannon
+            drawCannonOnCastle();
+        }
+
+        function drawFlag(x, y, color) {
+            // Flag pole
+            ctx.fillStyle = '#34495e';
+            ctx.fillRect(x - 1, y - 40, 2, 45);
+            
+            // Flag ball on top of pole
+            ctx.fillStyle = '#FFD700';
+            ctx.beginPath();
+            ctx.arc(x, y - 42, 3, 0, Math.PI * 2);
+            ctx.fill();
+            
+            // Flag
+            ctx.fillStyle = color === 'red' ? '#e74c3c' : '#3498db';
+            ctx.beginPath();
+            ctx.moveTo(x + 1, y - 40);
+            ctx.lineTo(x + 30, y - 35);
+            ctx.lineTo(x + 30, y - 20);
+            ctx.lineTo(x + 1, y - 25);
+            ctx.closePath();
+            ctx.fill();
+            
+            // Flag wave effect
+            const time = Date.now() * 0.002;
+            ctx.strokeStyle = color === 'red' ? '#c0392b' : '#2980b9';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(x + 5, y - 37);
+            ctx.quadraticCurveTo(x + 15, y - 35 + Math.sin(time) * 3, x + 25, y - 33);
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.moveTo(x + 5, y - 23);
+            ctx.quadraticCurveTo(x + 15, y - 25 + Math.sin(time + 1) * 3, x + 25, y - 22);
+            ctx.stroke();
+        }
+
+        function drawCannonOnCastle() {
+            ctx.save();
+            ctx.translate(cannon.x, cannon.y);
+            
+            // Cannon base
+            ctx.fillStyle = '#2c3e50';
+            ctx.fillRect(-15, -10, 30, 20);
+            
+            // Cannon barrel - rotate based on angle (0° = horizontal, 90° = vertical up)
+            ctx.rotate(-cannon.angle * Math.PI / 180); // Negative because canvas Y increases downward
+            ctx.fillStyle = '#1a1a1a';
+            ctx.fillRect(0, -6, 45, 12);
+            ctx.fillRect(40, -8, 8, 16);
+            
+            ctx.restore();
+        }
+
+        function drawTarget(x, y, radius) {
+            // Outer red circle
+            ctx.fillStyle = '#e74c3c';
+            ctx.beginPath();
+            ctx.arc(x, y, radius, 0, Math.PI * 2);
+            ctx.fill();
+            
+            // Middle white circle
+            ctx.fillStyle = '#ecf0f1';
+            ctx.beginPath();
+            ctx.arc(x, y, radius * 0.7, 0, Math.PI * 2);
+            ctx.fill();
+            
+            // Inner red circle
+            ctx.fillStyle = '#e74c3c';
+            ctx.beginPath();
+            ctx.arc(x, y, radius * 0.4, 0, Math.PI * 2);
+            ctx.fill();
+            
+            // Center white dot
+            ctx.fillStyle = '#ecf0f1';
+            ctx.beginPath();
+            ctx.arc(x, y, radius * 0.15, 0, Math.PI * 2);
+            ctx.fill();
+        }
+
+        function endRound(success) {
+            gameState.cannonRunning = false;
+            
+            if (success) {
+                gameState.phase = 'roundComplete';
+                
+                setTimeout(() => {
+                    document.getElementById('cannonPhase').classList.add('hidden');
+                    document.getElementById('roundCompleteScreen').classList.remove('hidden');
+                    
+                    document.getElementById('completedRound').textContent = gameState.currentRound;
+                    document.getElementById('roundTargets').textContent = gameState.roundTargetsDestroyed;
+                    document.getElementById('totalTargetsDestroyed').textContent = gameState.totalTargetsDestroyed;
+                    document.getElementById('remainingPoints').textContent = gameState.cannonPoints;
+                }, 1000);
+            } else {
+                endGame();
+            }
+        }
+
+        function continueToNextRound() {
+            gameState.currentRound++;
+            
+            if (gameState.devMode) {
+                // In dev mode, add more cannon points and go straight to cannon phase
+                gameState.phase = 'cannon';
+                gameState.cannonPoints += 5;
+                
+                console.log(`=== Dev Mode: Round ${gameState.currentRound} ===`);
+                console.log(`Added 5 cannon points. Total: ${gameState.cannonPoints}`);
+                console.log(`This round has ${gameState.currentRound} targets`);
+                
+                document.getElementById('roundCompleteScreen').classList.add('hidden');
+                document.getElementById('cannonPhase').classList.remove('hidden');
+                
+                updateCannonDisplay(true);
+                startCannon();
+            } else {
+                // Normal mode - go back to math phase
+                gameState.phase = 'math';
+                document.getElementById('roundCompleteScreen').classList.add('hidden');
+                document.getElementById('mathPhase').classList.remove('hidden');
+                
+                document.getElementById('roundNumber').textContent = gameState.currentRound;
+                updateMathDisplay();
+                updateCannonDisplay();
+                generateNewProblem();
+                clearInput();
+                startMathTimer();
+            }
+        }
+
+        // Game Flow Functions
+        function showCastleSelection() {
+            document.getElementById('startScreen').classList.add('hidden');
+            document.getElementById('castleSelectionScreen').classList.remove('hidden');
+            
+            // Draw castle previews
+            drawCastlePreviews();
+        }
+
+        function selectCastle(color) {
+            gameState.castleFlagColor = color;
+            
+            // Update UI
+            document.querySelectorAll('.castle-option').forEach(option => {
+                option.classList.remove('selected');
+            });
+            
+            if (color === 'red') {
+                document.querySelectorAll('.castle-option')[0].classList.add('selected');
+            } else {
+                document.querySelectorAll('.castle-option')[1].classList.add('selected');
+            }
+        }
+
+        function drawCastlePreviews() {
+            // Draw red castle preview
+            const redCanvas = document.getElementById('redCastlePreview');
+            if (redCanvas) {
+                const redCtx = redCanvas.getContext('2d');
+                redCtx.imageSmoothingEnabled = false;
+                drawMiniCastle(redCtx, 75, 100, 'red');
+            }
+            
+            // Draw blue castle preview
+            const blueCanvas = document.getElementById('blueCastlePreview');
+            if (blueCanvas) {
+                const blueCtx = blueCanvas.getContext('2d');
+                blueCtx.imageSmoothingEnabled = false;
+                drawMiniCastle(blueCtx, 75, 100, 'blue');
+            }
+        }
+
+        function drawMiniCastle(ctx, x, y, flagColor) {
+            // Scale factor for mini castle
+            const scale = 0.6;
+            
+            // Castle base
+            ctx.fillStyle = '#7f8c8d';
+            ctx.fillRect(x - 30 * scale, y - 20 * scale, 60 * scale, 40 * scale);
+            
+            // Towers
+            ctx.fillRect(x - 35 * scale, y - 40 * scale, 20 * scale, 60 * scale);
+            ctx.fillRect(x + 15 * scale, y - 40 * scale, 20 * scale, 60 * scale);
+            ctx.fillRect(x - 10 * scale, y - 50 * scale, 20 * scale, 70 * scale);
+            
+            // Tower tops
+            ctx.fillStyle = '#34495e';
+            ctx.beginPath();
+            ctx.moveTo(x - 40 * scale, y - 40 * scale);
+            ctx.lineTo(x - 25 * scale, y - 55 * scale);
+            ctx.lineTo(x - 10 * scale, y - 40 * scale);
+            ctx.closePath();
+            ctx.fill();
+            
+            ctx.beginPath();
+            ctx.moveTo(x + 10 * scale, y - 40 * scale);
+            ctx.lineTo(x + 25 * scale, y - 55 * scale);
+            ctx.lineTo(x + 40 * scale, y - 40 * scale);
+            ctx.closePath();
+            ctx.fill();
+            
+            ctx.beginPath();
+            ctx.moveTo(x - 15 * scale, y - 50 * scale);
+            ctx.lineTo(x, y - 65 * scale);
+            ctx.lineTo(x + 15 * scale, y - 50 * scale);
+            ctx.closePath();
+            ctx.fill();
+            
+            // Windows
+            ctx.fillStyle = '#f39c12';
+            ctx.fillRect(x - 25 * scale, y - 10 * scale, 5 * scale, 8 * scale);
+            ctx.fillRect(x + 20 * scale, y - 10 * scale, 5 * scale, 8 * scale);
+            ctx.fillRect(x - 3 * scale, y - 20 * scale, 6 * scale, 8 * scale);
+            
+            // Gate
+            ctx.fillStyle = '#2c3e50';
+            ctx.fillRect(x - 8 * scale, y + 5 * scale, 16 * scale, 15 * scale);
+            ctx.beginPath();
+            ctx.arc(x, y + 5 * scale, 8 * scale, 0, Math.PI, true);
+            ctx.fill();
+            
+            // Flag
+            drawMiniFlag(ctx, x, y - 65 * scale, flagColor, scale);
+        }
+
+        function drawMiniFlag(ctx, x, y, color, scale) {
+            // Flag pole
+            ctx.fillStyle = '#34495e';
+            ctx.fillRect(x - 1, y - 20 * scale, 2, 25 * scale);
+            
+            // Flag ball on top
+            ctx.fillStyle = '#FFD700';
+            ctx.beginPath();
+            ctx.arc(x, y - 22 * scale, 2 * scale, 0, Math.PI * 2);
+            ctx.fill();
+            
+            // Flag
+            ctx.fillStyle = color === 'red' ? '#e74c3c' : '#3498db';
+            ctx.beginPath();
+            ctx.moveTo(x + 1, y - 20 * scale);
+            ctx.lineTo(x + 20 * scale, y - 17 * scale);
+            ctx.lineTo(x + 20 * scale, y - 7 * scale);
+            ctx.lineTo(x + 1, y - 10 * scale);
+            ctx.closePath();
+            ctx.fill();
+        }
+
+        function startGame() {
+            gameState.phase = 'math';
+            gameState.currentRound = 1;
+            gameState.mathScore = 0;
+            gameState.cannonPoints = 0;
+            gameState.totalTargetsDestroyed = 0;
+            gameState.roundTargetsDestroyed = 0;
+            gameState.devMode = false;
+            
+            document.getElementById('castleSelectionScreen').classList.add('hidden');
+            document.getElementById('mathPhase').classList.remove('hidden');
+            
+            const mathDisplay = document.getElementById('cannonDisplayMath');
+            if (mathDisplay) mathDisplay.innerHTML = '';
+            
+            document.getElementById('roundNumber').textContent = '1';
+            generateNewProblem();
+            clearInput();
+            updateMathDisplay();
+            startMathTimer();
+            
+            if (sounds.audioContext && sounds.audioContext.state === 'suspended') {
+                sounds.audioContext.resume();
+            }
+        }
+
+        function devMode() {
+            gameState.phase = 'cannon';
+            gameState.mathScore = 0;
+            gameState.cannonPoints = 8;
+            gameState.currentRound = 1;
+            gameState.roundTargetsDestroyed = 0;
+            gameState.totalTargetsDestroyed = 0;
+            gameState.devMode = true;
+            gameState.castleFlagColor = 'red'; // Default to red in dev mode
+            
+            console.log("=== MATH CANNON DEV MODE ===");
+            console.log("Starting with 8 cannon points for testing");
+            console.log("Round 1: 1 target, Round 2: 2 targets, etc.");
+            console.log("Each round completion adds 5 more cannon points");
+            console.log("TIP: Cannonballs pass through targets - line up shots!");
+            console.log("============================");
+            
+            document.getElementById('startScreen').classList.add('hidden');
+            document.getElementById('cannonPhase').classList.remove('hidden');
+            
+            updateCannonDisplay(true);
+            startCannon();
+            
+            if (sounds.audioContext && sounds.audioContext.state === 'suspended') {
+                sounds.audioContext.resume();
+            }
+        }
+
+        function endGame() {
+            gameState.phase = 'gameOver';
+            gameState.cannonRunning = false;
+            
+            document.getElementById('cannonPhase').classList.add('hidden');
+            document.getElementById('gameOverScreen').classList.remove('hidden');
+            
+            document.getElementById('finalMathScore').textContent = gameState.mathScore;
+            document.getElementById('finalTargets').textContent = gameState.totalTargetsDestroyed;
+            document.getElementById('finalRound').textContent = gameState.currentRound;
+        }
+
+        function resetGame() {
+            gameState.phase = 'start';
+            gameState.mathScore = 0;
+            gameState.cannonPoints = 0;
+            gameState.currentRound = 1;
+            gameState.roundTargetsDestroyed = 0;
+            gameState.totalTargetsDestroyed = 0;
+            gameState.mathTimer = 60;
+            gameState.devMode = false;
+            gameState.castleFlagColor = 'red'; // Reset to default
+            
+            // Reset cannon
+            cannon.angle = 45;
+            cannon.power = 50;
+            
+            // Clear arrays
+            projectiles.length = 0;
+            targets.length = 0;
+            particles.length = 0;
+            
+            // Clear displays
+            const mathDisplay = document.getElementById('cannonDisplayMath');
+            if (mathDisplay) mathDisplay.innerHTML = '';
+            
+            // Show start screen
+            document.getElementById('gameOverScreen').classList.add('hidden');
+            document.getElementById('startScreen').classList.remove('hidden');
+        }
+
+        // Initialize
+        function init() {
+            canvas = document.getElementById('gameCanvas');
+            ctx = canvas.getContext('2d');
+            
+            // Disable image smoothing for crisp graphics
+            ctx.imageSmoothingEnabled = false;
+            
+            document.addEventListener('keydown', handleKeyPress);
+            
+            initializeBackground();
+            generateNewProblem();
+            
+            document.getElementById('roundNumber').textContent = '1';
+            
+            // Draw castle previews when page loads
+            setTimeout(() => {
+                drawCastlePreviews();
+            }, 100);
+        }
+
+        // Start when page loads
+        window.addEventListener('load', init);
+    </script>
+</body>
+</html>

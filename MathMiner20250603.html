@@ -1,0 +1,1490 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Math Miner - MVP</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            background: linear-gradient(135deg, #8B4513, #D2691E);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .game-container {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            max-width: 800px;
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        .phase-header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .phase-title {
+            font-size: 2.5em;
+            color: #2c3e50;
+            margin: 0;
+        }
+
+        .timer {
+            font-size: 1.5em;
+            color: #e74c3c;
+            margin: 10px 0;
+        }
+
+        /* Math Phase Styles */
+        .math-phase {
+            text-align: center;
+        }
+
+        .problem-display {
+            font-size: 3em;
+            color: #2c3e50;
+            margin: 30px 0;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            position: relative;
+            transition: background-color 0.3s ease;
+        }
+
+        .problem-display.correct {
+            background-color: #d4edda;
+        }
+
+        .problem-display.incorrect {
+            background-color: #f8d7da;
+        }
+
+        .feedback-icon {
+            position: absolute;
+            top: 50%;
+            right: 20px;
+            transform: translateY(-50%);
+            font-size: 2em;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .feedback-icon.show {
+            opacity: 1;
+        }
+
+        .feedback-icon.correct {
+            color: #28a745;
+        }
+
+        .feedback-icon.incorrect {
+            color: #dc3545;
+        }
+
+        .input-section {
+            margin: 20px 0;
+        }
+
+        .answer-input {
+            font-size: 2em;
+            padding: 10px 20px;
+            border: 3px solid #3498db;
+            border-radius: 10px;
+            text-align: center;
+            width: 150px;
+            transition: border-color 0.3s ease;
+        }
+
+        .numberpad {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            max-width: 200px;
+            margin: 20px auto;
+        }
+
+        .numberpad button {
+            padding: 15px;
+            font-size: 1.5em;
+            border: none;
+            border-radius: 8px;
+            background: #3498db;
+            color: white;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .numberpad button:hover {
+            background: #2980b9;
+            transform: scale(1.05);
+        }
+
+        .numberpad button:active {
+            transform: scale(0.95);
+        }
+
+        .numberpad .wide {
+            grid-column: span 2;
+        }
+
+        .score-display {
+            display: flex;
+            justify-content: space-around;
+            margin: 20px 0;
+            font-size: 1.3em;
+        }
+
+        .dig-counter {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        #digDisplay, #digDisplayMath {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px;
+            max-width: 400px;
+        }
+
+        .dig-point {
+            width: 20px;
+            height: 20px;
+            background: #8B4513;
+            border-radius: 4px;
+            display: inline-block;
+            margin: 2px;
+            animation: digPointDrop 0.5s ease-out;
+            border: 1px solid #6B3410;
+        }
+
+        .dig-point-large {
+            width: 30px;
+            height: 30px;
+            background: #654321;
+            border-radius: 6px;
+            display: inline-block;
+            margin: 2px;
+            animation: digPointDrop 0.5s ease-out;
+            position: relative;
+            border: 2px solid #4a3018;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .dig-point-large::after {
+            content: '10';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-size: 12px;
+            font-weight: bold;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+        }
+
+        @keyframes digPointDrop {
+            from { 
+                transform: translateY(-20px) rotate(0deg); 
+                opacity: 0; 
+            }
+            to { 
+                transform: translateY(0) rotate(360deg); 
+                opacity: 1; 
+            }
+        }
+
+        /* Mining Phase Styles */
+        .mining-phase {
+            text-align: center;
+        }
+
+        .game-canvas {
+            border: 3px solid #34495e;
+            border-radius: 10px;
+            background: #87CEEB;
+            image-rendering: pixelated;
+            image-rendering: -moz-crisp-edges;
+            image-rendering: crisp-edges;
+        }
+
+        .mining-info {
+            margin: 20px 0;
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            font-size: 1.2em;
+        }
+
+        .dig-points-display {
+            background: #f39c12;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-weight: bold;
+        }
+
+        /* Phase Transition */
+        .phase-transition {
+            text-align: center;
+            padding: 40px;
+            font-size: 1.5em;
+            color: #2c3e50;
+        }
+
+        /* Animations */
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .phase-transition h2 {
+            margin-bottom: 20px;
+            color: #27ae60;
+        }
+
+        #roundCompleteScreen h2 {
+            animation: bounce 0.5s ease-in-out infinite;
+        }
+
+        .start-button {
+            padding: 15px 40px;
+            font-size: 1.5em;
+            background: #27ae60;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+
+        .start-button:hover {
+            background: #229954;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        /* Sound toggle */
+        .sound-toggle {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            padding: 8px 12px;
+            font-size: 1.2em;
+            background: #3498db;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .sound-toggle:hover {
+            background: #2980b9;
+        }
+
+        .sound-toggle.muted {
+            background: #95a5a6;
+        }
+
+        /* Character selection */
+        .character-selection {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin: 20px 0;
+        }
+
+        .character-option {
+            padding: 15px;
+            border: 3px solid transparent;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s;
+            background: #ecf0f1;
+        }
+
+        .character-option:hover {
+            transform: scale(1.05);
+            background: #e8f4f8;
+        }
+
+        .character-option.selected {
+            border-color: #3498db;
+            background: #e8f4f8;
+            box-shadow: 0 4px 12px rgba(52, 152, 219, 0.3);
+        }
+
+        .character-preview {
+            width: 64px;
+            height: 64px;
+            image-rendering: pixelated;
+            image-rendering: -moz-crisp-edges;
+            image-rendering: crisp-edges;
+            margin: 0 auto 10px;
+        }
+
+        .character-name {
+            text-align: center;
+            font-size: 0.9em;
+            color: #2c3e50;
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <!-- Sound Toggle -->
+        <button class="sound-toggle" id="soundToggle" onclick="toggleSound()">🔊</button>
+
+        <!-- Start Screen -->
+        <div id="startScreen" class="phase-transition" style="position: relative;">
+            <button onclick="devMode()" style="position: absolute; top: 10px; right: 10px; padding: 5px 8px; font-size: 0.7em; background: #95a5a6; color: white; border: none; border-radius: 3px; cursor: pointer; opacity: 0.7;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.7'">DEV</button>
+            <h1>⛏️ Math Miner ⛏️</h1>
+            <p>Solve math problems to earn dig points!</p>
+            
+            <div class="character-selection">
+                <div class="character-option selected" onclick="selectMiner('blonde')">
+                    <canvas class="character-preview" id="blondePreview" width="64" height="64"></canvas>
+                    <div class="character-name">Alex</div>
+                </div>
+                <div class="character-option" onclick="selectMiner('brunette')">
+                    <canvas class="character-preview" id="brunettePreview" width="64" height="64"></canvas>
+                    <div class="character-name">Sam</div>
+                </div>
+            </div>
+            
+            <button class="start-button" onclick="startGame()">Start Mining!</button>
+        </div>
+
+        <!-- Math Phase -->
+        <div id="mathPhase" class="math-phase hidden">
+            <div class="phase-header">
+                <h2 class="phase-title">🧮 Math Mine</h2>
+                <div class="timer" id="mathTimer">60</div>
+            </div>
+            
+            <div class="problem-display" id="problemDisplay">
+                <span id="problemText">5 + 3 = ?</span>
+                <div class="feedback-icon" id="feedbackIcon"></div>
+            </div>
+            
+            <div class="input-section">
+                <input type="text" class="answer-input" id="answerInput" readonly>
+                
+                <div class="numberpad">
+                    <button onclick="addDigit('1')">1</button>
+                    <button onclick="addDigit('2')">2</button>
+                    <button onclick="addDigit('3')">3</button>
+                    <button onclick="addDigit('4')">4</button>
+                    <button onclick="addDigit('5')">5</button>
+                    <button onclick="addDigit('6')">6</button>
+                    <button onclick="addDigit('7')">7</button>
+                    <button onclick="addDigit('8')">8</button>
+                    <button onclick="addDigit('9')">9</button>
+                    <button onclick="clearInput()" class="wide">Clear</button>
+                    <button onclick="addDigit('0')">0</button>
+                </div>
+            </div>
+
+            <div class="score-display">
+                <div>Total Math Score: <span id="mathScore">0</span></div>
+                <div class="dig-counter">
+                    Dig Points: <span id="digPoints">0</span>
+                    <div id="digDisplayMath"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mining Phase -->
+        <div id="miningPhase" class="mining-phase hidden">
+            <div class="phase-header">
+                <h2 class="phase-title">⛏️ Mining Time!</h2>
+                <div>Round: <span id="roundNumber">1</span> <span id="devModeIndicator" style="color: #e74c3c; font-size: 0.8em;"></span></div>
+            </div>
+            
+            <canvas id="gameCanvas" class="game-canvas" width="512" height="384"></canvas>
+            
+            <div class="mining-info">
+                <div class="dig-points-display">
+                    Dig Points: <span id="remainingDigs">0</span>
+                </div>
+                <div>Coins: <span id="coinCounter">0/3</span></div>
+            </div>
+            
+            <div class="dig-counter" style="justify-content: center; margin-top: 15px;">
+                <div id="digDisplay" style="justify-content: center;"></div>
+            </div>
+        </div>
+
+        <!-- Round Complete Screen -->
+        <div id="roundCompleteScreen" class="phase-transition hidden">
+            <h2>⭐ Nice work! ⭐</h2>
+            <div style="margin: 20px 0;">
+                <p>Round <span id="completedRound">1</span> Complete!</p>
+                <p>Coins collected this round: <span id="roundCoins">3</span></p>
+                <p>Total coins: <span id="totalCoinsCollected">3</span></p>
+            </div>
+            <button class="start-button" onclick="continueToNextRound()">Continue to next round?</button>
+        </div>
+
+        <!-- Game Over Screen -->
+        <div id="gameOverScreen" class="phase-transition hidden">
+            <h2>⛰️ Mining Complete! ⛰️</h2>
+            <div class="score-display" style="flex-direction: column; gap: 15px;">
+                <div>Total Math Score: <span id="finalMathScore">0</span></div>
+                <div>Total Coins Collected: <span id="finalCoins">0</span></div>
+                <div>Round Reached: <span id="finalRound">1</span></div>
+            </div>
+            <button class="start-button" onclick="resetGame()">Play Again</button>
+        </div>
+    </div>
+
+    <script>
+        // Sound system
+        const sounds = {
+            enabled: true,
+            audioContext: null,
+            
+            init() {
+                if (typeof AudioContext !== 'undefined') {
+                    this.audioContext = new AudioContext();
+                }
+            },
+            
+            playCorrect() {
+                if (!this.enabled || !this.audioContext) return;
+                
+                const oscillator = this.audioContext.createOscillator();
+                const gainNode = this.audioContext.createGain();
+                
+                oscillator.connect(gainNode);
+                gainNode.connect(this.audioContext.destination);
+                
+                oscillator.frequency.setValueAtTime(523.25, this.audioContext.currentTime);
+                oscillator.frequency.setValueAtTime(659.25, this.audioContext.currentTime + 0.1);
+                oscillator.frequency.setValueAtTime(783.99, this.audioContext.currentTime + 0.2);
+                
+                gainNode.gain.setValueAtTime(0.3, this.audioContext.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, this.audioContext.currentTime + 0.5);
+                
+                oscillator.start(this.audioContext.currentTime);
+                oscillator.stop(this.audioContext.currentTime + 0.5);
+            },
+            
+            playIncorrect() {
+                if (!this.enabled || !this.audioContext) return;
+                
+                const oscillator = this.audioContext.createOscillator();
+                const gainNode = this.audioContext.createGain();
+                
+                oscillator.connect(gainNode);
+                gainNode.connect(this.audioContext.destination);
+                
+                oscillator.frequency.setValueAtTime(300, this.audioContext.currentTime);
+                oscillator.frequency.setValueAtTime(200, this.audioContext.currentTime + 0.1);
+                
+                gainNode.gain.setValueAtTime(0.3, this.audioContext.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, this.audioContext.currentTime + 0.3);
+                
+                oscillator.start(this.audioContext.currentTime);
+                oscillator.stop(this.audioContext.currentTime + 0.3);
+            },
+            
+            playDig() {
+                if (!this.enabled || !this.audioContext) return;
+                
+                const oscillator = this.audioContext.createOscillator();
+                const gainNode = this.audioContext.createGain();
+                
+                oscillator.connect(gainNode);
+                gainNode.connect(this.audioContext.destination);
+                
+                oscillator.frequency.setValueAtTime(150, this.audioContext.currentTime);
+                oscillator.type = 'square';
+                
+                gainNode.gain.setValueAtTime(0.2, this.audioContext.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, this.audioContext.currentTime + 0.1);
+                
+                oscillator.start(this.audioContext.currentTime);
+                oscillator.stop(this.audioContext.currentTime + 0.1);
+            },
+            
+            playCoin() {
+                if (!this.enabled || !this.audioContext) return;
+                
+                const oscillator = this.audioContext.createOscillator();
+                const gainNode = this.audioContext.createGain();
+                
+                oscillator.connect(gainNode);
+                gainNode.connect(this.audioContext.destination);
+                
+                oscillator.frequency.setValueAtTime(880, this.audioContext.currentTime);
+                oscillator.frequency.setValueAtTime(1174.66, this.audioContext.currentTime + 0.1);
+                oscillator.frequency.setValueAtTime(1396.91, this.audioContext.currentTime + 0.2);
+                
+                gainNode.gain.setValueAtTime(0.3, this.audioContext.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, this.audioContext.currentTime + 0.6);
+                
+                oscillator.start(this.audioContext.currentTime);
+                oscillator.stop(this.audioContext.currentTime + 0.6);
+            },
+            
+            playMove() {
+                if (!this.enabled || !this.audioContext) return;
+                
+                const oscillator = this.audioContext.createOscillator();
+                const gainNode = this.audioContext.createGain();
+                
+                oscillator.connect(gainNode);
+                gainNode.connect(this.audioContext.destination);
+                
+                oscillator.frequency.setValueAtTime(200, this.audioContext.currentTime);
+                oscillator.type = 'triangle';
+                
+                gainNode.gain.setValueAtTime(0.05, this.audioContext.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, this.audioContext.currentTime + 0.05);
+                
+                oscillator.start(this.audioContext.currentTime);
+                oscillator.stop(this.audioContext.currentTime + 0.05);
+            },
+            
+            playBell() {
+                if (!this.enabled || !this.audioContext) return;
+                
+                const oscillator = this.audioContext.createOscillator();
+                const gainNode = this.audioContext.createGain();
+                
+                oscillator.connect(gainNode);
+                gainNode.connect(this.audioContext.destination);
+                
+                oscillator.frequency.setValueAtTime(800, this.audioContext.currentTime);
+                oscillator.frequency.setValueAtTime(1200, this.audioContext.currentTime + 0.1);
+                
+                gainNode.gain.setValueAtTime(0.3, this.audioContext.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, this.audioContext.currentTime + 0.5);
+                
+                oscillator.start(this.audioContext.currentTime);
+                oscillator.stop(this.audioContext.currentTime + 0.5);
+            }
+        };
+
+        // Initialize sound
+        sounds.init();
+
+        function toggleSound() {
+            sounds.enabled = !sounds.enabled;
+            const button = document.getElementById('soundToggle');
+            button.textContent = sounds.enabled ? '🔊' : '🔇';
+            button.classList.toggle('muted', !sounds.enabled);
+        }
+
+        // Game State
+        const gameState = {
+            phase: 'start', // start, math, mining, roundComplete, gameOver
+            mathScore: 0,
+            digPoints: 0,
+            currentRound: 1,
+            roundCoinsCollected: 0, // Coins collected in current round
+            totalCoinsCollected: 0, // Total coins across all rounds
+            totalCoins: 3, // Coins to collect in current round
+            currentProblem: null,
+            mathTimer: 60,
+            mathInterval: null,
+            minerType: 'blonde',
+            miningRunning: false,
+            playerPosition: { x: 8, y: 3 },
+            terrain: [],
+            coinPositions: [],
+            particles: [],
+            devMode: false // Track if in dev mode
+        };
+
+        // Constants
+        const GRID_WIDTH = 16;
+        const GRID_HEIGHT = 12;
+        const BLOCK_SIZE = 32;
+        const TERRAIN_TYPES = {
+            AIR: 0,
+            GRASS: 1,
+            DIRT: 2,
+            COIN: 3
+        };
+
+        // Canvas and context
+        let canvas, ctx;
+
+        // Visual feedback functions
+        function showFeedback(isCorrect) {
+            const problemDisplay = document.getElementById('problemDisplay');
+            const problemText = document.getElementById('problemText');
+            const feedbackIcon = document.getElementById('feedbackIcon');
+            
+            problemDisplay.classList.remove('correct', 'incorrect');
+            feedbackIcon.classList.remove('show', 'correct', 'incorrect');
+            feedbackIcon.textContent = '';
+            
+            if (isCorrect) {
+                problemText.textContent = `${gameState.currentProblem.question} = ${gameState.currentProblem.answer}`;
+                problemDisplay.classList.add('correct');
+                feedbackIcon.textContent = '✓';
+                feedbackIcon.classList.add('show', 'correct');
+                sounds.playCorrect();
+            } else {
+                problemDisplay.classList.add('incorrect');
+                feedbackIcon.textContent = '✗';
+                feedbackIcon.classList.add('show', 'incorrect');
+                sounds.playIncorrect();
+            }
+            
+            setTimeout(() => {
+                problemDisplay.classList.remove('correct', 'incorrect');
+                feedbackIcon.classList.remove('show', 'correct', 'incorrect');
+                feedbackIcon.textContent = '';
+            }, 800);
+        }
+
+        // Math Phase Functions
+        function generateNewProblem() {
+            const a = Math.floor(Math.random() * 10) + 1;
+            const b = Math.floor(Math.random() * 10) + 1;
+            const answer = a + b;
+            gameState.currentProblem = {
+                question: `${a} + ${b}`,
+                answer: answer,
+                expectedDigits: answer.toString().length
+            };
+            const problemText = document.getElementById('problemText');
+            if (problemText) {
+                problemText.textContent = `${gameState.currentProblem.question} = ?`;
+            }
+        }
+
+        function addDigit(digit) {
+            const input = document.getElementById('answerInput');
+            input.value += digit;
+            
+            if (input.value.length >= gameState.currentProblem.expectedDigits) {
+                setTimeout(() => submitAnswer(), 100);
+            }
+        }
+
+        function clearInput() {
+            document.getElementById('answerInput').value = '';
+        }
+
+        function submitAnswer() {
+            const userAnswer = parseInt(document.getElementById('answerInput').value);
+            if (userAnswer === gameState.currentProblem.answer) {
+                // Correct answer
+                showFeedback(true);
+                gameState.mathScore++;
+                gameState.digPoints++;
+                
+                // Update displays
+                document.getElementById('mathScore').textContent = gameState.mathScore;
+                document.getElementById('digPoints').textContent = gameState.digPoints;
+                
+                // Update visual blocks with animation
+                updateDigDisplay(true);
+                
+                // Clear input and generate new problem after animation
+                setTimeout(() => {
+                    clearInput();
+                    generateNewProblem();
+                }, 500);
+            } else {
+                // Wrong answer
+                showFeedback(false);
+                setTimeout(() => {
+                    clearInput();
+                }, 500);
+            }
+        }
+
+        function updateDigDisplay(animate = false) {
+            // Update both math and mining phase displays
+            const displays = ['digDisplayMath', 'digDisplay'].map(id => document.getElementById(id)).filter(el => el);
+            
+            displays.forEach(digDisplay => {
+                const currentBlocks = digDisplay.children.length;
+                
+                // Calculate large blocks (10 points) and small blocks (1 point)
+                const largeBlocks = Math.floor(gameState.digPoints / 10);
+                const smallBlocks = gameState.digPoints % 10;
+                const totalBlocks = largeBlocks + smallBlocks;
+                
+                // Only rebuild if the structure changed significantly
+                if (animate || currentBlocks !== totalBlocks || Math.floor(currentBlocks / 10) !== largeBlocks) {
+                    digDisplay.innerHTML = ''; // Clear current display
+                    
+                    // Add large blocks
+                    for (let i = 0; i < largeBlocks; i++) {
+                        const block = document.createElement('div');
+                        block.className = 'dig-point-large';
+                        if (!animate) {
+                            // Skip animation if not explicitly requested
+                            block.style.animation = 'none';
+                        }
+                        digDisplay.appendChild(block);
+                    }
+                    
+                    // Add small blocks
+                    for (let i = 0; i < smallBlocks; i++) {
+                        const block = document.createElement('div');
+                        block.className = 'dig-point';
+                        if (!animate) {
+                            // Skip animation if not explicitly requested
+                            block.style.animation = 'none';
+                        }
+                        digDisplay.appendChild(block);
+                    }
+                }
+            });
+        }
+
+        function addDigPoint() {
+            // Update with animation for new points
+            updateDigDisplay(true);
+        }
+
+        function updateMathDisplay() {
+            document.getElementById('mathScore').textContent = gameState.mathScore;
+            document.getElementById('digPoints').textContent = gameState.digPoints;
+            updateDigDisplay(); // Update visual blocks
+        }
+
+        function startMathTimer() {
+            gameState.mathTimer = 60;
+            updateTimerDisplay();
+            gameState.mathInterval = setInterval(() => {
+                gameState.mathTimer--;
+                updateTimerDisplay();
+                if (gameState.mathTimer <= 0) {
+                    endMathPhase();
+                }
+            }, 1000);
+        }
+
+        function updateTimerDisplay() {
+            document.getElementById('mathTimer').textContent = gameState.mathTimer;
+        }
+
+        function endMathPhase() {
+            clearInterval(gameState.mathInterval);
+            showMiningPhase();
+        }
+
+        // Mining Phase Functions
+        function showMiningPhase() {
+            gameState.phase = 'mining';
+            document.getElementById('mathPhase').classList.add('hidden');
+            document.getElementById('miningPhase').classList.remove('hidden');
+            
+            // Bell sound to indicate phase change
+            sounds.playBell();
+            
+            // Update dig display immediately when showing mining phase
+            updateDigDisplay();
+            
+            // Initialize mining with a slight delay to ensure DOM is ready
+            setTimeout(() => {
+                startMining();
+            }, 100);
+        }
+
+        function startMining() {
+            gameState.miningRunning = true;
+            gameState.playerPosition = { x: 8, y: 3 };
+            gameState.roundCoinsCollected = 0;
+            
+            // Generate terrain for current round
+            generateTerrain(gameState.currentRound);
+            updateMiningDisplay(); // This will update the dig display
+            
+            // Start game loop
+            gameLoop();
+        }
+
+        // Terrain Generation
+        function generateTerrain(round) {
+            gameState.terrain = [];
+            gameState.coinPositions = [];
+            
+            // Initialize empty terrain
+            for (let y = 0; y < GRID_HEIGHT; y++) {
+                gameState.terrain[y] = [];
+                for (let x = 0; x < GRID_WIDTH; x++) {
+                    if (y < 3) {
+                        // Sky area
+                        gameState.terrain[y][x] = TERRAIN_TYPES.AIR;
+                    } else if (y === 3) {
+                        // Surface level - all air
+                        gameState.terrain[y][x] = TERRAIN_TYPES.AIR;
+                    } else if (y === 4) {
+                        // Grass layer
+                        gameState.terrain[y][x] = TERRAIN_TYPES.GRASS;
+                    } else {
+                        // Underground
+                        gameState.terrain[y][x] = TERRAIN_TYPES.DIRT;
+                    }
+                }
+            }
+            
+            // Place coins based on round
+            const coinLayouts = [
+                // Round 1: Simple vertical dig
+                [
+                    { x: 8, y: 6 },
+                    { x: 8, y: 8 },
+                    { x: 8, y: 10 }
+                ],
+                // Round 2: L-shaped path
+                [
+                    { x: 8, y: 6 },
+                    { x: 8, y: 8 },
+                    { x: 10, y: 8 },
+                    { x: 12, y: 8 }
+                ],
+                // Round 3: Spread out
+                [
+                    { x: 4, y: 7 },
+                    { x: 8, y: 9 },
+                    { x: 12, y: 7 },
+                    { x: 6, y: 11 },
+                    { x: 10, y: 11 }
+                ]
+            ];
+            
+            const layoutIndex = Math.min(round - 1, coinLayouts.length - 1);
+            const baseLayout = coinLayouts[layoutIndex];
+            
+            // For rounds beyond 3, add extra coins
+            let coinCount = baseLayout.length;
+            if (round > 3) {
+                coinCount = Math.min(5 + (round - 3), 8);
+            }
+            
+            gameState.totalCoins = coinCount;
+            
+            // Place coins from layout
+            for (let i = 0; i < Math.min(coinCount, baseLayout.length); i++) {
+                const pos = baseLayout[i];
+                gameState.terrain[pos.y][pos.x] = TERRAIN_TYPES.COIN;
+                gameState.coinPositions.push({ x: pos.x, y: pos.y });
+            }
+            
+            // Add random coins for higher rounds
+            while (gameState.coinPositions.length < coinCount) {
+                const x = Math.floor(Math.random() * (GRID_WIDTH - 4)) + 2;
+                const y = Math.floor(Math.random() * (GRID_HEIGHT - 7)) + 6;
+                
+                if (gameState.terrain[y][x] === TERRAIN_TYPES.DIRT) {
+                    gameState.terrain[y][x] = TERRAIN_TYPES.COIN;
+                    gameState.coinPositions.push({ x, y });
+                }
+            }
+        }
+
+        // Game Logic
+        function movePlayer(dx, dy) {
+            if (gameState.phase !== 'mining' || !gameState.miningRunning) return;
+            
+            const newX = gameState.playerPosition.x + dx;
+            const newY = gameState.playerPosition.y + dy;
+            
+            // Check bounds
+            if (newX < 0 || newX >= GRID_WIDTH || newY < 0 || newY >= GRID_HEIGHT) {
+                return;
+            }
+            
+            const targetTerrain = gameState.terrain[newY][newX];
+            
+            // Check if trying to dig
+            if (targetTerrain === TERRAIN_TYPES.GRASS || targetTerrain === TERRAIN_TYPES.DIRT) {
+                // Can only dig if we have dig points
+                if (gameState.digPoints > 0) {
+                    gameState.digPoints--;
+                    digBlock({ x: newX, y: newY });
+                    // Move player after digging
+                    gameState.playerPosition.x = newX;
+                    gameState.playerPosition.y = newY;
+                    updateMiningDisplay();
+                } else {
+                    // No dig points left
+                    sounds.playIncorrect();
+                }
+                return;
+            }
+            
+            // Move if air or coin
+            if (targetTerrain === TERRAIN_TYPES.AIR || targetTerrain === TERRAIN_TYPES.COIN) {
+                gameState.playerPosition.x = newX;
+                gameState.playerPosition.y = newY;
+                sounds.playMove();
+                
+                // Collect coin if present
+                if (targetTerrain === TERRAIN_TYPES.COIN) {
+                    collectCoin(newX, newY);
+                }
+            }
+        }
+
+        function digBlock(position) {
+            // Check if there's a coin before digging
+            const hadCoin = gameState.terrain[position.y][position.x] === TERRAIN_TYPES.COIN;
+            
+            gameState.terrain[position.y][position.x] = TERRAIN_TYPES.AIR;
+            sounds.playDig();
+            
+            // Create digging particles
+            for (let i = 0; i < 8; i++) {
+                gameState.particles.push({
+                    x: position.x * BLOCK_SIZE + BLOCK_SIZE / 2,
+                    y: position.y * BLOCK_SIZE + BLOCK_SIZE / 2,
+                    vx: (Math.random() - 0.5) * 4,
+                    vy: Math.random() * -3 - 1,
+                    life: 30,
+                    color: position.y === 4 ? '#228B22' : '#8B4513'
+                });
+            }
+            
+            // If there was a coin, collect it
+            if (hadCoin) {
+                gameState.roundCoinsCollected++;
+                gameState.totalCoinsCollected++;
+                sounds.playCoin();
+                
+                // Remove from positions array
+                gameState.coinPositions = gameState.coinPositions.filter(
+                    pos => pos.x !== position.x || pos.y !== position.y
+                );
+                
+                updateMiningDisplay();
+                
+                // Check if all coins collected
+                if (gameState.roundCoinsCollected >= gameState.totalCoins) {
+                    endRound(true);
+                }
+            }
+        }
+
+        function collectCoin(x, y) {
+            gameState.terrain[y][x] = TERRAIN_TYPES.AIR;
+            gameState.roundCoinsCollected++;
+            gameState.totalCoinsCollected++;
+            sounds.playCoin();
+            
+            // Remove from positions array
+            gameState.coinPositions = gameState.coinPositions.filter(
+                pos => pos.x !== x || pos.y !== y
+            );
+            
+            updateMiningDisplay();
+            
+            // Check if all coins collected
+            if (gameState.roundCoinsCollected >= gameState.totalCoins) {
+                endRound(true);
+            }
+        }
+
+        function updateParticles() {
+            gameState.particles = gameState.particles.filter(particle => {
+                particle.x += particle.vx;
+                particle.y += particle.vy;
+                particle.vy += 0.3;
+                particle.life--;
+                return particle.life > 0;
+            });
+        }
+
+        function updateMiningDisplay() {
+            document.getElementById('remainingDigs').textContent = gameState.digPoints;
+            document.getElementById('coinCounter').textContent = `${gameState.roundCoinsCollected}/${gameState.totalCoins}`;
+            document.getElementById('roundNumber').textContent = gameState.currentRound;
+            
+            // Update the dig display blocks when mining too
+            updateDigDisplay();
+            
+            // Show dev mode indicator if in dev mode
+            const devIndicator = document.getElementById('devModeIndicator');
+            if (devIndicator) {
+                devIndicator.textContent = gameState.devMode ? '(DEV MODE)' : '';
+            }
+        }
+
+        function endRound(success) {
+            gameState.miningRunning = false;
+            
+            if (success) {
+                // All coins collected - show round complete screen
+                gameState.phase = 'roundComplete';
+                
+                setTimeout(() => {
+                    document.getElementById('miningPhase').classList.add('hidden');
+                    document.getElementById('roundCompleteScreen').classList.remove('hidden');
+                    
+                    // Update round complete screen
+                    document.getElementById('completedRound').textContent = gameState.currentRound;
+                    document.getElementById('roundCoins').textContent = gameState.roundCoinsCollected;
+                    document.getElementById('totalCoinsCollected').textContent = gameState.totalCoinsCollected;
+                }, 1000);
+            } else {
+                // No more dig points
+                if (gameState.digPoints <= 0) {
+                    endGame();
+                }
+            }
+        }
+
+        function continueToNextRound() {
+            // Increment round
+            gameState.currentRound++;
+            
+            if (gameState.devMode) {
+                // In dev mode, skip math and go straight to mining with more points
+                gameState.phase = 'mining';
+                gameState.digPoints += 10; // Add 10 more dig points for testing
+                
+                console.log(`=== Dev Mode: Round ${gameState.currentRound} ===`);
+                console.log(`Added 10 dig points. Total: ${gameState.digPoints}`);
+                if (gameState.currentRound === 2) {
+                    console.log("Round 2: L-shaped path (4 coins, optimal: 7 digs)");
+                } else if (gameState.currentRound === 3) {
+                    console.log("Round 3: Spread out (5 coins, optimal: 10-12 digs)");
+                } else if (gameState.currentRound > 3) {
+                    console.log(`Round ${gameState.currentRound}: Random layout with ${Math.min(5 + (gameState.currentRound - 3), 8)} coins`);
+                }
+                
+                document.getElementById('roundCompleteScreen').classList.add('hidden');
+                document.getElementById('miningPhase').classList.remove('hidden');
+                
+                // Update the dig display to show new total
+                updateDigDisplay(true); // Animate the new blocks
+                
+                // Start mining for new round
+                startMining();
+            } else {
+                // Normal mode - go back to math phase
+                gameState.phase = 'math';
+                document.getElementById('roundCompleteScreen').classList.add('hidden');
+                document.getElementById('mathPhase').classList.remove('hidden');
+                
+                // Update displays with current values (dig points carry over)
+                updateMathDisplay();
+                updateDigDisplay(); // Ensure dig display is updated
+                generateNewProblem();
+                clearInput();
+                startMathTimer();
+            }
+        }
+
+        // Rendering
+        function render() {
+            if (!ctx) return;
+            
+            // Clear canvas
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // Draw sky gradient
+            const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
+            gradient.addColorStop(0, '#87CEEB');
+            gradient.addColorStop(0.3, '#98FB98');
+            gradient.addColorStop(1, '#654321');
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            // First pass: Draw terrain
+            for (let y = 0; y < GRID_HEIGHT; y++) {
+                for (let x = 0; x < GRID_WIDTH; x++) {
+                    const terrain = gameState.terrain[y][x];
+                    
+                    if (terrain === TERRAIN_TYPES.GRASS) {
+                        // Grass block
+                        ctx.fillStyle = '#8B4513';
+                        ctx.fillRect(x * BLOCK_SIZE, y * BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE);
+                        ctx.fillStyle = '#228B22';
+                        ctx.fillRect(x * BLOCK_SIZE, y * BLOCK_SIZE, BLOCK_SIZE, 8);
+                    } else if (terrain === TERRAIN_TYPES.DIRT) {
+                        // Dirt block
+                        ctx.fillStyle = '#8B4513';
+                        ctx.fillRect(x * BLOCK_SIZE, y * BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE);
+                        
+                        // Add texture dots
+                        ctx.fillStyle = 'rgba(0,0,0,0.1)';
+                        const seed = x * 100 + y;
+                        for (let i = 0; i < 3; i++) {
+                            const dx = ((seed * (i + 1) * 13) % (BLOCK_SIZE - 4)) + 2;
+                            const dy = ((seed * (i + 1) * 17) % (BLOCK_SIZE - 4)) + 2;
+                            ctx.fillRect(x * BLOCK_SIZE + dx, y * BLOCK_SIZE + dy, 2, 2);
+                        }
+                    }
+                }
+            }
+            
+            // Second pass: Draw coins
+            for (let y = 0; y < GRID_HEIGHT; y++) {
+                for (let x = 0; x < GRID_WIDTH; x++) {
+                    const terrain = gameState.terrain[y][x];
+                    
+                    if (terrain === TERRAIN_TYPES.COIN) {
+                        // Draw spinning coin
+                        const time = Date.now() * 0.002;
+                        const scale = Math.abs(Math.sin(time + x + y));
+                        
+                        ctx.save();
+                        ctx.translate(x * BLOCK_SIZE + BLOCK_SIZE / 2, y * BLOCK_SIZE + BLOCK_SIZE / 2);
+                        ctx.scale(scale, 1);
+                        
+                        // Coin circle
+                        ctx.fillStyle = '#FFD700';
+                        ctx.beginPath();
+                        ctx.arc(0, 0, 12, 0, Math.PI * 2);
+                        ctx.fill();
+                        
+                        // Coin outline
+                        ctx.strokeStyle = '#B8860B';
+                        ctx.lineWidth = 2;
+                        ctx.stroke();
+                        
+                        // Coin shine
+                        ctx.fillStyle = '#FFED4E';
+                        ctx.beginPath();
+                        ctx.arc(-3, -3, 6, 0, Math.PI * 2);
+                        ctx.fill();
+                        
+                        // Dollar sign
+                        ctx.fillStyle = '#B8860B';
+                        ctx.font = 'bold 16px Arial';
+                        ctx.textAlign = 'center';
+                        ctx.textBaseline = 'middle';
+                        ctx.fillText('$', 0, 0);
+                        
+                        ctx.restore();
+                    }
+                }
+            }
+            
+            // Draw particles
+            gameState.particles.forEach(particle => {
+                ctx.fillStyle = particle.color + Math.floor((particle.life / 30) * 255).toString(16).padStart(2, '0');
+                ctx.fillRect(particle.x - 2, particle.y - 2, 4, 4);
+            });
+            
+            // Draw miner
+            drawMiner(
+                gameState.playerPosition.x * BLOCK_SIZE,
+                gameState.playerPosition.y * BLOCK_SIZE
+            );
+            
+            // Draw helmet light effect
+            const lightX = gameState.playerPosition.x * BLOCK_SIZE + BLOCK_SIZE / 2;
+            const lightY = gameState.playerPosition.y * BLOCK_SIZE + BLOCK_SIZE / 2;
+            
+            const lightGradient = ctx.createRadialGradient(lightX, lightY, 0, lightX, lightY, 100);
+            lightGradient.addColorStop(0, 'rgba(255, 255, 200, 0.3)');
+            lightGradient.addColorStop(1, 'rgba(255, 255, 200, 0)');
+            ctx.fillStyle = lightGradient;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            // Check if no more dig points
+            if (gameState.digPoints <= 0 && gameState.miningRunning) {
+                let canReachCoin = false;
+                // Check if player can reach any coin without digging
+                for (let coin of gameState.coinPositions) {
+                    if (canReachPosition(gameState.playerPosition, coin)) {
+                        canReachCoin = true;
+                        break;
+                    }
+                }
+                
+                if (!canReachCoin) {
+                    endRound(false);
+                }
+            }
+        }
+
+        function canReachPosition(from, to) {
+            // Simple check - in a real implementation, we'd use pathfinding
+            // For now, just check if there's a clear path
+            return false; // Simplified - assume coins need digging to reach
+        }
+
+        function drawMiner(x, y) {
+            // Body - different color based on miner type
+            ctx.fillStyle = gameState.minerType === 'blonde' ? '#4169E1' : '#DC143C';
+            ctx.fillRect(x + 8, y + 12, 16, 16);
+            
+            // Head
+            ctx.fillStyle = '#FDBCB4';
+            ctx.fillRect(x + 10, y + 4, 12, 10);
+            
+            // Hair
+            ctx.fillStyle = gameState.minerType === 'blonde' ? '#FFD700' : '#8B4513';
+            ctx.fillRect(x + 8, y + 2, 16, 6);
+            ctx.fillRect(x + 10, y, 12, 4);
+            
+            // Helmet outline
+            ctx.strokeStyle = '#FFD700';
+            ctx.lineWidth = 2;
+            ctx.strokeRect(x + 6, y + 2, 20, 8);
+            
+            // Helmet light
+            ctx.fillStyle = '#FFFF00';
+            ctx.fillRect(x + 14, y + 2, 4, 4);
+            
+            // Arms
+            ctx.fillStyle = '#FDBCB4';
+            ctx.fillRect(x + 4, y + 14, 4, 8);
+            ctx.fillRect(x + 24, y + 14, 4, 8);
+            
+            // Legs
+            ctx.fillStyle = '#654321';
+            ctx.fillRect(x + 10, y + 24, 6, 8);
+            ctx.fillRect(x + 16, y + 24, 6, 8);
+        }
+
+        // Game Loop
+        function gameLoop() {
+            if (!gameState.miningRunning) return;
+            
+            updateParticles();
+            render();
+            
+            requestAnimationFrame(gameLoop);
+        }
+
+        // Game Flow Functions
+        function startGame() {
+            gameState.phase = 'math';
+            gameState.currentRound = 1;
+            gameState.mathScore = 0;
+            gameState.digPoints = 0;
+            gameState.totalCoinsCollected = 0;
+            gameState.roundCoinsCollected = 0;
+            gameState.devMode = false; // Reset dev mode flag
+            
+            document.getElementById('startScreen').classList.add('hidden');
+            document.getElementById('mathPhase').classList.remove('hidden');
+            
+            // Clear both dig displays on new game
+            const mathDisplay = document.getElementById('digDisplayMath');
+            const miningDisplay = document.getElementById('digDisplay');
+            if (mathDisplay) mathDisplay.innerHTML = '';
+            if (miningDisplay) miningDisplay.innerHTML = '';
+            
+            generateNewProblem();
+            clearInput();
+            updateMathDisplay(); // This will now properly initialize the dig display
+            startMathTimer();
+            
+            if (sounds.audioContext && sounds.audioContext.state === 'suspended') {
+                sounds.audioContext.resume();
+            }
+        }
+
+        function endGame() {
+            gameState.phase = 'gameOver';
+            gameState.miningRunning = false;
+            
+            document.getElementById('miningPhase').classList.add('hidden');
+            document.getElementById('gameOverScreen').classList.remove('hidden');
+            
+            document.getElementById('finalMathScore').textContent = gameState.mathScore;
+            document.getElementById('finalCoins').textContent = gameState.totalCoinsCollected;
+            document.getElementById('finalRound').textContent = gameState.currentRound;
+        }
+
+        function resetGame() {
+            // Reset game state
+            gameState.phase = 'start';
+            gameState.mathScore = 0;
+            gameState.digPoints = 0;
+            gameState.currentRound = 1;
+            gameState.roundCoinsCollected = 0;
+            gameState.totalCoinsCollected = 0;
+            gameState.mathTimer = 60;
+            gameState.particles = [];
+            gameState.devMode = false; // Reset dev mode flag
+            
+            // Clear both dig displays
+            const mathDisplay = document.getElementById('digDisplayMath');
+            const miningDisplay = document.getElementById('digDisplay');
+            if (mathDisplay) mathDisplay.innerHTML = '';
+            if (miningDisplay) miningDisplay.innerHTML = '';
+            
+            // Show start screen
+            document.getElementById('gameOverScreen').classList.add('hidden');
+            document.getElementById('startScreen').classList.remove('hidden');
+        }
+
+        function devMode() {
+            // Skip math phase, go straight to mining with test dig points
+            gameState.phase = 'mining';
+            gameState.mathScore = 0;
+            gameState.digPoints = 15; // Test with 15 dig points
+            gameState.currentRound = 1;
+            gameState.roundCoinsCollected = 0;
+            gameState.totalCoinsCollected = 0;
+            gameState.devMode = true; // Mark as dev mode
+            
+            // Add debug info
+            console.log("=== MATH MINER DEV MODE ===");
+            console.log("Starting with 15 dig points for testing");
+            console.log("Round 1: 3 coins in vertical layout (optimal: 6 digs)");
+            console.log("Round 2: 4 coins in L-shaped path (optimal: 7 digs)");
+            console.log("Round 3: 5 coins spread out (optimal: 10-12 digs)");
+            console.log("Each round completion adds 10 more dig points");
+            console.log("Press '+' key to add 5 dig points while mining");
+            console.log("TIP: Plan your path to use minimum dig points!");
+            console.log("==========================");
+            
+            document.getElementById('startScreen').classList.add('hidden');
+            document.getElementById('miningPhase').classList.remove('hidden');
+            
+            // Initialize mining
+            startMining();
+            
+            if (sounds.audioContext && sounds.audioContext.state === 'suspended') {
+                sounds.audioContext.resume();
+            }
+        }
+
+        // Character selection
+        function selectMiner(type) {
+            gameState.minerType = type;
+            
+            // Update UI
+            document.querySelectorAll('.character-option').forEach(option => {
+                option.classList.remove('selected');
+            });
+            
+            if (type === 'blonde') {
+                document.querySelectorAll('.character-option')[0].classList.add('selected');
+            } else {
+                document.querySelectorAll('.character-option')[1].classList.add('selected');
+            }
+        }
+
+        function drawCharacterPreviews() {
+            // Draw blonde miner preview
+            const blondeCanvas = document.getElementById('blondePreview');
+            if (blondeCanvas) {
+                const blondeCtx = blondeCanvas.getContext('2d');
+                blondeCtx.imageSmoothingEnabled = false;
+                blondeCtx.scale(2, 2);
+                drawMinerPreview(blondeCtx, 0, 0, 'blonde');
+            }
+            
+            // Draw brunette miner preview
+            const brunetteCanvas = document.getElementById('brunettePreview');
+            if (brunetteCanvas) {
+                const brunetteCtx = brunetteCanvas.getContext('2d');
+                brunetteCtx.imageSmoothingEnabled = false;
+                brunetteCtx.scale(2, 2);
+                drawMinerPreview(brunetteCtx, 0, 0, 'brunette');
+            }
+        }
+
+        function drawMinerPreview(ctx, x, y, type) {
+            // Body
+            ctx.fillStyle = type === 'blonde' ? '#4169E1' : '#DC143C';
+            ctx.fillRect(x + 8, y + 12, 16, 16);
+            
+            // Head
+            ctx.fillStyle = '#FDBCB4';
+            ctx.fillRect(x + 10, y + 4, 12, 10);
+            
+            // Hair
+            ctx.fillStyle = type === 'blonde' ? '#FFD700' : '#8B4513';
+            ctx.fillRect(x + 8, y + 2, 16, 6);
+            ctx.fillRect(x + 10, y, 12, 4);
+            
+            // Helmet outline
+            ctx.strokeStyle = '#FFD700';
+            ctx.lineWidth = 2;
+            ctx.strokeRect(x + 6, y + 2, 20, 8);
+            
+            // Helmet light
+            ctx.fillStyle = '#FFFF00';
+            ctx.fillRect(x + 14, y + 2, 4, 4);
+            
+            // Arms
+            ctx.fillStyle = '#FDBCB4';
+            ctx.fillRect(x + 4, y + 14, 4, 8);
+            ctx.fillRect(x + 24, y + 14, 4, 8);
+            
+            // Legs
+            ctx.fillStyle = '#654321';
+            ctx.fillRect(x + 10, y + 24, 6, 8);
+            ctx.fillRect(x + 16, y + 24, 6, 8);
+        }
+
+        // Keyboard controls
+        function handleKeyPress(e) {
+            if (gameState.phase === 'math') {
+                if (e.key >= '0' && e.key <= '9') {
+                    addDigit(e.key);
+                } else if (e.key === 'Backspace' || e.key === 'Delete') {
+                    clearInput();
+                }
+            } else if (gameState.phase === 'mining') {
+                switch(e.key) {
+                    case 'ArrowUp':
+                        e.preventDefault();
+                        movePlayer(0, -1);
+                        break;
+                    case 'ArrowDown':
+                        e.preventDefault();
+                        movePlayer(0, 1);
+                        break;
+                    case 'ArrowLeft':
+                        e.preventDefault();
+                        movePlayer(-1, 0);
+                        break;
+                    case 'ArrowRight':
+                        e.preventDefault();
+                        movePlayer(1, 0);
+                        break;
+                }
+                
+                // Dev mode shortcuts
+                if (gameState.devMode) {
+                    if (e.key === '+' || e.key === '=') {
+                        // Add 5 dig points
+                        gameState.digPoints += 5;
+                        updateMiningDisplay(); // This will update the display
+                        console.log(`Dev: Added 5 dig points. Total: ${gameState.digPoints}`);
+                    }
+                }
+            }
+        }
+
+        // Initialize
+        function init() {
+            canvas = document.getElementById('gameCanvas');
+            ctx = canvas.getContext('2d');
+            
+            // Disable image smoothing for pixel art
+            ctx.imageSmoothingEnabled = false;
+            
+            document.addEventListener('keydown', handleKeyPress);
+            
+            // Draw character previews
+            drawCharacterPreviews();
+        }
+
+        // Start when page loads
+        window.addEventListener('load', init);
+    </script>
+</body>
+</html>
