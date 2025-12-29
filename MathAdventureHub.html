@@ -96,6 +96,11 @@
             color: white;
         }
 
+        .game-card.minigolf {
+            background: linear-gradient(145deg, #2d5016, #e8f6f3);
+            color: white;
+        }
+
         .game-icon {
             font-size: 4em;
             margin-bottom: 15px;
@@ -675,6 +680,58 @@
             margin-top: 10px;
         }
 
+        /* Mini Golf Styles */
+        .minigolf-game-area {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            gap: 20px;
+            position: relative;
+        }
+
+        .minigolf-power-meter {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: absolute;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        .minigolf-power-bar {
+            width: 35px;
+            height: 250px;
+            background: linear-gradient(to top,
+                #27ae60 0%,
+                #2ecc71 30%,
+                #f1c40f 60%,
+                #e67e22 80%,
+                #e74c3c 100%
+            );
+            border-radius: 18px;
+            border: 3px solid #2c3e50;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .minigolf-power-fill {
+            position: absolute;
+            top: 0;
+            width: 100%;
+            height: 0%;
+            background: rgba(0,0,0,0.6);
+            transition: none;
+        }
+
+        .putt-status {
+            text-align: center;
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-top: 15px;
+        }
+
         .coal-counter {
             display: flex;
             flex-direction: column;
@@ -1102,6 +1159,12 @@
                 <div class="game-title">Math Field Goals</div>
                 <div class="game-description">Kick field goals! Solve problems to earn footballs and score through the uprights.</div>
             </div>
+
+            <div class="game-card minigolf" onclick="selectGame('minigolf')">
+                <div class="game-icon">⛳</div>
+                <div class="game-title">Math Mini Golf</div>
+                <div class="game-description">Putt your way to victory! Solve problems to earn strokes and sink the ball.</div>
+            </div>
         </div>
 
         <div class="global-settings">
@@ -1422,6 +1485,29 @@
             </div>
 
             <div class="kick-status" id="kickStatus">Press SPACE to set direction</div>
+        </div>
+    </div>
+
+    <!-- Mini Golf Game Container -->
+    <div id="minigolfGame" class="container game-container" style="display: none;">
+        <button class="back-button" onclick="returnToHub()">← Back to Hub</button>
+
+        <!-- Putt Phase (Action Phase) -->
+        <div id="minigolfPuttPhase" class="action-phase hidden">
+            <div class="minigolf-game-area">
+                <!-- Power Meter (vertical, on left side) -->
+                <div class="minigolf-power-meter" id="minigolfPowerMeter">
+                    <div class="power-meter-label">POWER</div>
+                    <div class="minigolf-power-bar">
+                        <div class="minigolf-power-fill" id="minigolfPowerFill"></div>
+                    </div>
+                </div>
+
+                <!-- Main Canvas -->
+                <canvas id="minigolfCanvas" class="game-canvas" width="800" height="600"></canvas>
+            </div>
+
+            <div class="putt-status" id="puttStatus">Use ← → to aim, hold SPACE for power</div>
         </div>
     </div>
 
@@ -1858,7 +1944,8 @@
                 express: { round: 1, score: 0, phase: 'start', resources: 0, trainColor: 'red', devMode: false, totalDistance: 0 },
                 miner: { round: 1, score: 0, phase: 'start', resources: 0, minerColor: 'red', devMode: false, totalCoinsCollected: 0 },
                 plane: { round: 1, score: 0, phase: 'start', resources: 0, airplaneType: 'red', devMode: false, totalDistance: 0 },
-                fieldgoal: { round: 1, score: 0, phase: 'start', resources: 0, teamColor: 'red', devMode: false, totalFieldGoalsMade: 0 }
+                fieldgoal: { round: 1, score: 0, phase: 'start', resources: 0, teamColor: 'red', devMode: false, totalFieldGoalsMade: 0 },
+                minigolf: { round: 1, score: 0, phase: 'start', resources: 0, ballColor: 'white', devMode: false, totalHolesCompleted: 0 }
             }
         };
 
@@ -2051,6 +2138,57 @@
                     { key: 'round', label: 'Round Reached', color: '#27ae60' },
                     { key: 'score', label: 'Math Score', color: '#3498db' },
                     { key: 'totalFieldGoalsMade', label: 'Field Goals Made', color: '#f39c12' }
+                ]
+            },
+
+            minigolf: {
+                id: 'minigolf',
+                title: 'Math Mini Golf',
+                icon: '⛳',
+                themeColor: '#27ae60',
+
+                selectionPrompt: 'Choose your ball color!',
+                options: [
+                    { id: 'white', name: 'Classic White', color: '#ffffff' },
+                    { id: 'orange', name: 'Bright Orange', color: '#ff6b35' }
+                ],
+                selectionKey: 'ballColor',
+                drawPreview: (canvas, colorId) => {
+                    const ctx = canvas.getContext('2d');
+                    ctx.clearRect(0, 0, 150, 150);
+                    // Draw golf ball
+                    const colors = { white: '#ffffff', orange: '#ff6b35' };
+                    ctx.fillStyle = colors[colorId] || '#ffffff';
+                    ctx.beginPath();
+                    ctx.arc(75, 75, 35, 0, Math.PI * 2);
+                    ctx.fill();
+                    ctx.strokeStyle = '#333';
+                    ctx.lineWidth = 2;
+                    ctx.stroke();
+                    // Highlight
+                    ctx.fillStyle = 'rgba(255,255,255,0.5)';
+                    ctx.beginPath();
+                    ctx.arc(65, 65, 10, 0, Math.PI * 2);
+                    ctx.fill();
+                },
+
+                mathTitle: 'Practice Swings',
+                resourceName: 'Strokes',
+                resourceIcon: '⛳',
+                pointClass: 'golf-point',
+
+                actionPhaseId: 'minigolfPuttPhase',
+                startAction: () => minigolfGame.startPuttPhase(),
+                gameObject: () => minigolfGame,
+
+                gameOverTitle: 'Round Over!',
+                gameOverIcon: '⛳',
+                playAgainText: 'Play Again!',
+                startButtonText: 'Tee Off!',
+                stats: [
+                    { key: 'round', label: 'Holes Reached', color: '#27ae60' },
+                    { key: 'score', label: 'Math Score', color: '#3498db' },
+                    { key: 'totalHolesCompleted', label: 'Holes Completed', color: '#f39c12' }
                 ]
             }
         };
@@ -6350,10 +6488,572 @@
             }
         };
 
+        // ===== MINI GOLF GAME =====
+        const minigolfGame = {
+            canvas: null,
+            ctx: null,
+            animationId: null,
+            gameRunning: false,
+
+            // Ball state
+            ball: {
+                x: 400,
+                y: 500,
+                vx: 0,
+                vy: 0,
+                radius: 8,
+                moving: false
+            },
+
+            // Hole state
+            hole: {
+                x: 400,
+                y: 100,
+                radius: 12
+            },
+
+            // Putter state
+            putter: {
+                angle: -Math.PI / 2,  // Pointing up initially
+                length: 50
+            },
+
+            // Power meter
+            power: {
+                value: 0,
+                charging: false,
+                maxPower: 12
+            },
+
+            // Course walls
+            walls: [],
+
+            // Game tracking
+            strokesUsed: 0,
+
+            init() {
+                this.canvas = document.getElementById('minigolfCanvas');
+                this.ctx = this.canvas.getContext('2d');
+            },
+
+            startPuttPhase() {
+                if (!this.canvas) this.init();
+                const state = gameManager.gameStates.minigolf;
+
+                // Setup hole based on round
+                this.setupHole(state.round);
+                this.strokesUsed = 0;
+
+                document.getElementById('minigolfPuttPhase').classList.remove('hidden');
+                this.updateStatus();
+                this.gameRunning = true;
+                this.gameLoop();
+            },
+
+            setupHole(round) {
+                // Position ball at starting location
+                this.ball.x = 400;
+                this.ball.y = 520;
+                this.ball.vx = 0;
+                this.ball.vy = 0;
+                this.ball.moving = false;
+
+                // Position hole (varies by round for difficulty)
+                const holePositions = [
+                    { x: 400, y: 100 },  // Round 1: straight shot
+                    { x: 300, y: 120 },  // Round 2: left
+                    { x: 500, y: 120 },  // Round 3: right
+                    { x: 250, y: 100 },  // Round 4: far left
+                    { x: 550, y: 100 },  // Round 5: far right
+                    { x: 400, y: 80 },   // Round 6: straight, far
+                    { x: 300, y: 80 },   // Round 7+: varies
+                ];
+                const posIndex = Math.min(round - 1, holePositions.length - 1);
+                this.hole.x = holePositions[posIndex].x;
+                this.hole.y = holePositions[posIndex].y;
+
+                // Generate walls based on round
+                this.walls = this.generateWalls(round);
+
+                // Reset putter and power
+                this.putter.angle = -Math.PI / 2;
+                this.power.value = 0;
+                this.power.charging = false;
+            },
+
+            generateWalls(round) {
+                const walls = [];
+
+                // Border walls (always present)
+                const left = 100, right = 700, top = 50, bottom = 570;
+                walls.push({ x1: left, y1: top, x2: right, y2: top });     // Top
+                walls.push({ x1: left, y1: bottom, x2: right, y2: bottom }); // Bottom
+                walls.push({ x1: left, y1: top, x2: left, y2: bottom });   // Left
+                walls.push({ x1: right, y1: top, x2: right, y2: bottom }); // Right
+
+                // Add obstacles based on round
+                if (round >= 3) {
+                    walls.push({ x1: 250, y1: 250, x2: 400, y2: 250 }); // Horizontal obstacle
+                }
+                if (round >= 5) {
+                    walls.push({ x1: 400, y1: 350, x2: 550, y2: 350 }); // Second horizontal
+                }
+                if (round >= 7) {
+                    walls.push({ x1: 300, y1: 150, x2: 300, y2: 250 }); // Vertical wall
+                }
+
+                return walls;
+            },
+
+            gameLoop() {
+                if (!this.gameRunning) return;
+
+                this.update();
+                this.render();
+
+                this.animationId = requestAnimationFrame(() => this.gameLoop());
+            },
+
+            update() {
+                // Update power if charging
+                if (this.power.charging && !this.ball.moving) {
+                    this.power.value = Math.min(this.power.value + 0.25, this.power.maxPower);
+                    this.updatePowerMeter();
+                }
+
+                // Update ball physics if moving
+                if (this.ball.moving) {
+                    this.updateBallPhysics();
+                }
+            },
+
+            updatePowerMeter() {
+                const fill = document.getElementById('minigolfPowerFill');
+                if (fill) {
+                    const percent = (this.power.value / this.power.maxPower) * 100;
+                    fill.style.height = (100 - percent) + '%';
+                }
+            },
+
+            updateBallPhysics() {
+                // Apply velocity
+                this.ball.x += this.ball.vx;
+                this.ball.y += this.ball.vy;
+
+                // Apply friction
+                this.ball.vx *= 0.985;
+                this.ball.vy *= 0.985;
+
+                // Wall collisions
+                this.checkWallCollisions();
+
+                // Check if ball stopped
+                const speed = Math.sqrt(this.ball.vx * this.ball.vx + this.ball.vy * this.ball.vy);
+                if (speed < 0.15) {
+                    this.ball.vx = 0;
+                    this.ball.vy = 0;
+                    this.ball.moving = false;
+                    this.checkHoleResult();
+                }
+
+                // Check if ball in hole while moving slowly
+                if (speed < 3) {
+                    const dx = this.ball.x - this.hole.x;
+                    const dy = this.ball.y - this.hole.y;
+                    const dist = Math.sqrt(dx * dx + dy * dy);
+                    if (dist < this.hole.radius) {
+                        this.ballInHole();
+                    }
+                }
+            },
+
+            checkWallCollisions() {
+                const r = this.ball.radius;
+
+                // Border collisions
+                if (this.ball.x - r < 100) {
+                    this.ball.x = 100 + r;
+                    this.ball.vx *= -0.7;
+                    sounds.playButtonClick();
+                }
+                if (this.ball.x + r > 700) {
+                    this.ball.x = 700 - r;
+                    this.ball.vx *= -0.7;
+                    sounds.playButtonClick();
+                }
+                if (this.ball.y - r < 50) {
+                    this.ball.y = 50 + r;
+                    this.ball.vy *= -0.7;
+                    sounds.playButtonClick();
+                }
+                if (this.ball.y + r > 570) {
+                    this.ball.y = 570 - r;
+                    this.ball.vy *= -0.7;
+                    sounds.playButtonClick();
+                }
+
+                // Obstacle wall collisions (simplified - horizontal/vertical only)
+                for (const wall of this.walls) {
+                    // Skip border walls (already handled)
+                    if (wall.x1 === 100 && wall.x2 === 100) continue;
+                    if (wall.x1 === 700 && wall.x2 === 700) continue;
+                    if (wall.y1 === 50 && wall.y2 === 50) continue;
+                    if (wall.y1 === 570 && wall.y2 === 570) continue;
+
+                    // Horizontal wall
+                    if (wall.y1 === wall.y2) {
+                        const minX = Math.min(wall.x1, wall.x2);
+                        const maxX = Math.max(wall.x1, wall.x2);
+                        if (this.ball.x >= minX && this.ball.x <= maxX) {
+                            if (Math.abs(this.ball.y - wall.y1) < r + 4) {
+                                if (this.ball.vy > 0 && this.ball.y < wall.y1) {
+                                    this.ball.y = wall.y1 - r - 4;
+                                    this.ball.vy *= -0.7;
+                                    sounds.playButtonClick();
+                                } else if (this.ball.vy < 0 && this.ball.y > wall.y1) {
+                                    this.ball.y = wall.y1 + r + 4;
+                                    this.ball.vy *= -0.7;
+                                    sounds.playButtonClick();
+                                }
+                            }
+                        }
+                    }
+                    // Vertical wall
+                    if (wall.x1 === wall.x2) {
+                        const minY = Math.min(wall.y1, wall.y2);
+                        const maxY = Math.max(wall.y1, wall.y2);
+                        if (this.ball.y >= minY && this.ball.y <= maxY) {
+                            if (Math.abs(this.ball.x - wall.x1) < r + 4) {
+                                if (this.ball.vx > 0 && this.ball.x < wall.x1) {
+                                    this.ball.x = wall.x1 - r - 4;
+                                    this.ball.vx *= -0.7;
+                                    sounds.playButtonClick();
+                                } else if (this.ball.vx < 0 && this.ball.x > wall.x1) {
+                                    this.ball.x = wall.x1 + r + 4;
+                                    this.ball.vx *= -0.7;
+                                    sounds.playButtonClick();
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+
+            checkHoleResult() {
+                const dx = this.ball.x - this.hole.x;
+                const dy = this.ball.y - this.hole.y;
+                const dist = Math.sqrt(dx * dx + dy * dy);
+
+                if (dist < this.hole.radius + this.ball.radius) {
+                    this.ballInHole();
+                } else {
+                    // Ball stopped but not in hole - check if strokes remaining
+                    this.updateStatus();
+                    const state = gameManager.gameStates.minigolf;
+                    if (state.resources <= 0) {
+                        setTimeout(() => this.endRound(false), 500);
+                    }
+                }
+            },
+
+            ballInHole() {
+                const state = gameManager.gameStates.minigolf;
+                state.totalHolesCompleted++;
+
+                this.ball.moving = false;
+                this.gameRunning = false;
+
+                sounds.playCorrect();
+
+                // Show success message briefly then end round
+                const status = document.getElementById('puttStatus');
+                status.textContent = '🎉 HOLE IN ' + this.strokesUsed + '!';
+
+                setTimeout(() => {
+                    this.endRound(true);
+                }, 1500);
+            },
+
+            putt() {
+                const state = gameManager.gameStates.minigolf;
+                if (state.resources <= 0 || this.ball.moving) return;
+
+                // Use a stroke
+                state.resources--;
+                this.strokesUsed++;
+
+                // Calculate velocity from angle and power
+                const speed = this.power.value;
+                this.ball.vx = Math.cos(this.putter.angle) * speed;
+                this.ball.vy = Math.sin(this.putter.angle) * speed;
+                this.ball.moving = true;
+
+                // Reset power
+                this.power.value = 0;
+                this.power.charging = false;
+                this.updatePowerMeter();
+
+                sounds.playButtonClick();
+                this.updateStatus();
+            },
+
+            updateStatus() {
+                const state = gameManager.gameStates.minigolf;
+                const status = document.getElementById('puttStatus');
+                if (this.ball.moving) {
+                    status.textContent = '...rolling...';
+                } else {
+                    status.textContent = `Hole ${state.round} | Strokes: ${state.resources} | ← → aim, hold SPACE for power`;
+                }
+            },
+
+            endRound(success) {
+                this.gameRunning = false;
+                if (this.animationId) {
+                    cancelAnimationFrame(this.animationId);
+                }
+
+                document.getElementById('minigolfPuttPhase').classList.add('hidden');
+                document.getElementById('minigolfGame').style.display = 'none';
+                document.getElementById('sharedGameContainer').style.display = 'block';
+
+                if (success) {
+                    showRoundComplete({
+                        'Strokes Used': this.strokesUsed,
+                        'Hole': gameManager.gameStates.minigolf.round
+                    });
+                } else {
+                    showGameOver();
+                }
+            },
+
+            render() {
+                const ctx = this.ctx;
+                const state = gameManager.gameStates.minigolf;
+
+                // Clear canvas
+                ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+
+                // Draw grass background
+                this.drawGreen(ctx);
+
+                // Draw walls/obstacles
+                this.drawWalls(ctx);
+
+                // Draw hole
+                this.drawHole(ctx);
+
+                // Draw ball
+                this.drawBall(ctx, state.ballColor);
+
+                // Draw putter (only when ball not moving)
+                if (!this.ball.moving) {
+                    this.drawPutter(ctx);
+                }
+
+                // Draw HUD
+                this.drawHUD(ctx, state);
+            },
+
+            drawGreen(ctx) {
+                // Outer area
+                ctx.fillStyle = '#1a472a';
+                ctx.fillRect(0, 0, 800, 600);
+
+                // Putting green
+                ctx.fillStyle = '#228B22';
+                ctx.fillRect(100, 50, 600, 520);
+
+                // Subtle green texture
+                ctx.fillStyle = 'rgba(50, 160, 50, 0.3)';
+                for (let i = 0; i < 20; i++) {
+                    const x = 100 + Math.random() * 600;
+                    const y = 50 + Math.random() * 520;
+                    ctx.beginPath();
+                    ctx.arc(x, y, 2, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+            },
+
+            drawWalls(ctx) {
+                ctx.strokeStyle = '#5D4037';
+                ctx.lineWidth = 8;
+                ctx.lineCap = 'round';
+
+                for (const wall of this.walls) {
+                    ctx.beginPath();
+                    ctx.moveTo(wall.x1, wall.y1);
+                    ctx.lineTo(wall.x2, wall.y2);
+                    ctx.stroke();
+                }
+            },
+
+            drawHole(ctx) {
+                // Hole shadow/cup
+                ctx.fillStyle = '#000';
+                ctx.beginPath();
+                ctx.arc(this.hole.x, this.hole.y, this.hole.radius, 0, Math.PI * 2);
+                ctx.fill();
+
+                // Flag pole
+                ctx.strokeStyle = '#888';
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.moveTo(this.hole.x, this.hole.y);
+                ctx.lineTo(this.hole.x, this.hole.y - 45);
+                ctx.stroke();
+
+                // Flag
+                ctx.fillStyle = '#e74c3c';
+                ctx.beginPath();
+                ctx.moveTo(this.hole.x, this.hole.y - 45);
+                ctx.lineTo(this.hole.x + 20, this.hole.y - 38);
+                ctx.lineTo(this.hole.x, this.hole.y - 30);
+                ctx.closePath();
+                ctx.fill();
+            },
+
+            drawBall(ctx, colorId) {
+                const colors = { white: '#ffffff', orange: '#ff6b35' };
+                const color = colors[colorId] || '#ffffff';
+
+                // Ball shadow
+                ctx.fillStyle = 'rgba(0,0,0,0.3)';
+                ctx.beginPath();
+                ctx.ellipse(this.ball.x + 2, this.ball.y + 2, this.ball.radius, this.ball.radius * 0.6, 0, 0, Math.PI * 2);
+                ctx.fill();
+
+                // Ball
+                ctx.fillStyle = color;
+                ctx.beginPath();
+                ctx.arc(this.ball.x, this.ball.y, this.ball.radius, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.strokeStyle = '#333';
+                ctx.lineWidth = 1;
+                ctx.stroke();
+
+                // Highlight
+                ctx.fillStyle = 'rgba(255,255,255,0.6)';
+                ctx.beginPath();
+                ctx.arc(this.ball.x - 2, this.ball.y - 2, 3, 0, Math.PI * 2);
+                ctx.fill();
+            },
+
+            drawPutter(ctx) {
+                // Direction line (dotted)
+                const lineLen = 80;
+                const dirX = this.ball.x + Math.cos(this.putter.angle) * lineLen;
+                const dirY = this.ball.y + Math.sin(this.putter.angle) * lineLen;
+
+                ctx.strokeStyle = 'rgba(255,255,255,0.5)';
+                ctx.lineWidth = 2;
+                ctx.setLineDash([5, 5]);
+                ctx.beginPath();
+                ctx.moveTo(this.ball.x, this.ball.y);
+                ctx.lineTo(dirX, dirY);
+                ctx.stroke();
+                ctx.setLineDash([]);
+
+                // Putter (behind ball)
+                const putterX = this.ball.x - Math.cos(this.putter.angle) * 15;
+                const putterY = this.ball.y - Math.sin(this.putter.angle) * 15;
+                const putterEndX = this.ball.x - Math.cos(this.putter.angle) * (15 + this.putter.length);
+                const putterEndY = this.ball.y - Math.sin(this.putter.angle) * (15 + this.putter.length);
+
+                // Putter shaft
+                ctx.strokeStyle = '#666';
+                ctx.lineWidth = 4;
+                ctx.beginPath();
+                ctx.moveTo(putterX, putterY);
+                ctx.lineTo(putterEndX, putterEndY);
+                ctx.stroke();
+
+                // Putter head
+                ctx.fillStyle = '#444';
+                ctx.beginPath();
+                ctx.arc(putterX, putterY, 6, 0, Math.PI * 2);
+                ctx.fill();
+            },
+
+            drawHUD(ctx, state) {
+                // Background bar
+                ctx.fillStyle = 'rgba(0,0,0,0.5)';
+                ctx.fillRect(0, 0, 800, 40);
+
+                ctx.fillStyle = '#fff';
+                ctx.font = 'bold 18px Arial';
+                ctx.textAlign = 'left';
+                ctx.fillText(`Hole ${state.round}`, 20, 28);
+
+                ctx.textAlign = 'right';
+                ctx.fillText(`Strokes: ${state.resources}`, 780, 28);
+
+                ctx.textAlign = 'center';
+                ctx.fillText(`⛳ Math Mini Golf`, 400, 28);
+            },
+
+            handleKeyDown(e) {
+                if (!this.gameRunning) return;
+
+                const rotateSpeed = 0.06;
+
+                if (e.key === 'ArrowLeft') {
+                    e.preventDefault();
+                    if (!this.ball.moving) {
+                        this.putter.angle -= rotateSpeed;
+                    }
+                } else if (e.key === 'ArrowRight') {
+                    e.preventDefault();
+                    if (!this.ball.moving) {
+                        this.putter.angle += rotateSpeed;
+                    }
+                } else if (e.key === ' ') {
+                    e.preventDefault();
+                    if (!this.ball.moving && !this.power.charging) {
+                        this.power.charging = true;
+                        this.power.value = 0;
+                    }
+                }
+            },
+
+            handleKeyUp(e) {
+                if (e.key === ' ' && this.power.charging) {
+                    e.preventDefault();
+                    this.power.charging = false;
+                    if (this.power.value > 0.5) {
+                        this.putt();
+                    } else {
+                        this.power.value = 0;
+                        this.updatePowerMeter();
+                    }
+                }
+            },
+
+            cleanup() {
+                this.gameRunning = false;
+                if (this.animationId) {
+                    cancelAnimationFrame(this.animationId);
+                }
+            }
+        };
+
         // Add keyboard listener for fieldgoal game
         document.addEventListener('keydown', (e) => {
             if (currentGameType === 'fieldgoal') {
                 fieldgoalGame.handleKeyPress(e);
+            }
+        });
+
+        // Add keyboard listeners for minigolf game
+        document.addEventListener('keydown', (e) => {
+            if (currentGameType === 'minigolf') {
+                minigolfGame.handleKeyDown(e);
+            }
+        });
+
+        document.addEventListener('keyup', (e) => {
+            if (currentGameType === 'minigolf') {
+                minigolfGame.handleKeyUp(e);
             }
         });
 
