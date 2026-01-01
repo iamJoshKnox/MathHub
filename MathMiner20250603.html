@@ -683,7 +683,7 @@
         }
 
         function submitAnswer() {
-            const userAnswer = parseInt(document.getElementById('answerInput').value);
+            const userAnswer = parseInt(document.getElementById('answerInput').value, 10);
             if (userAnswer === gameState.currentProblem.answer) {
                 // Correct answer
                 showFeedback(true);

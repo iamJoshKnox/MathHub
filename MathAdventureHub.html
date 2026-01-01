@@ -2432,7 +2432,7 @@
             const state = gameManager.gameStates[currentGameType];
             const config = gameConfigs[currentGameType];
             const input = document.getElementById('answerInput');
-            const userAnswer = parseInt(input.value);
+            const userAnswer = parseInt(input.value, 10);
 
             if (isNaN(userAnswer)) return;
 
