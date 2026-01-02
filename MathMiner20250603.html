@@ -1214,9 +1214,53 @@
         }
 
         function canReachPosition(from, to) {
-            // Simple check - in a real implementation, we'd use pathfinding
-            // For now, just check if there's a clear path
-            return false; // Simplified - assume coins need digging to reach
+            // Use flood-fill algorithm to check if position is reachable without digging
+            const visited = new Set();
+            const queue = [{ x: from.x, y: from.y }];
+
+            while (queue.length > 0) {
+                const pos = queue.shift();
+                const key = `${pos.x},${pos.y}`;
+
+                // Skip if already visited
+                if (visited.has(key)) continue;
+                visited.add(key);
+
+                // Check if we reached the target
+                if (pos.x === to.x && pos.y === to.y) {
+                    return true;
+                }
+
+                // Check all 4 directions
+                const directions = [
+                    { x: 0, y: -1 }, // up
+                    { x: 0, y: 1 },  // down
+                    { x: -1, y: 0 }, // left
+                    { x: 1, y: 0 }   // right
+                ];
+
+                for (const dir of directions) {
+                    const newX = pos.x + dir.x;
+                    const newY = pos.y + dir.y;
+
+                    // Check bounds
+                    if (newX < 0 || newX >= GRID_WIDTH || newY < 0 || newY >= GRID_HEIGHT) {
+                        continue;
+                    }
+
+                    const terrain = gameState.terrain[newY][newX];
+
+                    // Can move through air or coin blocks
+                    if (terrain === TERRAIN_TYPES.AIR || terrain === TERRAIN_TYPES.COIN) {
+                        const newKey = `${newX},${newY}`;
+                        if (!visited.has(newKey)) {
+                            queue.push({ x: newX, y: newY });
+                        }
+                    }
+                }
+            }
+
+            return false; // No path found
         }
 
         function drawMiner(x, y) {
