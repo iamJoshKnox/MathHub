@@ -101,6 +101,16 @@
             color: white;
         }
 
+        .game-card.motorcycle {
+            background: linear-gradient(145deg, #c0392b, #e8f6f3);
+            color: white;
+        }
+
+        .game-card.snowball {
+            background: linear-gradient(145deg, #74b9ff, #dfe6e9);
+            color: #2d3436;
+        }
+
         .game-icon {
             font-size: 4em;
             margin-bottom: 15px;
@@ -732,6 +742,14 @@
             margin-top: 15px;
         }
 
+        .race-status {
+            text-align: center;
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-top: 15px;
+        }
+
         .coal-counter {
             display: flex;
             flex-direction: column;
@@ -773,7 +791,7 @@
             border-radius: 12px;
             padding: 15px 20px;
             margin: 0 auto 20px auto;
-            max-width: 600px;
+            max-width: 800px;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
         }
 
@@ -783,20 +801,20 @@
             justify-content: center;
             gap: 10px;
             margin: 8px 0;
-            flex-wrap: wrap;
+            flex-wrap: nowrap;
         }
 
         .config-label {
             font-size: 0.9em;
             color: #7f8c8d;
             font-weight: bold;
-            min-width: 70px;
+            min-width: 50px;
         }
 
         .config-tiles {
             display: flex;
             gap: 6px;
-            flex-wrap: wrap;
+            flex-wrap: nowrap;
             justify-content: center;
         }
 
@@ -1092,6 +1110,162 @@
                 font-size: 1.5em;
             }
         }
+
+        /* My Adventure Styles */
+        .adventure-button {
+            background: linear-gradient(145deg, #9b59b6, #8e44ad);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            padding: 12px 20px;
+            font-size: 1.2em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: inherit;
+        }
+
+        .adventure-button:hover {
+            background: linear-gradient(145deg, #8e44ad, #7d3c98);
+            transform: translateY(-2px);
+        }
+
+        .adventure-title {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 20px;
+        }
+
+        .adventure-tabs {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .adventure-tab {
+            background: #ecf0f1;
+            border: none;
+            padding: 12px 24px;
+            font-size: 1.1em;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: inherit;
+        }
+
+        .adventure-tab:hover {
+            background: #d5dbdb;
+        }
+
+        .adventure-tab.active {
+            background: linear-gradient(145deg, #3498db, #2980b9);
+            color: white;
+        }
+
+        .adventure-content {
+            margin-top: 20px;
+        }
+
+        .stats-filter {
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .stats-filter select {
+            padding: 8px 15px;
+            font-size: 1em;
+            border-radius: 8px;
+            border: 2px solid #3498db;
+            font-family: inherit;
+            cursor: pointer;
+        }
+
+        .stats-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        .stats-table th,
+        .stats-table td {
+            padding: 12px 8px;
+            text-align: center;
+            border-bottom: 1px solid #ecf0f1;
+        }
+
+        .stats-table th {
+            background: #2c3e50;
+            color: white;
+            font-weight: bold;
+        }
+
+        .stats-table th:first-child {
+            border-radius: 8px 0 0 0;
+        }
+
+        .stats-table th:last-child {
+            border-radius: 0 8px 0 0;
+        }
+
+        .stats-table tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+
+        .stats-table tr:hover {
+            background: #e8f4f8;
+        }
+
+        .stats-cell {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .stats-cell-row {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+        }
+
+        .stats-value {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .stats-label {
+            font-size: 0.75em;
+            color: #7f8c8d;
+        }
+
+        .stats-number {
+            font-weight: bold;
+            font-size: 1.1em;
+            color: #2c3e50;
+        }
+
+        .stats-stars {
+            color: #f1c40f;
+            font-size: 0.9em;
+            min-height: 1.2em;
+        }
+
+        .stats-empty {
+            color: #bdc3c7;
+        }
+
+        .mode-icon {
+            font-size: 1.8em;
+            display: block;
+            margin-bottom: 4px;
+        }
+
+        .game-icon {
+            font-size: 1.8em;
+            display: block;
+            margin-bottom: 4px;
+        }
     </style>
 </head>
 <body>
@@ -1114,6 +1288,7 @@
                     <div class="config-tile" data-value="coin" onclick="selectProblemType('coin')">🪙</div>
                     <div class="config-tile" data-value="change" onclick="selectProblemType('change')">💵</div>
                     <div class="config-tile" data-value="fractions" onclick="selectProblemType('fractions')">½</div>
+                    <div class="config-tile" data-value="hundred" onclick="selectProblemType('hundred')">💯</div>
                 </div>
             </div>
         </div>
@@ -1165,10 +1340,82 @@
                 <div class="game-title">Math Mini Golf</div>
                 <div class="game-description">Putt your way to victory! Solve problems to earn strokes and sink the ball.</div>
             </div>
+
+            <div class="game-card motorcycle" onclick="selectGame('motorcycle')">
+                <div class="game-icon">🏍️</div>
+                <div class="game-title">Math Racer</div>
+                <div class="game-description">Race to the finish! Earn turbo boosts and dodge the edges.</div>
+            </div>
+
+            <div class="game-card snowball" onclick="selectGame('snowball')">
+                <div class="game-icon">❄️</div>
+                <div class="game-title">Snowball Math</div>
+                <div class="game-description">Knock down snowmen! Solve problems to earn snowballs and take aim.</div>
+            </div>
         </div>
 
         <div class="global-settings">
             <button class="sound-toggle" id="globalSoundToggle" onclick="toggleGlobalSound()">🔊</button>
+            <button class="adventure-button" onclick="showMyAdventure()">📊 My Adventure</button>
+        </div>
+    </div>
+
+    <!-- My Adventure Screen -->
+    <div id="myAdventureScreen" class="container" style="display: none; max-width: 1000px;">
+        <button class="back-button" onclick="hideMyAdventure()">← Back to Hub</button>
+        <h2 class="adventure-title">📊 My Adventure</h2>
+
+        <!-- Tab Navigation -->
+        <div class="adventure-tabs">
+            <button class="adventure-tab active" id="mathProgressTab" onclick="showMathProgress()">🧮 Math Progress</button>
+            <button class="adventure-tab" id="gameProgressTab" onclick="showGameProgress()">🎮 Game Progress</button>
+        </div>
+
+        <!-- Math Progress Table -->
+        <div id="mathProgressContent" class="adventure-content">
+            <table class="stats-table">
+                <thead>
+                    <tr>
+                        <th>Mode</th>
+                        <th>Easy</th>
+                        <th>Medium</th>
+                        <th>Hard</th>
+                    </tr>
+                </thead>
+                <tbody id="mathProgressBody">
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Game Progress Table -->
+        <div id="gameProgressContent" class="adventure-content" style="display: none;">
+            <div class="stats-filter">
+                <label>Mode Filter: </label>
+                <select id="gameModeFilter" onchange="renderGameProgress()">
+                    <option value="">All Modes</option>
+                    <option value="addition">➕ Addition</option>
+                    <option value="subtraction">➖ Subtraction</option>
+                    <option value="multiplication">✖️ Multiplication</option>
+                    <option value="division">➗ Division</option>
+                    <option value="dice">🎲 Dice</option>
+                    <option value="coin">🪙 Coins</option>
+                    <option value="change">💵 Change</option>
+                    <option value="fractions">½ Fractions</option>
+                    <option value="hundred">💯 Hundred</option>
+                </select>
+            </div>
+            <table class="stats-table">
+                <thead>
+                    <tr>
+                        <th>Game</th>
+                        <th>Easy</th>
+                        <th>Medium</th>
+                        <th>Hard</th>
+                    </tr>
+                </thead>
+                <tbody id="gameProgressBody">
+                </tbody>
+            </table>
         </div>
     </div>
 
@@ -1511,6 +1758,28 @@
         </div>
     </div>
 
+    <!-- Motorcycle Game Container -->
+    <div id="motorcycleGame" class="container game-container" style="display: none;">
+        <button class="back-button" onclick="returnToHub()">← Back to Hub</button>
+
+        <!-- Race Phase (Action Phase) -->
+        <div id="motorcycleRacePhase" class="action-phase hidden">
+            <canvas id="motorcycleCanvas" class="game-canvas" width="800" height="600"></canvas>
+            <div class="race-status" id="raceStatus">← → to steer, SPACE for turbo</div>
+        </div>
+    </div>
+
+    <!-- Snowball Game Container -->
+    <div id="snowballGame" class="container game-container" style="display: none;">
+        <button class="back-button" onclick="returnToHub()">← Back to Hub</button>
+
+        <!-- Throw Phase (Action Phase) -->
+        <div id="snowballThrowPhase" class="action-phase hidden">
+            <canvas id="snowballCanvas" class="game-canvas" width="800" height="600"></canvas>
+            <div class="throw-status" id="throwStatus">Arrow keys to aim, hold SPACE for power</div>
+        </div>
+    </div>
+
     <script>
         // Global Audio System
         const sounds = {
@@ -1520,6 +1789,49 @@
             init() {
                 if (typeof AudioContext !== 'undefined') {
                     this.audioContext = new AudioContext();
+                }
+            },
+
+            // Engine sound system for motorcycle
+            engineOscillator: null,
+            engineGain: null,
+
+            startEngine() {
+                if (!this.enabled || !this.audioContext) return;
+                if (this.engineOscillator) return;  // Already running
+
+                this.engineOscillator = this.audioContext.createOscillator();
+                this.engineGain = this.audioContext.createGain();
+
+                this.engineOscillator.type = 'sawtooth';
+                this.engineOscillator.connect(this.engineGain);
+                this.engineGain.connect(this.audioContext.destination);
+
+                this.engineOscillator.frequency.setValueAtTime(80, this.audioContext.currentTime);
+                this.engineGain.gain.setValueAtTime(0.08, this.audioContext.currentTime);
+
+                this.engineOscillator.start();
+            },
+
+            updateEngine(speed) {
+                if (!this.engineOscillator || !this.engineGain) return;
+
+                // Map speed (5-12) to frequency (80-200 Hz) for engine pitch
+                const baseFreq = 80;
+                const freqRange = 120;
+                const freq = baseFreq + (speed - 5) * (freqRange / 7);
+                this.engineOscillator.frequency.setValueAtTime(Math.max(60, Math.min(200, freq)), this.audioContext.currentTime);
+
+                // Louder when boosting
+                const vol = speed > 7 ? 0.12 : 0.08;
+                this.engineGain.gain.setValueAtTime(vol, this.audioContext.currentTime);
+            },
+
+            stopEngine() {
+                if (this.engineOscillator) {
+                    this.engineOscillator.stop();
+                    this.engineOscillator = null;
+                    this.engineGain = null;
                 }
             },
 
@@ -1823,6 +2135,7 @@
                     case 'coin': return this.generateCoin(params);
                     case 'change': return this.generateChange(params);
                     case 'fractions': return this.generateFractions(params);
+                    case 'hundred': return this.generateHundred(params);
                     default: return this.generateAddition(params);
                 }
             },
@@ -1929,6 +2242,15 @@
                 const whole = den * (Math.floor(Math.random() * Math.floor(params.fracMax / den)) + 1);
                 const answer = (whole * num) / den;
                 return { question: `${num}/${den} of ${whole}`, answer, expectedDigits: answer.toString().length };
+            },
+
+            generateHundred(params) {
+                // 100 - X = ? problems
+                // Easy: subtract 1-10, Medium: subtract 1-30, Hard: subtract 1-50
+                const subtractMax = params.addMax <= 10 ? 10 : params.addMax <= 20 ? 30 : 50;
+                const b = Math.floor(Math.random() * subtractMax) + 1;
+                const answer = 100 - b;
+                return { question: `100 − ${b}`, answer, expectedDigits: answer.toString().length };
             }
         };
 
@@ -1945,7 +2267,9 @@
                 miner: { round: 1, score: 0, phase: 'start', resources: 0, minerColor: 'red', devMode: false, totalCoinsCollected: 0 },
                 plane: { round: 1, score: 0, phase: 'start', resources: 0, airplaneType: 'red', devMode: false, totalDistance: 0 },
                 fieldgoal: { round: 1, score: 0, phase: 'start', resources: 0, teamColor: 'red', devMode: false, totalFieldGoalsMade: 0 },
-                minigolf: { round: 1, score: 0, phase: 'start', resources: 0, ballColor: 'white', devMode: false, totalHolesCompleted: 0 }
+                minigolf: { round: 1, score: 0, phase: 'start', resources: 0, ballColor: 'white', devMode: false, totalHolesCompleted: 0 },
+                motorcycle: { round: 1, score: 0, phase: 'start', resources: 0, bikeColor: 'red', devMode: false, totalDistanceTraveled: 0 },
+                snowball: { round: 1, score: 0, phase: 'start', resources: 0, teamColor: 'red', devMode: false, totalSnowmenHit: 0 }
             }
         };
 
@@ -2190,6 +2514,346 @@
                     { key: 'score', label: 'Math Score', color: '#3498db' },
                     { key: 'totalHolesCompleted', label: 'Holes Completed', color: '#f39c12' }
                 ]
+            },
+
+            motorcycle: {
+                id: 'motorcycle',
+                title: 'Math Racer',
+                icon: '🏍️',
+                themeColor: '#c0392b',
+
+                selectionPrompt: 'Choose your bike!',
+                options: [
+                    { id: 'red', name: 'Red Rocket', color: '#e74c3c' },
+                    { id: 'blue', name: 'Blue Blaze', color: '#3498db' }
+                ],
+                selectionKey: 'bikeColor',
+                drawPreview: (canvas, colorId) => {
+                    const ctx = canvas.getContext('2d');
+                    ctx.clearRect(0, 0, 150, 150);
+                    const colors = { red: '#e74c3c', blue: '#3498db' };
+                    const color = colors[colorId] || '#e74c3c';
+                    const darkerColor = colorId === 'blue' ? '#2980b9' : '#c0392b';
+
+                    ctx.save();
+                    ctx.translate(75, 75);  // Center of preview
+                    ctx.scale(1.8, 1.8);    // Scale up for preview
+
+                    // Front wheel
+                    ctx.fillStyle = '#222';
+                    ctx.beginPath();
+                    ctx.ellipse(0, -18, 8, 5, 0, 0, Math.PI * 2);
+                    ctx.fill();
+
+                    // Rear wheel
+                    ctx.beginPath();
+                    ctx.ellipse(0, 20, 9, 6, 0, 0, Math.PI * 2);
+                    ctx.fill();
+
+                    // Bike body (rounded)
+                    ctx.fillStyle = color;
+                    ctx.beginPath();
+                    ctx.moveTo(-10, -12);
+                    ctx.quadraticCurveTo(-12, 0, -10, 15);
+                    ctx.lineTo(-6, 18);
+                    ctx.lineTo(6, 18);
+                    ctx.lineTo(10, 15);
+                    ctx.quadraticCurveTo(12, 0, 10, -12);
+                    ctx.lineTo(6, -15);
+                    ctx.lineTo(-6, -15);
+                    ctx.closePath();
+                    ctx.fill();
+
+                    // Fuel tank
+                    ctx.fillStyle = darkerColor;
+                    ctx.beginPath();
+                    ctx.ellipse(0, 2, 7, 5, 0, 0, Math.PI * 2);
+                    ctx.fill();
+
+                    // Windshield
+                    ctx.fillStyle = '#87CEEB';
+                    ctx.beginPath();
+                    ctx.moveTo(-6, -14);
+                    ctx.quadraticCurveTo(0, -20, 6, -14);
+                    ctx.lineTo(4, -10);
+                    ctx.lineTo(-4, -10);
+                    ctx.closePath();
+                    ctx.fill();
+
+                    // Handlebars
+                    ctx.strokeStyle = '#333';
+                    ctx.lineWidth = 3;
+                    ctx.beginPath();
+                    ctx.moveTo(-12, -8);
+                    ctx.lineTo(-8, -10);
+                    ctx.moveTo(8, -10);
+                    ctx.lineTo(12, -8);
+                    ctx.stroke();
+
+                    // Exhaust
+                    ctx.fillStyle = '#666';
+                    ctx.fillRect(8, 10, 6, 3);
+
+                    // Rider helmet
+                    ctx.fillStyle = '#222';
+                    ctx.beginPath();
+                    ctx.arc(0, -6, 6, 0, Math.PI * 2);
+                    ctx.fill();
+                    // Visor
+                    ctx.fillStyle = '#4a90d9';
+                    ctx.beginPath();
+                    ctx.arc(0, -5, 4, -0.3, Math.PI + 0.3);
+                    ctx.fill();
+                    // Body
+                    ctx.fillStyle = '#333';
+                    ctx.beginPath();
+                    ctx.ellipse(0, 4, 5, 7, 0, 0, Math.PI * 2);
+                    ctx.fill();
+
+                    ctx.restore();
+                },
+
+                mathTitle: 'Turbo Charge',
+                resourceName: 'Turbos',
+                resourceIcon: '⚡',
+                pointClass: 'turbo-point',
+
+                actionPhaseId: 'motorcycleRacePhase',
+                startAction: () => motorcycleGame.startRacePhase(),
+                gameObject: () => motorcycleGame,
+
+                gameOverTitle: 'Race Over!',
+                gameOverIcon: '🏍️',
+                playAgainText: 'Race Again!',
+                startButtonText: 'Start Engine!',
+                stats: [
+                    { key: 'round', label: 'Tracks Completed', color: '#c0392b' },
+                    { key: 'score', label: 'Math Score', color: '#3498db' },
+                    { key: 'totalDistanceTraveled', label: 'Total Distance', color: '#f39c12' }
+                ]
+            },
+
+            snowball: {
+                id: 'snowball',
+                title: 'Snowball Math',
+                icon: '❄️',
+                themeColor: '#74b9ff',
+
+                selectionPrompt: 'Choose your team!',
+                options: [
+                    { id: 'red', name: 'Red Team', color: '#e74c3c' },
+                    { id: 'blue', name: 'Blue Team', color: '#3498db' }
+                ],
+                selectionKey: 'teamColor',
+                drawPreview: (canvas, colorId) => {
+                    const ctx = canvas.getContext('2d');
+                    ctx.clearRect(0, 0, 150, 150);
+                    const scarfColor = colorId === 'blue' ? '#3498db' : '#e74c3c';
+
+                    ctx.save();
+                    ctx.translate(75, 85);
+
+                    // Bottom ball
+                    ctx.fillStyle = '#fff';
+                    ctx.beginPath();
+                    ctx.arc(0, 25, 22, 0, Math.PI * 2);
+                    ctx.fill();
+                    ctx.strokeStyle = '#ddd';
+                    ctx.lineWidth = 2;
+                    ctx.stroke();
+
+                    // Middle ball
+                    ctx.beginPath();
+                    ctx.arc(0, 0, 16, 0, Math.PI * 2);
+                    ctx.fill();
+                    ctx.stroke();
+
+                    // Head
+                    ctx.beginPath();
+                    ctx.arc(0, -22, 12, 0, Math.PI * 2);
+                    ctx.fill();
+                    ctx.stroke();
+
+                    // Top hat
+                    ctx.fillStyle = '#222';
+                    ctx.fillRect(-10, -42, 20, 6);
+                    ctx.fillRect(-7, -58, 14, 18);
+
+                    // Carrot nose
+                    ctx.fillStyle = '#e67e22';
+                    ctx.beginPath();
+                    ctx.moveTo(0, -22);
+                    ctx.lineTo(12, -20);
+                    ctx.lineTo(0, -18);
+                    ctx.closePath();
+                    ctx.fill();
+
+                    // Eyes
+                    ctx.fillStyle = '#222';
+                    ctx.beginPath();
+                    ctx.arc(-4, -26, 2, 0, Math.PI * 2);
+                    ctx.arc(4, -26, 2, 0, Math.PI * 2);
+                    ctx.fill();
+
+                    // Scarf
+                    ctx.fillStyle = scarfColor;
+                    ctx.fillRect(-12, -10, 24, 6);
+                    ctx.fillRect(8, -10, 6, 18);
+
+                    // Stick arms
+                    ctx.strokeStyle = '#654321';
+                    ctx.lineWidth = 3;
+                    ctx.beginPath();
+                    ctx.moveTo(-16, 0);
+                    ctx.lineTo(-32, -10);
+                    ctx.moveTo(16, 0);
+                    ctx.lineTo(32, -8);
+                    ctx.stroke();
+
+                    ctx.restore();
+                },
+
+                mathTitle: 'Snowball Time',
+                resourceName: 'Snowballs',
+                resourceIcon: '⛄',
+                pointClass: 'snowball-point',
+
+                actionPhaseId: 'snowballThrowPhase',
+                startAction: () => snowballGame.startThrowPhase(),
+                gameObject: () => snowballGame,
+
+                gameOverTitle: 'Game Over!',
+                gameOverIcon: '❄️',
+                playAgainText: 'Play Again!',
+                startButtonText: 'Let it Snow!',
+                stats: [
+                    { key: 'round', label: 'Rounds Completed', color: '#74b9ff' },
+                    { key: 'score', label: 'Math Score', color: '#3498db' },
+                    { key: 'totalSnowmenHit', label: 'Snowmen Hit', color: '#00b894' }
+                ]
+            }
+        };
+
+        // ===== STORAGE MANAGER =====
+        const storageManager = {
+            STORAGE_KEY: 'mathAdventureStats',
+            VERSION: 1,
+
+            // Get default empty stats object
+            getDefaultStats() {
+                return { highScore: 0, totalScore: 0, highestLevel: 0, totalLevels: 0 };
+            },
+
+            // Load stats from localStorage
+            load() {
+                try {
+                    const data = localStorage.getItem(this.STORAGE_KEY);
+                    if (data) {
+                        const parsed = JSON.parse(data);
+                        if (parsed.version === this.VERSION) {
+                            return parsed;
+                        }
+                    }
+                } catch (e) {
+                    console.warn('Failed to load stats:', e);
+                }
+                return { version: this.VERSION, stats: {} };
+            },
+
+            // Save stats to localStorage
+            save(data) {
+                try {
+                    localStorage.setItem(this.STORAGE_KEY, JSON.stringify(data));
+                } catch (e) {
+                    console.warn('Failed to save stats:', e);
+                }
+            },
+
+            // Get stat key for a game/mode/difficulty combination
+            getStatKey(game, mode, difficulty) {
+                return `${game}_${mode}_${difficulty}`;
+            },
+
+            // Get stats for a specific combination
+            getStats(game, mode, difficulty) {
+                const data = this.load();
+                const key = this.getStatKey(game, mode, difficulty);
+                return data.stats[key] || this.getDefaultStats();
+            },
+
+            // Update stats after a game ends
+            updateStats(game, mode, difficulty, score, level) {
+                const data = this.load();
+                const key = this.getStatKey(game, mode, difficulty);
+                const current = data.stats[key] || this.getDefaultStats();
+
+                // Update math progress stats
+                if (score > current.highScore) {
+                    current.highScore = score;
+                }
+                current.totalScore += score;
+
+                // Update game progress stats
+                if (level > current.highestLevel) {
+                    current.highestLevel = level;
+                }
+                current.totalLevels += level;
+
+                data.stats[key] = current;
+                this.save(data);
+            },
+
+            // Get all stats
+            getAllStats() {
+                return this.load().stats;
+            },
+
+            // Get stars for a score/level based on type
+            getStars(value, type) {
+                if (value === 0) return '';
+
+                const thresholds = {
+                    highScore: [1, 10, 20],      // 1-9=1star, 10-19=2stars, 20+=3stars
+                    totalScore: [1, 50, 100],    // 1-49=1star, 50-99=2stars, 100+=3stars
+                    highestLevel: [1, 4, 7],     // 1-3=1star, 4-6=2stars, 7+=3stars
+                    totalLevels: [1, 16, 31]     // 1-15=1star, 16-30=2stars, 31+=3stars
+                };
+
+                const [min1, min2, min3] = thresholds[type] || [1, 10, 20];
+                if (value >= min3) return '⭐⭐⭐';
+                if (value >= min2) return '⭐⭐';
+                if (value >= min1) return '⭐';
+                return '';
+            },
+
+            // Aggregate stats across games for a mode/difficulty (for Math Progress)
+            aggregateMathStats(mode, difficulty) {
+                const games = ['castle', 'express', 'miner', 'plane', 'fieldgoal', 'minigolf', 'motorcycle', 'snowball'];
+                let highScore = 0, totalScore = 0;
+
+                games.forEach(game => {
+                    const stats = this.getStats(game, mode, difficulty);
+                    if (stats.highScore > highScore) highScore = stats.highScore;
+                    totalScore += stats.totalScore;
+                });
+
+                return { highScore, totalScore };
+            },
+
+            // Aggregate stats across modes for a game/difficulty (for Game Progress)
+            aggregateGameStats(game, difficulty, modeFilter = null) {
+                const modes = ['addition', 'subtraction', 'multiplication', 'division', 'dice', 'coin', 'change', 'fractions', 'hundred'];
+                const modesToCheck = modeFilter ? [modeFilter] : modes;
+
+                let highestLevel = 0, totalLevels = 0;
+
+                modesToCheck.forEach(mode => {
+                    const stats = this.getStats(game, mode, difficulty);
+                    if (stats.highestLevel > highestLevel) highestLevel = stats.highestLevel;
+                    totalLevels += stats.totalLevels;
+                });
+
+                return { highestLevel, totalLevels };
             }
         };
 
@@ -2529,17 +3193,35 @@
         // Start next round
         function startNextRound() {
             sounds.playButtonClick();
+            const config = gameConfigs[currentGameType];
             const state = gameManager.gameStates[currentGameType];
             state.round++;
 
             document.getElementById('roundCompleteScreen').classList.add('hidden');
-            startMathPhase();
+
+            // In dev mode, skip math phase and go directly to action phase
+            // Resources carry over from the previous round
+            if (state.devMode) {
+                state.phase = 'action';
+                config.startAction();
+            } else {
+                startMathPhase();
+            }
         }
 
         // Show game over screen
         function showGameOver() {
             const config = gameConfigs[currentGameType];
             const state = gameManager.gameStates[currentGameType];
+
+            // Save stats to localStorage
+            storageManager.updateStats(
+                currentGameType,
+                gameManager.mathSettings.problemType,
+                gameManager.mathSettings.difficulty,
+                state.score,
+                state.round
+            );
 
             // Hide game container, show shared container
             const gameElement = document.getElementById(currentGameType + 'Game');
@@ -2649,6 +3331,151 @@
             document.getElementById('gameHub').classList.add('active');
             gameManager.currentGame = null;
             currentGameType = null;
+        }
+
+        // ===== MY ADVENTURE FUNCTIONS =====
+
+        function showMyAdventure() {
+            sounds.playButtonClick();
+            document.getElementById('gameHub').style.display = 'none';
+            document.getElementById('myAdventureScreen').style.display = 'block';
+            renderMathProgress();
+        }
+
+        function hideMyAdventure() {
+            sounds.playButtonClick();
+            document.getElementById('myAdventureScreen').style.display = 'none';
+            document.getElementById('gameHub').style.display = 'block';
+        }
+
+        function showMathProgress() {
+            document.getElementById('mathProgressTab').classList.add('active');
+            document.getElementById('gameProgressTab').classList.remove('active');
+            document.getElementById('mathProgressContent').style.display = 'block';
+            document.getElementById('gameProgressContent').style.display = 'none';
+            renderMathProgress();
+        }
+
+        function showGameProgress() {
+            document.getElementById('mathProgressTab').classList.remove('active');
+            document.getElementById('gameProgressTab').classList.add('active');
+            document.getElementById('mathProgressContent').style.display = 'none';
+            document.getElementById('gameProgressContent').style.display = 'block';
+            renderGameProgress();
+        }
+
+        function renderMathProgress() {
+            const modes = [
+                { id: 'addition', icon: '➕', name: 'Addition' },
+                { id: 'subtraction', icon: '➖', name: 'Subtraction' },
+                { id: 'multiplication', icon: '✖️', name: 'Multiplication' },
+                { id: 'division', icon: '➗', name: 'Division' },
+                { id: 'dice', icon: '🎲', name: 'Dice' },
+                { id: 'coin', icon: '🪙', name: 'Coins' },
+                { id: 'change', icon: '💵', name: 'Change' },
+                { id: 'fractions', icon: '½', name: 'Fractions' },
+                { id: 'hundred', icon: '💯', name: 'Hundred' }
+            ];
+            const difficulties = ['easy', 'medium', 'hard'];
+
+            const tbody = document.getElementById('mathProgressBody');
+            tbody.innerHTML = '';
+
+            modes.forEach(mode => {
+                const row = document.createElement('tr');
+
+                // Mode column
+                const modeCell = document.createElement('td');
+                modeCell.innerHTML = `<span class="mode-icon">${mode.icon}</span>${mode.name}`;
+                row.appendChild(modeCell);
+
+                // Difficulty columns
+                difficulties.forEach(diff => {
+                    const stats = storageManager.aggregateMathStats(mode.id, diff);
+                    const cell = document.createElement('td');
+
+                    if (stats.highScore === 0 && stats.totalScore === 0) {
+                        cell.innerHTML = '<span class="stats-empty">—</span>';
+                    } else {
+                        cell.innerHTML = `
+                            <div class="stats-cell">
+                                <div class="stats-cell-row">
+                                    <div class="stats-value">
+                                        <span class="stats-label">High Score</span>
+                                        <span class="stats-number">${stats.highScore}</span>
+                                        <span class="stats-stars">${storageManager.getStars(stats.highScore, 'highScore')}</span>
+                                    </div>
+                                    <div class="stats-value">
+                                        <span class="stats-label">Total Score</span>
+                                        <span class="stats-number">${stats.totalScore}</span>
+                                        <span class="stats-stars">${storageManager.getStars(stats.totalScore, 'totalScore')}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    }
+                    row.appendChild(cell);
+                });
+
+                tbody.appendChild(row);
+            });
+        }
+
+        function renderGameProgress() {
+            const games = [
+                { id: 'castle', icon: '🏰', name: 'Math Castle' },
+                { id: 'express', icon: '🚂', name: 'Math Express' },
+                { id: 'miner', icon: '⛏️', name: 'Math Miner' },
+                { id: 'plane', icon: '✈️', name: 'Math Plane' },
+                { id: 'fieldgoal', icon: '🏈', name: 'Field Goals' },
+                { id: 'minigolf', icon: '⛳', name: 'Mini Golf' },
+                { id: 'motorcycle', icon: '🏍️', name: 'Math Racer' },
+                { id: 'snowball', icon: '❄️', name: 'Snowball Math' }
+            ];
+            const difficulties = ['easy', 'medium', 'hard'];
+            const modeFilter = document.getElementById('gameModeFilter').value || null;
+
+            const tbody = document.getElementById('gameProgressBody');
+            tbody.innerHTML = '';
+
+            games.forEach(game => {
+                const row = document.createElement('tr');
+
+                // Game column
+                const gameCell = document.createElement('td');
+                gameCell.innerHTML = `<span class="game-icon">${game.icon}</span>${game.name}`;
+                row.appendChild(gameCell);
+
+                // Difficulty columns
+                difficulties.forEach(diff => {
+                    const stats = storageManager.aggregateGameStats(game.id, diff, modeFilter);
+                    const cell = document.createElement('td');
+
+                    if (stats.highestLevel === 0 && stats.totalLevels === 0) {
+                        cell.innerHTML = '<span class="stats-empty">—</span>';
+                    } else {
+                        cell.innerHTML = `
+                            <div class="stats-cell">
+                                <div class="stats-cell-row">
+                                    <div class="stats-value">
+                                        <span class="stats-label">Highest Level</span>
+                                        <span class="stats-number">${stats.highestLevel}</span>
+                                        <span class="stats-stars">${storageManager.getStars(stats.highestLevel, 'highestLevel')}</span>
+                                    </div>
+                                    <div class="stats-value">
+                                        <span class="stats-label">Total Levels</span>
+                                        <span class="stats-number">${stats.totalLevels}</span>
+                                        <span class="stats-stars">${storageManager.getStars(stats.totalLevels, 'totalLevels')}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    }
+                    row.appendChild(cell);
+                });
+
+                tbody.appendChild(row);
+            });
         }
 
         // Shared function for visual point displays with gap for grouping by 5s
@@ -7037,6 +7864,2139 @@
             }
         };
 
+        // ===== MOTORCYCLE RACING GAME =====
+        const motorcycleGame = {
+            canvas: null,
+            ctx: null,
+            animationId: null,
+            gameRunning: false,
+
+            // Bike state
+            bike: {
+                x: 400,
+                y: 450,
+                width: 30,
+                height: 50,
+                speed: 5,
+                lateralSpeed: 0,
+                jumping: false,
+                jumpScale: 1.0,
+                jumpTimer: 0
+            },
+
+            // Track state
+            track: {
+                scrollY: 0,
+                roadCenterX: 400,
+                roadWidth: 300,
+                sandWidth: 80,
+                segments: [],
+                segmentLength: 100,
+                curveIntensity: 0.5
+            },
+
+            // Ramps on track
+            ramps: [],
+
+            // Game tracking
+            distance: 0,
+            targetDistance: 1000,
+            timeRemaining: 30,
+            timerInterval: null,
+
+            // Boost state
+            boost: {
+                active: false,
+                timer: 0,
+                duration: 0,
+                multiplier: 1.0,
+                targetMultiplier: 1.0,  // For smooth ramping
+                rampSpeed: 0.03         // How fast to ramp up/down
+            },
+
+            init() {
+                this.canvas = document.getElementById('motorcycleCanvas');
+                this.ctx = this.canvas.getContext('2d');
+            },
+
+            startRacePhase() {
+                const state = gameManager.gameStates.motorcycle;
+
+                // Hide shared container, show motorcycle game
+                document.getElementById('sharedGameContainer').style.display = 'none';
+                document.getElementById('motorcycleGame').style.display = 'block';
+                document.getElementById('motorcycleRacePhase').classList.remove('hidden');
+
+                this.init();
+                this.setupTrack(state.round);
+                this.resetBike();
+                this.distance = 0;
+                this.boost = { active: false, timer: 0, duration: 0, multiplier: 1.0, targetMultiplier: 1.0, rampSpeed: 0.03 };
+
+                // Timer in milliseconds for precision
+                this.timeRemaining = 30000;
+                this.lastFrameTime = performance.now();
+
+                this.gameRunning = true;
+                sounds.startEngine();
+                this.gameLoop();
+            },
+
+            resetBike() {
+                this.bike = {
+                    x: 400,
+                    y: 450,
+                    width: 30,
+                    height: 50,
+                    speed: 5,
+                    lateralSpeed: 0,
+                    jumping: false,
+                    jumpScale: 1.0,
+                    jumpTimer: 0,
+                    lean: 0,           // Lean angle for steering
+                    wheelRotation: 0,  // Wheel spin animation
+                    trail: []          // Trail particles for boost
+                };
+                this.screenShake = { x: 0, y: 0, intensity: 0 };
+            },
+
+            setupTrack(round) {
+                // Set target distance (increases each round)
+                // Base speed 5 * 60fps = 300 units/sec, so 9000 = 30 seconds
+                // Each round adds 1500m, requiring boosts to finish in time
+                this.targetDistance = 9000 + (round - 1) * 1500;
+
+                // Set curve intensity (increases each round)
+                this.track.curveIntensity = 0.3 + (round - 1) * 0.15;
+
+                // Generate road segments with curves
+                this.generateTrackSegments();
+
+                // Place ramps on track
+                this.generateRamps(round);
+            },
+
+            generateTrackSegments() {
+                this.track.segments = [];
+                let currentX = 400;
+
+                for (let i = 0; i < 300; i++) {
+                    // Sine wave for road curves
+                    const curveOffset = Math.sin(i * 0.08) * this.track.curveIntensity * 150;
+                    currentX = 400 + curveOffset;
+
+                    this.track.segments.push({
+                        y: i * this.track.segmentLength,
+                        centerX: currentX
+                    });
+                }
+            },
+
+            generateRamps(round) {
+                this.ramps = [];
+                // More ramps spread across the longer track
+                const rampCount = 4 + round;
+                const spacing = Math.floor(this.targetDistance / (rampCount + 1));
+
+                for (let i = 0; i < rampCount; i++) {
+                    this.ramps.push({
+                        y: spacing * (i + 1) + (Math.random() - 0.5) * 300,
+                        offsetX: (Math.random() - 0.5) * 100,
+                        width: 60,
+                        height: 40,
+                        hit: false
+                    });
+                }
+            },
+
+            gameLoop() {
+                if (!this.gameRunning) return;
+
+                // Calculate delta time for accurate timing
+                const now = performance.now();
+                const deltaTime = now - this.lastFrameTime;
+                this.lastFrameTime = now;
+
+                // Update countdown timer
+                this.timeRemaining -= deltaTime;
+                if (this.timeRemaining <= 0) {
+                    this.timeRemaining = 0;
+                    this.endRound(false);
+                    return;
+                }
+
+                this.update();
+                this.render();
+
+                this.animationId = requestAnimationFrame(() => this.gameLoop());
+            },
+
+            update() {
+                // Update boost timer and smooth ramping
+                if (this.boost.active) {
+                    this.boost.timer -= 16;
+                    if (this.boost.timer <= 0) {
+                        this.boost.active = false;
+                        this.boost.targetMultiplier = 1.0;  // Start ramping down
+                    }
+                }
+
+                // Smooth ramp multiplier toward target
+                if (this.boost.multiplier < this.boost.targetMultiplier) {
+                    this.boost.multiplier = Math.min(this.boost.multiplier + this.boost.rampSpeed, this.boost.targetMultiplier);
+                } else if (this.boost.multiplier > this.boost.targetMultiplier) {
+                    this.boost.multiplier = Math.max(this.boost.multiplier - this.boost.rampSpeed, this.boost.targetMultiplier);
+                }
+
+                // Update jump animation
+                if (this.bike.jumping) {
+                    this.bike.jumpTimer -= 16;
+                    // Scale up then down during jump
+                    const progress = 1 - (this.bike.jumpTimer / 1000);
+                    this.bike.jumpScale = 1.0 + 0.5 * Math.sin(progress * Math.PI);
+
+                    if (this.bike.jumpTimer <= 0) {
+                        this.bike.jumping = false;
+                        this.bike.jumpScale = 1.0;
+                    }
+                }
+
+                // Calculate current speed
+                let speed = this.bike.speed * this.boost.multiplier;
+
+                // Update engine sound based on speed
+                sounds.updateEngine(speed);
+
+                // Check terrain under bike (only if not jumping)
+                if (!this.bike.jumping) {
+                    const terrain = this.getTerrainAtBike();
+                    if (terrain === 'sand') {
+                        speed *= 0.5;
+                    } else if (terrain === 'edge') {
+                        this.crash();
+                        return;
+                    }
+                }
+
+                // Update distance
+                this.distance += speed;
+
+                // Scroll track
+                this.track.scrollY += speed;
+
+                // Check for ramp collisions
+                if (!this.bike.jumping) {
+                    this.checkRampCollisions();
+                }
+
+                // Check win condition
+                if (this.distance >= this.targetDistance) {
+                    this.endRound(true);
+                }
+
+                // Update wheel rotation based on speed
+                this.bike.wheelRotation += speed * 0.3;
+
+                // Update trail particles when boosting
+                if (this.boost.active || this.boost.multiplier > 1.1) {
+                    this.bike.trail.push({
+                        x: this.bike.x + (Math.random() - 0.5) * 10,
+                        y: this.bike.y + 25,
+                        life: 20,
+                        size: 3 + Math.random() * 3
+                    });
+                }
+                // Fade and remove old trail particles
+                this.bike.trail = this.bike.trail.filter(p => {
+                    p.life--;
+                    p.y += 2;
+                    return p.life > 0;
+                });
+
+                // Update screen shake
+                if (this.screenShake.intensity > 0) {
+                    this.screenShake.x = (Math.random() - 0.5) * this.screenShake.intensity;
+                    this.screenShake.y = (Math.random() - 0.5) * this.screenShake.intensity;
+                    this.screenShake.intensity *= 0.9;
+                    if (this.screenShake.intensity < 0.5) {
+                        this.screenShake.intensity = 0;
+                        this.screenShake.x = 0;
+                        this.screenShake.y = 0;
+                    }
+                }
+            },
+
+            getTerrainAtBike() {
+                // Find current road segment
+                const segmentIndex = Math.floor(this.distance / this.track.segmentLength);
+                const segment = this.track.segments[segmentIndex % this.track.segments.length];
+
+                const roadLeft = segment.centerX - this.track.roadWidth / 2;
+                const roadRight = segment.centerX + this.track.roadWidth / 2;
+                const sandLeft = roadLeft - this.track.sandWidth;
+                const sandRight = roadRight + this.track.sandWidth;
+
+                if (this.bike.x >= roadLeft && this.bike.x <= roadRight) {
+                    return 'road';
+                } else if (this.bike.x >= sandLeft && this.bike.x <= sandRight) {
+                    return 'sand';
+                } else {
+                    return 'edge';
+                }
+            },
+
+            checkRampCollisions() {
+                for (const ramp of this.ramps) {
+                    const distanceToRamp = ramp.y - this.distance;
+                    // Ramp peak screen Y = 600 - distanceToRamp - 10
+                    // Bike front is at screen Y = 430 (bike.y - 20)
+                    // Trigger when bike front reaches ramp peak: distanceToRamp ≈ 160
+                    if (distanceToRamp > 140 && distanceToRamp < 180) {
+                        // Check X collision with ramp
+                        const segmentIndex = Math.floor(ramp.y / this.track.segmentLength);
+                        const segment = this.track.segments[segmentIndex % this.track.segments.length];
+                        const rampX = segment.centerX + ramp.offsetX;
+
+                        if (Math.abs(this.bike.x - rampX) < 40 && !ramp.hit) {
+                            ramp.hit = true;
+                            this.triggerJump();
+                        }
+                    }
+                }
+            },
+
+            triggerJump() {
+                this.bike.jumping = true;
+                this.bike.jumpTimer = 1000;
+
+                // If turbo is active during jump, extend to superboost
+                if (this.boost.active) {
+                    this.boost.timer = 2000;  // 2 second superboost
+                    this.boost.targetMultiplier = 2.2;
+                } else {
+                    // Normal ramp boost
+                    this.boost.active = true;
+                    this.boost.timer = 1000;  // 1 second boost
+                    this.boost.targetMultiplier = 1.8;
+                }
+
+                sounds.playCorrect();
+            },
+
+            activateTurbo() {
+                const state = gameManager.gameStates.motorcycle;
+                if (state.resources <= 0 || this.boost.active) return;
+
+                state.resources--;
+                this.boost.active = true;
+                this.boost.timer = 1000;  // 1 second turbo boost
+                this.boost.targetMultiplier = 1.8;
+
+                sounds.playButtonClick();
+            },
+
+            crash() {
+                this.gameRunning = false;
+                sounds.playIncorrect();
+                setTimeout(() => this.endRound(false), 500);
+            },
+
+            endRound(success) {
+                this.gameRunning = false;
+                sounds.stopEngine();
+                if (this.animationId) {
+                    cancelAnimationFrame(this.animationId);
+                }
+
+                const state = gameManager.gameStates.motorcycle;
+                state.totalDistanceTraveled += Math.floor(this.distance);
+
+                // Hide motorcycle game, show shared container
+                document.getElementById('motorcycleRacePhase').classList.add('hidden');
+                document.getElementById('motorcycleGame').style.display = 'none';
+                document.getElementById('sharedGameContainer').style.display = 'block';
+
+                if (success) {
+                    const secondsLeft = (this.timeRemaining / 1000).toFixed(1);
+                    showRoundComplete({
+                        'Distance': Math.floor(this.distance) + 'm',
+                        'Time Left': secondsLeft + 's',
+                        'Track': state.round
+                    });
+                } else {
+                    showGameOver();
+                }
+            },
+
+            render() {
+                const ctx = this.ctx;
+                ctx.clearRect(0, 0, 800, 600);
+
+                // Apply screen shake
+                ctx.save();
+                ctx.translate(this.screenShake.x, this.screenShake.y);
+
+                this.drawTrack(ctx);
+                this.drawFinishLine(ctx);
+                this.drawRamps(ctx);
+                this.drawTrail(ctx);
+                this.drawBike(ctx);
+                this.drawSpeedLines(ctx);
+
+                ctx.restore();
+
+                // HUD drawn without shake
+                this.drawHUD(ctx);
+                this.drawSpeedometer(ctx);
+            },
+
+            drawTrail(ctx) {
+                for (const p of this.bike.trail) {
+                    const alpha = p.life / 20;
+                    ctx.fillStyle = `rgba(255, 150, 50, ${alpha * 0.6})`;
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, p.size * alpha, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+            },
+
+            drawSpeedLines(ctx) {
+                const speed = this.bike.speed * this.boost.multiplier;
+                if (speed < 7) return;  // Only show at higher speeds
+
+                const intensity = (speed - 7) / 8;  // 0 to 1 based on speed
+                const lineCount = Math.floor(intensity * 10) + 3;
+
+                ctx.strokeStyle = `rgba(255, 255, 255, ${intensity * 0.4})`;
+                ctx.lineWidth = 2;
+
+                for (let i = 0; i < lineCount; i++) {
+                    const side = i % 2 === 0 ? -1 : 1;
+                    const x = side === -1 ? 20 + Math.random() * 60 : 720 + Math.random() * 60;
+                    const y = 100 + Math.random() * 400;
+                    const len = 30 + Math.random() * 50 * intensity;
+
+                    ctx.beginPath();
+                    ctx.moveTo(x, y);
+                    ctx.lineTo(x, y + len);
+                    ctx.stroke();
+                }
+            },
+
+            drawTrack(ctx) {
+                // Draw track segments from bottom to top
+                for (let screenY = 600; screenY >= -100; screenY -= 10) {
+                    const worldY = this.distance + (600 - screenY);
+                    const segmentIndex = Math.floor(worldY / this.track.segmentLength);
+                    const segment = this.track.segments[segmentIndex % this.track.segments.length];
+
+                    const centerX = segment.centerX;
+                    const roadHalf = this.track.roadWidth / 2;
+                    const sandHalf = roadHalf + this.track.sandWidth;
+
+                    // Edge (grass/barrier)
+                    ctx.fillStyle = '#2d5016';
+                    ctx.fillRect(0, screenY, 800, 12);
+
+                    // Sand
+                    ctx.fillStyle = '#d4a84b';
+                    ctx.fillRect(centerX - sandHalf, screenY, this.track.sandWidth, 12);
+                    ctx.fillRect(centerX + roadHalf, screenY, this.track.sandWidth, 12);
+
+                    // Road
+                    ctx.fillStyle = '#444';
+                    ctx.fillRect(centerX - roadHalf, screenY, this.track.roadWidth, 12);
+
+                    // Road markings (dashed center line)
+                    if (Math.floor(worldY / 40) % 2 === 0) {
+                        ctx.fillStyle = '#fff';
+                        ctx.fillRect(centerX - 2, screenY, 4, 10);
+                    }
+                }
+            },
+
+            drawFinishLine(ctx) {
+                // Draw checkered finish line at target distance
+                const finishY = this.targetDistance;
+                const screenY = 600 - (finishY - this.distance);
+
+                // Only draw if visible on screen
+                if (screenY < -50 || screenY > 700) return;
+
+                const segmentIndex = Math.floor(finishY / this.track.segmentLength);
+                const segment = this.track.segments[segmentIndex % this.track.segments.length];
+                const centerX = segment.centerX;
+                const roadHalf = this.track.roadWidth / 2;
+
+                // Draw checkered pattern
+                const squareSize = 20;
+                const rows = 3;
+
+                for (let row = 0; row < rows; row++) {
+                    for (let col = 0; col < Math.ceil(this.track.roadWidth / squareSize); col++) {
+                        const isWhite = (row + col) % 2 === 0;
+                        ctx.fillStyle = isWhite ? '#fff' : '#000';
+                        const x = centerX - roadHalf + col * squareSize;
+                        const y = screenY + row * squareSize - squareSize;
+                        ctx.fillRect(x, y, squareSize, squareSize);
+                    }
+                }
+
+                // "FINISH" banner above
+                if (screenY > 80) {
+                    ctx.fillStyle = 'rgba(0,0,0,0.8)';
+                    ctx.fillRect(centerX - 80, screenY - 70, 160, 30);
+                    ctx.fillStyle = '#fff';
+                    ctx.font = 'bold 20px Arial';
+                    ctx.textAlign = 'center';
+                    ctx.fillText('🏁 FINISH 🏁', centerX, screenY - 50);
+                }
+            },
+
+            drawRamps(ctx) {
+                for (const ramp of this.ramps) {
+                    const screenY = 600 - (ramp.y - this.distance);
+                    if (screenY < -50 || screenY > 650) continue;
+
+                    const segmentIndex = Math.floor(ramp.y / this.track.segmentLength);
+                    const segment = this.track.segments[segmentIndex % this.track.segments.length];
+                    const rampX = segment.centerX + ramp.offsetX;
+
+                    // Draw ramp
+                    ctx.fillStyle = '#e67e22';
+                    ctx.beginPath();
+                    ctx.moveTo(rampX - 30, screenY + 20);
+                    ctx.lineTo(rampX, screenY - 10);
+                    ctx.lineTo(rampX + 30, screenY + 20);
+                    ctx.closePath();
+                    ctx.fill();
+
+                    ctx.strokeStyle = '#d35400';
+                    ctx.lineWidth = 2;
+                    ctx.stroke();
+                }
+            },
+
+            drawBike(ctx) {
+                const state = gameManager.gameStates.motorcycle;
+                const colors = { red: '#e74c3c', blue: '#3498db' };
+                const color = colors[state.bikeColor] || '#e74c3c';
+                const darkerColor = state.bikeColor === 'blue' ? '#2980b9' : '#c0392b';
+
+                ctx.save();
+                ctx.translate(this.bike.x, this.bike.y);
+                ctx.scale(this.bike.jumpScale, this.bike.jumpScale);
+                ctx.rotate(this.bike.lean);  // Lean animation
+
+                // Shadow when jumping
+                if (this.bike.jumping) {
+                    ctx.fillStyle = 'rgba(0,0,0,0.3)';
+                    ctx.beginPath();
+                    ctx.ellipse(5, 35, 22, 10, 0, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+
+                // === IMPROVED MOTORCYCLE DESIGN ===
+
+                // Front wheel with tread animation (overhead view - treads move forward)
+                ctx.save();
+                ctx.translate(0, -18);
+                // Wheel base
+                ctx.fillStyle = '#222';
+                ctx.beginPath();
+                ctx.ellipse(0, 0, 8, 5, 0, 0, Math.PI * 2);
+                ctx.fill();
+                // Tread marks scrolling forward (use wheelRotation as vertical offset)
+                ctx.save();
+                ctx.beginPath();
+                ctx.ellipse(0, 0, 8, 5, 0, 0, Math.PI * 2);
+                ctx.clip();
+                ctx.strokeStyle = '#444';
+                ctx.lineWidth = 2;
+                const treadSpacing = 4;
+                const treadOffset = (this.bike.wheelRotation * 5) % treadSpacing;
+                for (let y = -8 + treadOffset; y <= 8; y += treadSpacing) {
+                    ctx.beginPath();
+                    ctx.moveTo(-8, y);
+                    ctx.lineTo(8, y);
+                    ctx.stroke();
+                }
+                ctx.restore();
+                ctx.restore();
+
+                // Rear wheel with tread animation
+                ctx.save();
+                ctx.translate(0, 20);
+                // Wheel base
+                ctx.fillStyle = '#222';
+                ctx.beginPath();
+                ctx.ellipse(0, 0, 9, 6, 0, 0, Math.PI * 2);
+                ctx.fill();
+                // Tread marks scrolling forward
+                ctx.save();
+                ctx.beginPath();
+                ctx.ellipse(0, 0, 9, 6, 0, 0, Math.PI * 2);
+                ctx.clip();
+                ctx.strokeStyle = '#444';
+                ctx.lineWidth = 2;
+                for (let y = -10 + treadOffset; y <= 10; y += treadSpacing) {
+                    ctx.beginPath();
+                    ctx.moveTo(-9, y);
+                    ctx.lineTo(9, y);
+                    ctx.stroke();
+                }
+                ctx.restore();
+                ctx.restore();
+
+                // Bike frame/body (rounded)
+                ctx.fillStyle = color;
+                ctx.beginPath();
+                ctx.moveTo(-10, -12);
+                ctx.quadraticCurveTo(-12, 0, -10, 15);
+                ctx.lineTo(-6, 18);
+                ctx.lineTo(6, 18);
+                ctx.lineTo(10, 15);
+                ctx.quadraticCurveTo(12, 0, 10, -12);
+                ctx.lineTo(6, -15);
+                ctx.lineTo(-6, -15);
+                ctx.closePath();
+                ctx.fill();
+
+                // Fuel tank (darker accent)
+                ctx.fillStyle = darkerColor;
+                ctx.beginPath();
+                ctx.ellipse(0, 2, 7, 5, 0, 0, Math.PI * 2);
+                ctx.fill();
+
+                // Windshield
+                ctx.fillStyle = '#87CEEB';
+                ctx.beginPath();
+                ctx.moveTo(-6, -14);
+                ctx.quadraticCurveTo(0, -20, 6, -14);
+                ctx.lineTo(4, -10);
+                ctx.lineTo(-4, -10);
+                ctx.closePath();
+                ctx.fill();
+                ctx.strokeStyle = '#666';
+                ctx.lineWidth = 1;
+                ctx.stroke();
+
+                // Handlebars
+                ctx.strokeStyle = '#333';
+                ctx.lineWidth = 3;
+                ctx.beginPath();
+                ctx.moveTo(-12, -8);
+                ctx.lineTo(-8, -10);
+                ctx.moveTo(8, -10);
+                ctx.lineTo(12, -8);
+                ctx.stroke();
+
+                // Exhaust pipe
+                ctx.fillStyle = '#666';
+                ctx.fillRect(8, 10, 6, 3);
+                ctx.fillStyle = '#888';
+                ctx.fillRect(12, 9, 4, 5);
+
+                // === RIDER SILHOUETTE ===
+                // Helmet
+                ctx.fillStyle = '#222';
+                ctx.beginPath();
+                ctx.arc(0, -6, 6, 0, Math.PI * 2);
+                ctx.fill();
+                // Visor
+                ctx.fillStyle = '#4a90d9';
+                ctx.beginPath();
+                ctx.arc(0, -5, 4, -0.3, Math.PI + 0.3);
+                ctx.fill();
+                // Body hunched over
+                ctx.fillStyle = '#333';
+                ctx.beginPath();
+                ctx.ellipse(0, 4, 5, 7, 0, 0, Math.PI * 2);
+                ctx.fill();
+
+                // Boost flames (improved)
+                if (this.boost.multiplier > 1.1) {
+                    const flameIntensity = (this.boost.multiplier - 1) / 1.5;
+                    // Orange core
+                    ctx.fillStyle = `rgba(255, 150, 50, ${flameIntensity})`;
+                    ctx.beginPath();
+                    ctx.moveTo(-6, 22);
+                    ctx.lineTo(0, 35 + Math.random() * 15 * flameIntensity);
+                    ctx.lineTo(6, 22);
+                    ctx.fill();
+                    // Yellow inner
+                    ctx.fillStyle = `rgba(255, 220, 100, ${flameIntensity * 0.8})`;
+                    ctx.beginPath();
+                    ctx.moveTo(-3, 22);
+                    ctx.lineTo(0, 28 + Math.random() * 10 * flameIntensity);
+                    ctx.lineTo(3, 22);
+                    ctx.fill();
+                }
+
+                ctx.restore();
+            },
+
+            drawHUD(ctx) {
+                const state = gameManager.gameStates.motorcycle;
+
+                // Background bar
+                ctx.fillStyle = 'rgba(0,0,0,0.7)';
+                ctx.fillRect(0, 0, 800, 50);
+
+                // Time - show milliseconds when under 10 seconds for drama
+                const seconds = this.timeRemaining / 1000;
+                const isLowTime = seconds <= 10;
+
+                // Flash effect when very low
+                const flash = seconds <= 5 && Math.floor(Date.now() / 200) % 2 === 0;
+                ctx.fillStyle = isLowTime ? (flash ? '#ff6b6b' : '#e74c3c') : '#fff';
+                ctx.font = isLowTime ? 'bold 28px Arial' : 'bold 24px Arial';
+                ctx.textAlign = 'left';
+
+                let timeText;
+                if (isLowTime) {
+                    // Show with 1 decimal place for milliseconds drama
+                    timeText = `⏱️ ${seconds.toFixed(1)}s`;
+                } else {
+                    timeText = `⏱️ ${Math.ceil(seconds)}s`;
+                }
+                ctx.fillText(timeText, 20, 35);
+
+                // Distance / Target
+                ctx.fillStyle = '#fff';
+                ctx.textAlign = 'center';
+                const progress = Math.min(this.distance / this.targetDistance, 1);
+                ctx.fillText(`${Math.floor(this.distance)}m / ${this.targetDistance}m`, 400, 35);
+
+                // Progress bar
+                ctx.fillStyle = '#333';
+                ctx.fillRect(250, 42, 300, 6);
+                ctx.fillStyle = '#27ae60';
+                ctx.fillRect(250, 42, 300 * progress, 6);
+
+                // Turbos remaining
+                ctx.fillStyle = '#f39c12';
+                ctx.textAlign = 'right';
+                ctx.fillText(`⚡ ${state.resources}`, 780, 35);
+            },
+
+            drawSpeedometer(ctx) {
+                const centerX = 720;
+                const centerY = 520;
+                const radius = 50;
+
+                // Background circle
+                ctx.fillStyle = 'rgba(0,0,0,0.7)';
+                ctx.beginPath();
+                ctx.arc(centerX, centerY, radius + 5, 0, Math.PI * 2);
+                ctx.fill();
+
+                // Speed arc background
+                ctx.strokeStyle = '#333';
+                ctx.lineWidth = 8;
+                ctx.beginPath();
+                ctx.arc(centerX, centerY, radius, 0.75 * Math.PI, 0.25 * Math.PI);
+                ctx.stroke();
+
+                // Speed arc fill
+                const speed = this.bike.speed * this.boost.multiplier;
+                const maxSpeed = 15;
+                const speedRatio = Math.min(speed / maxSpeed, 1);
+                const endAngle = 0.75 * Math.PI + speedRatio * 1.5 * Math.PI;
+
+                ctx.strokeStyle = speed > 10 ? '#e74c3c' : '#27ae60';
+                ctx.beginPath();
+                ctx.arc(centerX, centerY, radius, 0.75 * Math.PI, endAngle);
+                ctx.stroke();
+
+                // Speed text
+                ctx.fillStyle = '#fff';
+                ctx.font = 'bold 16px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText(Math.floor(speed * 10) + '', centerX, centerY + 5);
+                ctx.font = '10px Arial';
+                ctx.fillText('km/h', centerX, centerY + 18);
+            },
+
+            handleKeyDown(e) {
+                if (!this.gameRunning) return;
+
+                if (e.key === 'ArrowLeft') {
+                    e.preventDefault();
+                    this.bike.x -= 8;
+                    this.bike.lean = -0.2;  // Lean left
+                } else if (e.key === 'ArrowRight') {
+                    e.preventDefault();
+                    this.bike.x += 8;
+                    this.bike.lean = 0.2;   // Lean right
+                } else if (e.key === ' ') {
+                    e.preventDefault();
+                    this.activateTurbo();
+                }
+            },
+
+            handleKeyUp(e) {
+                if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
+                    this.bike.lean = 0;  // Return to upright
+                }
+            },
+
+            cleanup() {
+                this.gameRunning = false;
+                if (this.animationId) {
+                    cancelAnimationFrame(this.animationId);
+                }
+                sounds.stopEngine();
+            }
+        };
+
+        // ===== SNOWBALL THROWING GAME =====
+        const snowballGame = {
+            canvas: null,
+            ctx: null,
+            animationId: null,
+            gameRunning: false,
+
+            // Slingshot state
+            slingshot: {
+                x: 400,
+                y: 520,
+                direction: 0,
+                loft: 0.5,
+                power: 0,
+                charging: false
+            },
+
+            // Active snowball in flight (bezier curve animation)
+            snowball: {
+                active: false,
+                t: 0,                    // Bezier parameter (0 to 1)
+                flightDuration: 0,       // Total flight time in ms
+                elapsedTime: 0,          // Time since throw
+                start: { x: 0, y: 0 },   // Starting position
+                control: { x: 0, y: 0 }, // Bezier control point
+                end: { x: 0, y: 0 },     // Target position (exact landing spot)
+                x: 0,                    // Current render position
+                y: 0
+            },
+
+            // 5 Snowman targets
+            snowmen: [],
+
+            // Particle systems
+            particles: [],
+            splatMarks: [],
+            fallingSnow: [],
+
+            // Round state
+            snowmenHitThisRound: 0,
+            requiredHits: 3,
+            timeRemaining: 30000,
+            lastTime: 0,
+
+            // Difficulty settings
+            difficulty: {
+                popBack: true,
+                ducking: false,
+                duckVisibleTime: 2000,
+                duckHiddenTime: 1500,
+                availableTargets: [1, 2, 3, 4, 5]
+            },
+
+            init() {
+                this.canvas = document.getElementById('snowballCanvas');
+                this.ctx = this.canvas.getContext('2d');
+                // Initialize falling snow
+                this.fallingSnow = [];
+                for (let i = 0; i < 50; i++) {
+                    this.fallingSnow.push({
+                        x: Math.random() * 800,
+                        y: Math.random() * 600,
+                        size: Math.random() * 3 + 1,
+                        speed: Math.random() * 1 + 0.5
+                    });
+                }
+            },
+
+            startThrowPhase() {
+                this.init();
+                const state = gameManager.gameStates.snowball;
+
+                this.setupDifficulty(state.round);
+                this.resetSnowmen();
+                this.snowmenHitThisRound = 0;
+                this.timeRemaining = 30000;
+                this.particles = [];
+                this.splatMarks = [];
+                this.resetSlingshot();
+                this.snowball.active = false;
+
+                document.getElementById('snowballThrowPhase').classList.remove('hidden');
+                document.getElementById('snowballGame').style.display = 'block';
+                document.getElementById('sharedGameContainer').style.display = 'none';
+
+                this.gameRunning = true;
+                this.lastTime = performance.now();
+                this.gameLoop();
+            },
+
+            setupDifficulty(round) {
+                switch(round) {
+                    case 1:
+                        this.difficulty = { popBack: true, ducking: false, duckVisibleTime: 2000, duckHiddenTime: 1500, availableTargets: [1,2,3,4,5] };
+                        break;
+                    case 2:
+                        this.difficulty = { popBack: false, ducking: false, duckVisibleTime: 2000, duckHiddenTime: 1500, availableTargets: [1,2,3,4,5] };
+                        break;
+                    case 3:
+                        this.difficulty = { popBack: false, ducking: true, duckVisibleTime: 2000, duckHiddenTime: 1500, availableTargets: [1,2,3,4,5] };
+                        break;
+                    case 4:
+                        this.difficulty = { popBack: false, ducking: true, duckVisibleTime: 1800, duckHiddenTime: 1200, availableTargets: [1,2,4,5] };
+                        break;
+                    default:
+                        this.difficulty = { popBack: false, ducking: true, duckVisibleTime: 1500, duckHiddenTime: 1000, availableTargets: [1,4,5] };
+                }
+            },
+
+            resetSnowmen() {
+                // Fort at (120, 350), Igloo at (520, 370), Tree at (680, 330) - all moved up 50px
+
+                this.snowmen = [
+                    {
+                        // Tower snowman - on fort tower, head/body exposed above tower top
+                        // Tower top is at y=350-100=250. Position snowman so head is above that
+                        id: 1, x: 75, y: 280, name: 'Fort Tower',
+                        scale: 0.85,  // Same size as wall snowman
+                        showPos: { x: 75, y: 280 },
+                        hidePos: { x: 75, y: 320 },  // Duck behind tower
+                        hit: false, visible: true, ducking: false, duckTimer: Math.random() * 2000
+                    },
+                    {
+                        // Wall snowman - on fort wall, head/body exposed, base behind
+                        // Wall top is at y=350-18=332. Position so body visible above
+                        id: 2, x: 150, y: 315, name: 'Fort Wall',
+                        scale: 0.85,  // Same size as tower snowman
+                        showPos: { x: 150, y: 315 },
+                        hidePos: { x: 120, y: 350 },  // Duck behind wall
+                        hit: false, visible: true, ducking: false, duckTimer: Math.random() * 2000
+                    },
+                    {
+                        // Front snowman - big, in foreground, no cover
+                        id: 3, x: 320, y: 450, name: 'Ground',
+                        scale: 1.3,  // Largest snowman
+                        showPos: { x: 320, y: 450 },
+                        hidePos: { x: 320, y: 450 },  // No cover
+                        hit: false, visible: true, ducking: false, duckTimer: Math.random() * 2000,
+                        hideShadow: false
+                    },
+                    {
+                        // Igloo snowman - LEFT side of igloo so visible
+                        // Igloo dome at (520, 370). Put snowman to the left at x~455
+                        id: 4, x: 455, y: 340, name: 'Igloo',
+                        scale: 0.85,
+                        showPos: { x: 455, y: 340 },
+                        hidePos: { x: 490, y: 370 },  // Duck behind igloo dome
+                        hit: false, visible: true, ducking: false, duckTimer: Math.random() * 2000,
+                        hideShadow: false
+                    },
+                    {
+                        // Tree snowman - half covered, peeking from RIGHT side
+                        // Tree at (680, 330). Put snowman to right at x~735
+                        id: 5, x: 735, y: 330, name: 'Tree',
+                        scale: 0.8,
+                        showPos: { x: 735, y: 330 },
+                        hidePos: { x: 700, y: 350 },  // Duck behind tree
+                        hit: false, visible: true, ducking: false, duckTimer: Math.random() * 2000
+                    }
+                ];
+            },
+
+            resetSlingshot() {
+                this.slingshot.direction = 0;
+                this.slingshot.loft = 0.5;
+                this.slingshot.power = 0;
+                this.slingshot.charging = false;
+                this.slingshot.lockedAngle = null;  // Angle locked when space pressed
+            },
+
+            // Get aim angle from direction: -1 to +1 maps to 165° to 15°
+            getAimAngle() {
+                // direction: -1 → aims at 15° (far right, just above horizontal)
+                // direction: 0 → aims at 90° (straight up)
+                // direction: +1 → aims at 165° (far left, just above horizontal)
+                // Offset of 75° (5π/12) from vertical gives 15°-165° range
+                return -Math.PI/2 - this.slingshot.direction * (5 * Math.PI / 12);
+            },
+
+            // Get target position based on locked angle (if charging) or current aim angle
+            // Distance extends from 50px to 500px as power increases
+            getTargetPosition() {
+                // Use locked angle if charging, otherwise current aim angle
+                const angle = this.slingshot.charging && this.slingshot.lockedAngle !== null
+                    ? this.slingshot.lockedAngle
+                    : this.getAimAngle();
+
+                // Distance: 50px (min) to 500px (max) based on power
+                const minDistance = 50;
+                const maxDistance = 500;
+                const distance = minDistance + this.slingshot.power * (maxDistance - minDistance);
+
+                // Use slingshot.y - 30 to match the actual launch point in calculateTrajectoryArc()
+                return {
+                    x: this.slingshot.x + Math.cos(angle) * distance,
+                    y: (this.slingshot.y - 30) + Math.sin(angle) * distance
+                };
+            },
+
+            // Calculate bezier trajectory arc from slingshot to target
+            calculateTrajectoryArc() {
+                const start = { x: this.slingshot.x, y: this.slingshot.y - 30 };
+                const end = this.getTargetPosition();
+
+                // Control point: midpoint raised by loft amount
+                const midX = (start.x + end.x) / 2;
+                const midY = (start.y + end.y) / 2;
+                // Loft adjusts arc height (50-200px above midpoint), but NOT landing position
+                const arcHeight = 50 + this.slingshot.loft * 150;
+
+                const control = { x: midX, y: midY - arcHeight };
+
+                // Generate quadratic bezier curve points
+                const points = [];
+                for (let t = 0; t <= 1; t += 0.02) {
+                    const x = (1-t)*(1-t)*start.x + 2*(1-t)*t*control.x + t*t*end.x;
+                    const y = (1-t)*(1-t)*start.y + 2*(1-t)*t*control.y + t*t*end.y;
+                    points.push({ x, y });
+                }
+
+                return { points, start, control, end };
+            },
+
+            gameLoop() {
+                if (!this.gameRunning) return;
+
+                const now = performance.now();
+                const delta = now - this.lastTime;
+                this.lastTime = now;
+
+                this.update(delta);
+                this.render();
+
+                this.animationId = requestAnimationFrame(() => this.gameLoop());
+            },
+
+            update(delta) {
+                this.timeRemaining -= delta;
+                if (this.timeRemaining <= 0) {
+                    this.endRound(false);
+                    return;
+                }
+
+                if (this.difficulty.ducking) {
+                    this.updateDuckingSnowmen(delta);
+                }
+
+                if (this.snowball.active) {
+                    this.updateSnowball(delta);
+                }
+
+                if (this.slingshot.charging) {
+                    // Power charges at constant rate (fills in ~1.5 seconds)
+                    this.slingshot.power = Math.min(1, this.slingshot.power + delta / 1500);
+
+                    // Auto-release at max power
+                    if (this.slingshot.power >= 1) {
+                        this.throwSnowball();
+                        this.slingshot.charging = false;
+                        this.slingshot.power = 0;
+                        this.slingshot.lockedAngle = null;
+                    }
+                }
+
+                this.updateParticles(delta);
+                this.updateFallingSnow();
+
+                if (this.snowmenHitThisRound >= this.requiredHits) {
+                    this.endRound(true);
+                    return;
+                }
+
+                const state = gameManager.gameStates.snowball;
+                if (state.resources <= 0 && !this.snowball.active && this.snowmenHitThisRound < this.requiredHits) {
+                    setTimeout(() => this.endRound(false), 500);
+                }
+            },
+
+            updateDuckingSnowmen(delta) {
+                const lerpSpeed = 0.008;  // Animation speed for duck/show transitions
+
+                for (const snowman of this.snowmen) {
+                    if (snowman.hit || !this.difficulty.availableTargets.includes(snowman.id)) continue;
+
+                    snowman.duckTimer -= delta;
+                    if (snowman.duckTimer <= 0) {
+                        snowman.ducking = !snowman.ducking;
+                        snowman.visible = true;  // Always visible during animation
+                        snowman.duckTimer = snowman.ducking ? this.difficulty.duckHiddenTime : this.difficulty.duckVisibleTime;
+                    }
+
+                    // Animate position between show and hide positions
+                    const targetPos = snowman.ducking ? snowman.hidePos : snowman.showPos;
+                    const dx = targetPos.x - snowman.x;
+                    const dy = targetPos.y - snowman.y;
+
+                    // Lerp toward target position
+                    snowman.x += dx * lerpSpeed * delta;
+                    snowman.y += dy * lerpSpeed * delta;
+
+                    // Snap when close enough
+                    if (Math.abs(dx) < 1 && Math.abs(dy) < 1) {
+                        snowman.x = targetPos.x;
+                        snowman.y = targetPos.y;
+                        // If fully ducked behind cover, become invisible (unhittable)
+                        if (snowman.ducking) {
+                            snowman.visible = false;
+                        }
+                    }
+                }
+            },
+
+            updateSnowball(delta) {
+                // Bezier animation: advance t based on elapsed time
+                this.snowball.elapsedTime += delta;
+                // Allow t to go beyond 1 for continued flight
+                this.snowball.t = this.snowball.elapsedTime / this.snowball.flightDuration;
+
+                // Quadratic bezier interpolation (works for t > 1 to extrapolate)
+                const t = this.snowball.t;
+                const s = this.snowball.start;
+                const c = this.snowball.control;
+                const e = this.snowball.end;
+
+                this.snowball.x = (1-t)*(1-t)*s.x + 2*(1-t)*t*c.x + t*t*e.x;
+                this.snowball.y = (1-t)*(1-t)*s.y + 2*(1-t)*t*c.y + t*t*e.y;
+
+                // Check if snowball went off-screen - disappear silently
+                if (this.snowball.x < -20 || this.snowball.x > 820 ||
+                    this.snowball.y < -20 || this.snowball.y > 620) {
+                    this.snowball.active = false;
+                    return;
+                }
+
+                // Check collision with snowmen ONLY at landing (t >= 1)
+                // This prevents hits when snowball passes over a snowman but lands beyond
+                if (this.snowball.t >= 1) {
+                    for (const snowman of this.snowmen) {
+                        if (!snowman.hit && snowman.visible && this.difficulty.availableTargets.includes(snowman.id)) {
+                            const dist = Math.hypot(this.snowball.x - snowman.x, this.snowball.y - snowman.y);
+                            const hitRadius = 40 * snowman.scale;  // Scaled hitbox
+                            if (dist < hitRadius) {
+                                this.hitSnowman(snowman);
+                                return;
+                            }
+                        }
+                    }
+                }
+
+                // Only check collisions after the ball has reached the apex (t > 0.3)
+                // This prevents immediate collision at launch
+                if (this.snowball.t > 0.3) {
+                    // Check collision with structures (fort, igloo, tree)
+                    if (this.checkStructureCollision()) {
+                        return;
+                    }
+                }
+
+                // Fence top position
+                const fenceTop = 185;  // Top of fence (2/3 up screen = ~200, minus pointed tips)
+                const groundLevel = 400;  // Where ground starts - moved up 50px
+
+                // Only check fence/ground collision when ball is descending (past apex, t > 0.5)
+                if (this.snowball.t > 0.5) {
+                    // Check if snowball hit the fence or ground
+                    if (this.snowball.y >= fenceTop && this.snowball.y <= groundLevel) {
+                        // Hit fence area - create splat
+                        this.snowballMiss();
+                        return;
+                    }
+
+                    // Hit ground below fence
+                    if (this.snowball.y > groundLevel) {
+                        this.snowballMiss();
+                        return;
+                    }
+                }
+
+                // If trajectory completed but still above fence - ball went "over" fence into background
+                if (this.snowball.t >= 1 && this.snowball.y < fenceTop) {
+                    // Disappear silently behind fence (no splat in sky)
+                    this.snowball.active = false;
+                    return;
+                }
+                // Otherwise, snowball continues flying (t > 1 extrapolates the arc)
+            },
+
+            checkStructureCollision() {
+                const x = this.snowball.x;
+                const y = this.snowball.y;
+
+                // Snow fort collision - Fort at (120, 350) - moved up 50px
+                // Tower: x=50-70, y=250-350. Wall: x=50-190, y=350-410
+                if ((x >= 45 && x <= 195 && y >= 230 && y <= 420)) {
+                    this.snowballMiss();
+                    return true;
+                }
+
+                // Igloo collision - dome at (520, 370) with radius ~70 - moved up 50px
+                const iglooDistX = x - 520;
+                const iglooDistY = y - 370;
+                if (iglooDistX * iglooDistX + (iglooDistY * 1.5) * (iglooDistY * 1.5) < 75 * 75 && y < 370) {
+                    this.snowballMiss();
+                    return true;
+                }
+
+                // Pine tree collision - Tree at (680, 330), larger tree shape - moved up 50px
+                // Tree extends from about x=610 to x=750, y=210 to y=380
+                if (x >= 605 && x <= 755 && y >= 200 && y <= 390) {
+                    this.snowballMiss();
+                    return true;
+                }
+
+                return false;
+            },
+
+            updateParticles(delta) {
+                for (let i = this.particles.length - 1; i >= 0; i--) {
+                    const p = this.particles[i];
+                    p.x += p.vx;
+                    p.y += p.vy;
+                    p.vy += 0.2;
+                    p.life -= delta;
+                    if (p.life <= 0) {
+                        this.particles.splice(i, 1);
+                    }
+                }
+                // Splat marks now persist until round end (no fade)
+            },
+
+            updateFallingSnow() {
+                for (const flake of this.fallingSnow) {
+                    flake.y += flake.speed;
+                    flake.x += Math.sin(flake.y / 30) * 0.5;
+                    if (flake.y > 600) {
+                        flake.y = -10;
+                        flake.x = Math.random() * 800;
+                    }
+                }
+            },
+
+            hitSnowman(snowman) {
+                snowman.hit = true;
+                this.snowmenHitThisRound++;
+
+                const state = gameManager.gameStates.snowball;
+                state.totalSnowmenHit++;
+
+                this.createHitParticles(snowman.x, snowman.y);
+                sounds.playCorrect();
+
+                if (this.difficulty.popBack) {
+                    setTimeout(() => {
+                        snowman.hit = false;
+                        snowman.visible = true;
+                        snowman.ducking = false;
+                        // Reset to show position
+                        snowman.x = snowman.showPos.x;
+                        snowman.y = snowman.showPos.y;
+                        snowman.duckTimer = Math.random() * 2000 + 1000;
+                    }, 1500);
+                }
+
+                this.snowball.active = false;
+            },
+
+            snowballMiss() {
+                const x = this.snowball.x;
+                const y = this.snowball.y;
+
+                // If snowball is off-screen, just disappear (no splat)
+                if (x < 0 || x > 800 || y < 0 || y > 600) {
+                    this.snowball.active = false;
+                    return;
+                }
+
+                // On-screen miss - create splat mark
+                this.splatMarks.push({
+                    x: x,
+                    y: y,
+                    alpha: 1
+                });
+                this.createMissParticles(x, y);
+                this.snowball.active = false;
+            },
+
+            throwSnowball() {
+                const state = gameManager.gameStates.snowball;
+                if (state.resources <= 0 || this.snowball.active) return;
+
+                state.resources--;
+
+                // Calculate bezier curve for flight
+                const trajectory = this.calculateTrajectoryArc();
+
+                // Set up bezier animation
+                this.snowball.active = true;
+                this.snowball.t = 0;
+                this.snowball.start = trajectory.start;
+                this.snowball.control = trajectory.control;
+                this.snowball.end = trajectory.end;
+                // Flight duration based on loft (arc height): lower arc = faster
+                // Loft 0 (low arc) → 500ms, Loft 1 (high arc) → 1200ms
+                this.snowball.flightDuration = 500 + this.slingshot.loft * 700;
+                this.snowball.elapsedTime = 0;
+                this.snowball.x = trajectory.start.x;
+                this.snowball.y = trajectory.start.y;
+
+                sounds.playButtonClick();
+            },
+
+            createHitParticles(x, y) {
+                for (let i = 0; i < 20; i++) {
+                    this.particles.push({
+                        x: x,
+                        y: y,
+                        vx: (Math.random() - 0.5) * 8,
+                        vy: (Math.random() - 0.5) * 8 - 3,
+                        size: Math.random() * 6 + 2,
+                        life: 800
+                    });
+                }
+            },
+
+            createMissParticles(x, y) {
+                for (let i = 0; i < 8; i++) {
+                    this.particles.push({
+                        x: x,
+                        y: y,
+                        vx: (Math.random() - 0.5) * 4,
+                        vy: -Math.random() * 3,
+                        size: Math.random() * 4 + 1,
+                        life: 500
+                    });
+                }
+            },
+
+            endRound(success) {
+                this.gameRunning = false;
+                if (this.animationId) {
+                    cancelAnimationFrame(this.animationId);
+                }
+
+                document.getElementById('snowballThrowPhase').classList.add('hidden');
+                document.getElementById('snowballGame').style.display = 'none';
+                document.getElementById('sharedGameContainer').style.display = 'block';
+
+                const state = gameManager.gameStates.snowball;
+
+                if (success) {
+                    showRoundComplete({
+                        'Snowmen Hit': this.snowmenHitThisRound,
+                        'Time Left': Math.ceil(this.timeRemaining / 1000) + 's',
+                        'Round': state.round
+                    });
+                } else {
+                    showGameOver();
+                }
+            },
+
+            handleKeyDown(e) {
+                if (!this.gameRunning) return;
+
+                if (e.key === 'ArrowLeft' && !this.slingshot.charging) {
+                    e.preventDefault();
+                    // Left arrow → aim left (increase direction toward +1)
+                    // Only allowed when NOT charging (direction locked during charge)
+                    this.slingshot.direction = Math.min(1, this.slingshot.direction + 0.08);
+                } else if (e.key === 'ArrowRight' && !this.slingshot.charging) {
+                    e.preventDefault();
+                    // Right arrow → aim right (decrease direction toward -1)
+                    // Only allowed when NOT charging (direction locked during charge)
+                    this.slingshot.direction = Math.max(-1, this.slingshot.direction - 0.08);
+                } else if (e.key === 'ArrowUp') {
+                    e.preventDefault();
+                    // Up/down can adjust loft anytime (affects arc height, not landing)
+                    this.slingshot.loft = Math.min(1, this.slingshot.loft + 0.08);
+                } else if (e.key === 'ArrowDown') {
+                    e.preventDefault();
+                    this.slingshot.loft = Math.max(0, this.slingshot.loft - 0.08);
+                } else if (e.key === ' ' && !this.slingshot.charging && !this.snowball.active) {
+                    e.preventDefault();
+                    // Lock the current aim angle when starting to charge
+                    this.slingshot.lockedAngle = this.getAimAngle();
+                    this.slingshot.charging = true;
+                    this.slingshot.power = 0;
+                }
+            },
+
+            handleKeyUp(e) {
+                if (e.key === ' ' && this.slingshot.charging) {
+                    e.preventDefault();
+                    // IMPORTANT: Call throwSnowball() BEFORE resetting charging/power
+                    // so getTargetPosition() uses the correct power value
+                    this.throwSnowball();
+                    this.slingshot.charging = false;
+                    this.slingshot.power = 0;
+                    this.slingshot.lockedAngle = null;  // Clear locked angle after throw
+                }
+            },
+
+            render() {
+                const ctx = this.ctx;
+                ctx.clearRect(0, 0, 800, 600);
+
+                this.drawBackgroundBase(ctx);
+                this.drawSplatMarks(ctx);
+                this.drawSnowmen(ctx);        // Snowmen drawn BEHIND elements
+                this.drawElements(ctx);        // Fort, igloo, tree drawn IN FRONT
+                this.drawSlingshot(ctx);
+                this.drawTrajectory(ctx);
+                this.drawSnowball(ctx);
+                this.drawParticles(ctx);
+                this.drawFallingSnowRender(ctx);
+                this.drawHUD(ctx);
+            },
+
+            drawBackgroundBase(ctx) {
+                // Sky gradient
+                const skyGrad = ctx.createLinearGradient(0, 0, 0, 450);
+                skyGrad.addColorStop(0, '#5BA3D9');
+                skyGrad.addColorStop(0.6, '#87CEEB');
+                skyGrad.addColorStop(1, '#B0E0E6');
+                ctx.fillStyle = skyGrad;
+                ctx.fillRect(0, 0, 800, 450);
+
+                // Sun with glow
+                const sunX = 680, sunY = 80;
+                const sunGlow = ctx.createRadialGradient(sunX, sunY, 20, sunX, sunY, 80);
+                sunGlow.addColorStop(0, 'rgba(255, 250, 200, 1)');
+                sunGlow.addColorStop(0.3, 'rgba(255, 245, 180, 0.6)');
+                sunGlow.addColorStop(1, 'rgba(255, 245, 180, 0)');
+                ctx.fillStyle = sunGlow;
+                ctx.beginPath();
+                ctx.arc(sunX, sunY, 80, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.fillStyle = '#FFF5B8';
+                ctx.beginPath();
+                ctx.arc(sunX, sunY, 28, 0, Math.PI * 2);
+                ctx.fill();
+
+                // Clouds
+                this.drawCloud(ctx, 120, 90, 1.0);
+                this.drawCloud(ctx, 350, 60, 0.7);
+                this.drawCloud(ctx, 550, 110, 0.85);
+
+                // Distant mountains (back layer - lighter) - extend higher for new fence position
+                ctx.fillStyle = '#C8D8E8';
+                ctx.beginPath();
+                ctx.moveTo(0, 200);
+                ctx.lineTo(100, 140);
+                ctx.lineTo(200, 180);
+                ctx.lineTo(320, 110);
+                ctx.lineTo(450, 170);
+                ctx.lineTo(550, 130);
+                ctx.lineTo(680, 185);
+                ctx.lineTo(800, 145);
+                ctx.lineTo(800, 200);
+                ctx.closePath();
+                ctx.fill();
+
+                // Closer mountains (front layer - darker)
+                ctx.fillStyle = '#A8C0D5';
+                ctx.beginPath();
+                ctx.moveTo(0, 200);
+                ctx.lineTo(80, 155);
+                ctx.lineTo(180, 190);
+                ctx.lineTo(280, 145);
+                ctx.lineTo(400, 195);
+                ctx.lineTo(500, 155);
+                ctx.lineTo(620, 195);
+                ctx.lineTo(720, 160);
+                ctx.lineTo(800, 190);
+                ctx.lineTo(800, 200);
+                ctx.closePath();
+                ctx.fill();
+
+                // Tiny snowman on the mountains (far background)
+                this.drawTinySnowman(ctx, 335, 115);
+
+                // Solid wooden backyard fence (moved back, top at ~200)
+                this.drawWoodenFence(ctx);
+
+                // Snow ground with texture
+                ctx.fillStyle = '#f0f8ff';
+                ctx.fillRect(0, 280, 800, 320);
+
+                // Snow texture/sparkle on ground
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
+                for (let i = 0; i < 15; i++) {
+                    const sx = 50 + i * 50 + Math.sin(i * 1.5) * 20;
+                    const sy = 320 + Math.cos(i * 2) * 15;
+                    ctx.beginPath();
+                    ctx.arc(sx, sy, 2, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+            },
+
+            drawTinySnowman(ctx, x, y) {
+                // Teeny tiny snowman in the distance
+                ctx.fillStyle = '#fff';
+                ctx.beginPath();
+                ctx.arc(x, y + 4, 4, 0, Math.PI * 2);  // Body
+                ctx.arc(x, y, 3, 0, Math.PI * 2);      // Head
+                ctx.fill();
+                // Tiny hat
+                ctx.fillStyle = '#333';
+                ctx.fillRect(x - 2, y - 5, 4, 2);
+                ctx.fillRect(x - 1, y - 8, 2, 3);
+            },
+
+            drawCloud(ctx, x, y, scale) {
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+                const s = scale;
+                ctx.beginPath();
+                ctx.arc(x, y, 25 * s, 0, Math.PI * 2);
+                ctx.arc(x + 30 * s, y - 10 * s, 30 * s, 0, Math.PI * 2);
+                ctx.arc(x + 60 * s, y, 25 * s, 0, Math.PI * 2);
+                ctx.arc(x + 35 * s, y + 10 * s, 20 * s, 0, Math.PI * 2);
+                ctx.fill();
+            },
+
+            drawWoodenFence(ctx) {
+                const fenceTop = 200;  // Top of fence at 2/3 up screen
+                const fenceBottom = 280;  // Shorter fence since it's farther away
+                const fenceHeight = fenceBottom - fenceTop;
+                const plankWidth = 35;  // Narrower planks for perspective
+
+                // Fence planks (vertical boards)
+                for (let x = 0; x < 800; x += plankWidth) {
+                    // Main plank
+                    const plankGrad = ctx.createLinearGradient(x, 0, x + plankWidth, 0);
+                    plankGrad.addColorStop(0, '#8B5A2B');
+                    plankGrad.addColorStop(0.3, '#A0522D');
+                    plankGrad.addColorStop(0.7, '#8B4513');
+                    plankGrad.addColorStop(1, '#654321');
+                    ctx.fillStyle = plankGrad;
+                    ctx.fillRect(x, fenceTop, plankWidth - 2, fenceHeight);
+
+                    // Pointed top
+                    ctx.beginPath();
+                    ctx.moveTo(x, fenceTop);
+                    ctx.lineTo(x + (plankWidth - 2) / 2, fenceTop - 12);
+                    ctx.lineTo(x + plankWidth - 2, fenceTop);
+                    ctx.closePath();
+                    ctx.fill();
+
+                    // Wood grain lines
+                    ctx.strokeStyle = 'rgba(101, 67, 33, 0.4)';
+                    ctx.lineWidth = 1;
+                    for (let gy = fenceTop + 15; gy < fenceBottom - 8; gy += 20) {
+                        ctx.beginPath();
+                        ctx.moveTo(x + 3, gy);
+                        ctx.bezierCurveTo(x + 10, gy + 2, x + 20, gy - 1, x + plankWidth - 5, gy + 1);
+                        ctx.stroke();
+                    }
+
+                    // Gap shadow between planks
+                    ctx.fillStyle = '#3D2817';
+                    ctx.fillRect(x + plankWidth - 2, fenceTop - 12, 2, fenceHeight + 12);
+                }
+
+                // Horizontal rail (back support)
+                ctx.fillStyle = '#654321';
+                ctx.fillRect(0, fenceTop + 20, 800, 8);
+                ctx.fillRect(0, fenceBottom - 25, 800, 8);
+            },
+
+            drawElements(ctx) {
+                // Snow fort (left side) - covers snowmen 1 & 2
+                this.drawSnowFort(ctx, 120, 350);
+
+                // Igloo (center-right) - covers snowman 4
+                this.drawIgloo(ctx, 520, 370);
+
+                // Pine tree (far right) - covers snowman 5
+                this.drawPineTree(ctx, 680, 330);
+            },
+
+            drawSnowFort(ctx, x, y) {
+                // Create gradient for snow blocks
+                const snowGrad = ctx.createLinearGradient(x - 70, 0, x + 70, 0);
+                snowGrad.addColorStop(0, '#dce8f0');
+                snowGrad.addColorStop(0.5, '#f0f8ff');
+                snowGrad.addColorStop(1, '#e0ecf4');
+
+                ctx.strokeStyle = '#b8c8d8';
+                ctx.lineWidth = 2;
+
+                // Tower (aligned with left edge of base wall)
+                const towerGrad = ctx.createLinearGradient(x - 75, 0, x - 25, 0);
+                towerGrad.addColorStop(0, '#d0e0ec');
+                towerGrad.addColorStop(0.6, '#e8f4f8');
+                towerGrad.addColorStop(1, '#d8e8f0');
+                ctx.fillStyle = towerGrad;
+
+                // Tower - left edge at x-70 (same as wall)
+                ctx.fillRect(x - 70, y - 80, 50, 80);
+                ctx.strokeRect(x - 70, y - 80, 50, 80);
+                ctx.fillRect(x - 75, y - 100, 60, 20);
+                ctx.strokeRect(x - 75, y - 100, 60, 20);
+
+                // Tower crenellations
+                for (let i = 0; i < 2; i++) {
+                    ctx.fillRect(x - 70 + i * 32, y - 115, 20, 15);
+                    ctx.strokeRect(x - 70 + i * 32, y - 115, 20, 15);
+                }
+
+                // Tower shadow (right side)
+                ctx.fillStyle = 'rgba(180, 200, 220, 0.4)';
+                ctx.fillRect(x - 30, y - 80, 10, 80);
+
+                // Main wall (base)
+                ctx.fillStyle = snowGrad;
+                ctx.fillRect(x - 70, y, 140, 60);
+                ctx.strokeRect(x - 70, y, 140, 60);
+
+                // Wall shadow (bottom)
+                ctx.fillStyle = 'rgba(180, 200, 220, 0.3)';
+                ctx.fillRect(x - 70, y + 45, 140, 15);
+
+                // Crenellations (top of wall)
+                ctx.fillStyle = snowGrad;
+                for (let i = 0; i < 4; i++) {
+                    ctx.fillRect(x - 65 + i * 38, y - 18, 24, 18);
+                    ctx.strokeRect(x - 65 + i * 38, y - 18, 24, 18);
+                }
+
+                // Snow accumulation on tower top
+                ctx.fillStyle = '#fff';
+                ctx.beginPath();
+                ctx.ellipse(x - 45, y - 115, 22, 8, 0, 0, Math.PI * 2);
+                ctx.fill();
+
+                // Snow accumulation on crenellations
+                for (let i = 0; i < 4; i++) {
+                    ctx.beginPath();
+                    ctx.ellipse(x - 53 + i * 38, y - 18, 13, 5, 0, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+
+                // Icicles hanging from tower ledge
+                ctx.fillStyle = '#d0e8f8';
+                const iciclePositions = [x - 72, x - 55, x - 40, x - 25];
+                iciclePositions.forEach((ix, idx) => {
+                    const len = 8 + (idx % 2) * 6;
+                    ctx.beginPath();
+                    ctx.moveTo(ix, y - 80);
+                    ctx.lineTo(ix + 3, y - 80);
+                    ctx.lineTo(ix + 1.5, y - 80 + len);
+                    ctx.closePath();
+                    ctx.fill();
+                });
+
+                // Icicles hanging from main wall crenellations
+                for (let i = 0; i < 4; i++) {
+                    const ix = x - 62 + i * 38;
+                    ctx.beginPath();
+                    ctx.moveTo(ix, y);
+                    ctx.lineTo(ix + 2, y);
+                    ctx.lineTo(ix + 1, y + 10);
+                    ctx.closePath();
+                    ctx.fill();
+                }
+
+                // Block lines on wall
+                ctx.strokeStyle = 'rgba(200, 215, 230, 0.6)';
+                ctx.lineWidth = 1;
+                for (let by = y + 15; by < y + 55; by += 18) {
+                    ctx.beginPath();
+                    ctx.moveTo(x - 68, by);
+                    ctx.lineTo(x + 68, by);
+                    ctx.stroke();
+                }
+            },
+
+            drawIgloo(ctx, x, y) {
+                // Main dome with gradient shading
+                const domeGrad = ctx.createRadialGradient(x - 20, y - 40, 10, x, y, 70);
+                domeGrad.addColorStop(0, '#ffffff');
+                domeGrad.addColorStop(0.4, '#f0f8ff');
+                domeGrad.addColorStop(0.8, '#dce8f4');
+                domeGrad.addColorStop(1, '#c8d8e8');
+
+                ctx.fillStyle = domeGrad;
+                ctx.beginPath();
+                ctx.arc(x, y, 70, Math.PI, 0);
+                ctx.fill();
+
+                // Dome outline
+                ctx.strokeStyle = '#b0c8d8';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+
+                // Shadow on right side of dome
+                ctx.fillStyle = 'rgba(180, 200, 220, 0.25)';
+                ctx.beginPath();
+                ctx.arc(x, y, 70, -0.3, 0);
+                ctx.lineTo(x + 70, y);
+                ctx.arc(x, y, 50, 0, -0.4, true);
+                ctx.closePath();
+                ctx.fill();
+
+                // Ice block pattern (staggered bricks)
+                ctx.strokeStyle = 'rgba(200, 220, 235, 0.7)';
+                ctx.lineWidth = 1;
+
+                // Horizontal block lines (curved)
+                for (let i = 1; i < 4; i++) {
+                    const radius = 70 - i * 17;
+                    ctx.beginPath();
+                    ctx.arc(x, y, radius, Math.PI, 0);
+                    ctx.stroke();
+                }
+
+                // Vertical block divisions (adjusted for each row)
+                for (let row = 0; row < 3; row++) {
+                    const innerR = 70 - (row + 1) * 17;
+                    const outerR = 70 - row * 17;
+                    const numBlocks = 6 + row * 2;
+                    const offset = row % 2 === 0 ? 0 : Math.PI / numBlocks;
+
+                    for (let b = 1; b < numBlocks; b++) {
+                        const angle = Math.PI + (b * Math.PI / numBlocks) + offset;
+                        if (angle > 0) continue;
+                        ctx.beginPath();
+                        ctx.moveTo(x + Math.cos(angle) * innerR, y + Math.sin(angle) * innerR);
+                        ctx.lineTo(x + Math.cos(angle) * outerR, y + Math.sin(angle) * outerR);
+                        ctx.stroke();
+                    }
+                }
+
+                // Warm entrance glow (draw before entrance)
+                const glowGrad = ctx.createRadialGradient(x, y - 5, 5, x, y - 5, 35);
+                glowGrad.addColorStop(0, 'rgba(255, 200, 100, 0.6)');
+                glowGrad.addColorStop(0.5, 'rgba(255, 180, 80, 0.3)');
+                glowGrad.addColorStop(1, 'rgba(255, 150, 50, 0)');
+                ctx.fillStyle = glowGrad;
+                ctx.beginPath();
+                ctx.ellipse(x, y - 5, 30, 35, 0, 0, Math.PI * 2);
+                ctx.fill();
+
+                // Entrance (dark opening)
+                const entranceGrad = ctx.createLinearGradient(x, y - 30, x, y);
+                entranceGrad.addColorStop(0, '#3a5a6a');
+                entranceGrad.addColorStop(0.5, '#4a6a7a');
+                entranceGrad.addColorStop(1, '#2a4a5a');
+                ctx.fillStyle = entranceGrad;
+                ctx.beginPath();
+                ctx.ellipse(x, y, 22, 30, 0, Math.PI, 0);
+                ctx.fill();
+
+                // Entrance rim highlight
+                ctx.strokeStyle = '#a0b8c8';
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.ellipse(x, y, 22, 30, 0, Math.PI, 0);
+                ctx.stroke();
+
+                // Snow on top of igloo
+                ctx.fillStyle = '#fff';
+                ctx.beginPath();
+                ctx.ellipse(x, y - 68, 30, 10, 0, 0, Math.PI * 2);
+                ctx.fill();
+            },
+
+            drawPineTree(ctx, x, y) {
+                // Very short trunk - just a small square
+                ctx.fillStyle = '#654321';
+                ctx.fillRect(x - 12, y + 50, 24, 30);
+
+                // Trunk highlight (left side)
+                ctx.fillStyle = '#8B5A2B';
+                ctx.fillRect(x - 12, y + 50, 8, 30);
+
+                // Larger snow-covered branches (4 layers instead of 3)
+                for (let i = 0; i < 4; i++) {
+                    const layerY = y + 40 - i * 40;  // Start lower, space them more
+                    const width = 70 - i * 15;  // Wider base
+
+                    // Branch shadow
+                    ctx.fillStyle = '#1B6B1B';
+                    ctx.beginPath();
+                    ctx.moveTo(x, layerY - 48);
+                    ctx.lineTo(x - width + 5, layerY + 3);
+                    ctx.lineTo(x + width - 5, layerY + 3);
+                    ctx.closePath();
+                    ctx.fill();
+
+                    // Main green branches
+                    ctx.fillStyle = '#228B22';
+                    ctx.beginPath();
+                    ctx.moveTo(x, layerY - 50);
+                    ctx.lineTo(x - width, layerY);
+                    ctx.lineTo(x + width, layerY);
+                    ctx.closePath();
+                    ctx.fill();
+
+                    // Snow on top - thicker coverage
+                    ctx.fillStyle = '#fff';
+                    ctx.beginPath();
+                    ctx.moveTo(x, layerY - 50);
+                    ctx.lineTo(x - width * 0.6, layerY - 20);
+                    ctx.lineTo(x + width * 0.6, layerY - 20);
+                    ctx.closePath();
+                    ctx.fill();
+
+                    // Snow drips/edges
+                    ctx.fillStyle = '#E8F4F8';
+                    ctx.beginPath();
+                    ctx.arc(x - width * 0.4, layerY - 17, 4, 0, Math.PI * 2);
+                    ctx.arc(x + width * 0.3, layerY - 14, 3, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+            },
+
+            drawFallingSnowRender(ctx) {
+                ctx.fillStyle = '#fff';
+                for (const flake of this.fallingSnow) {
+                    ctx.beginPath();
+                    ctx.arc(flake.x, flake.y, flake.size, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+            },
+
+            drawSplatMarks(ctx) {
+                for (const splat of this.splatMarks) {
+                    if (splat.alpha <= 0) continue;
+                    ctx.fillStyle = `rgba(255, 255, 255, ${splat.alpha})`;
+                    ctx.beginPath();
+                    ctx.ellipse(splat.x, splat.y, 15, 8, 0, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+            },
+
+            drawSnowmen(ctx) {
+                const state = gameManager.gameStates.snowball;
+                const scarfColor = state.teamColor === 'blue' ? '#3498db' : '#e74c3c';
+
+                // Sort snowmen by Y position (back to front) for proper depth
+                const sortedSnowmen = [...this.snowmen].sort((a, b) => a.y - b.y);
+
+                for (const snowman of sortedSnowmen) {
+                    if (!this.difficulty.availableTargets.includes(snowman.id)) continue;
+                    if (snowman.hit || !snowman.visible) continue;
+                    this.drawSnowman(ctx, snowman.x, snowman.y, scarfColor, snowman.scale, snowman.hideShadow);
+                }
+            },
+
+            drawSnowman(ctx, x, y, scarfColor, scale = 1.0, hideShadow = false) {
+                const s = scale;  // Shorthand for scaling
+
+                // Shadow (ellipse under snowman) - only if not hidden
+                if (!hideShadow) {
+                    ctx.fillStyle = 'rgba(0, 0, 0, 0.15)';
+                    ctx.beginPath();
+                    ctx.ellipse(x, y + 40 * s, 25 * s, 8 * s, 0, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+
+                // Bottom ball
+                ctx.fillStyle = '#fff';
+                ctx.beginPath();
+                ctx.arc(x, y + 22 * s, 18 * s, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.strokeStyle = '#ddd';
+                ctx.lineWidth = 2 * s;
+                ctx.stroke();
+
+                // Middle ball
+                ctx.beginPath();
+                ctx.arc(x, y, 13 * s, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.stroke();
+
+                // Head
+                ctx.beginPath();
+                ctx.arc(x, y - 18 * s, 10 * s, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.stroke();
+
+                // Top hat
+                ctx.fillStyle = '#222';
+                ctx.fillRect(x - 8 * s, y - 34 * s, 16 * s, 5 * s);
+                ctx.fillRect(x - 5 * s, y - 48 * s, 10 * s, 16 * s);
+
+                // Carrot nose
+                ctx.fillStyle = '#e67e22';
+                ctx.beginPath();
+                ctx.moveTo(x, y - 18 * s);
+                ctx.lineTo(x + 10 * s, y - 17 * s);
+                ctx.lineTo(x, y - 16 * s);
+                ctx.closePath();
+                ctx.fill();
+
+                // Eyes
+                ctx.fillStyle = '#222';
+                ctx.beginPath();
+                ctx.arc(x - 3 * s, y - 21 * s, 2 * s, 0, Math.PI * 2);
+                ctx.arc(x + 3 * s, y - 21 * s, 2 * s, 0, Math.PI * 2);
+                ctx.fill();
+
+                // Scarf
+                ctx.fillStyle = scarfColor;
+                ctx.fillRect(x - 10 * s, y - 8 * s, 20 * s, 5 * s);
+                ctx.fillRect(x + 6 * s, y - 8 * s, 5 * s, 15 * s);
+
+                // Stick arms
+                ctx.strokeStyle = '#654321';
+                ctx.lineWidth = 2 * s;
+                ctx.beginPath();
+                ctx.moveTo(x - 13 * s, y);
+                ctx.lineTo(x - 28 * s, y - 8 * s);
+                ctx.moveTo(x + 13 * s, y);
+                ctx.lineTo(x + 28 * s, y - 6 * s);
+                ctx.stroke();
+            },
+
+            drawSlingshot(ctx) {
+                const x = this.slingshot.x;
+                const y = this.slingshot.y;
+
+                // Handle (fixed, doesn't rotate)
+                ctx.fillStyle = '#8B4513';
+                ctx.beginPath();
+                ctx.moveTo(x - 4, y);
+                ctx.lineTo(x + 4, y);
+                ctx.lineTo(x + 3, y + 45);
+                ctx.lineTo(x - 3, y + 45);
+                ctx.closePath();
+                ctx.fill();
+
+                // Fork prongs (fixed, don't rotate)
+                ctx.beginPath();
+                ctx.moveTo(x - 4, y);
+                ctx.lineTo(x - 18, y - 35);
+                ctx.lineTo(x - 13, y - 40);
+                ctx.lineTo(x, y - 5);
+                ctx.fill();
+
+                ctx.beginPath();
+                ctx.moveTo(x + 4, y);
+                ctx.lineTo(x + 18, y - 35);
+                ctx.lineTo(x + 13, y - 40);
+                ctx.lineTo(x, y - 5);
+                ctx.fill();
+
+                // Elastic band (angles toward target direction)
+                ctx.strokeStyle = '#5D3A1A';
+                ctx.lineWidth = 3;
+
+                // Fork tip positions (where bands attach)
+                const leftForkX = x - 15;
+                const leftForkY = y - 37;
+                const rightForkX = x + 15;
+                const rightForkY = y - 37;
+
+                // When snowball is flying, show relaxed band
+                if (this.snowball.active) {
+                    ctx.beginPath();
+                    ctx.moveTo(leftForkX, leftForkY);
+                    ctx.quadraticCurveTo(x, y - 30, rightForkX, rightForkY);
+                    ctx.stroke();
+                } else {
+                    // Calculate band pullback position based on aim direction and power
+                    const aimAngle = this.getAimAngle();
+                    // Power affects pullback distance (10 to 35 pixels behind slingshot)
+                    const displayPower = this.slingshot.charging ? this.slingshot.power : 0.2;
+                    const pullDistance = 10 + displayPower * 25;
+
+                    // Pullback position: opposite direction of aim (behind slingshot)
+                    const pullX = x - Math.cos(aimAngle) * pullDistance;
+                    const pullY = (y - 25) - Math.sin(aimAngle) * pullDistance;
+
+                    // Draw bands from fork tips to pullback point
+                    ctx.beginPath();
+                    ctx.moveTo(leftForkX, leftForkY);
+                    ctx.lineTo(pullX, pullY);
+                    ctx.lineTo(rightForkX, rightForkY);
+                    ctx.stroke();
+
+                    // Snowball in sling at pullback position
+                    ctx.fillStyle = '#fff';
+                    ctx.beginPath();
+                    ctx.arc(pullX, pullY, 10, 0, Math.PI * 2);
+                    ctx.fill();
+                    ctx.strokeStyle = '#ddd';
+                    ctx.lineWidth = 2;
+                    ctx.stroke();
+
+                    // Draw aim direction indicator (small line toward target)
+                    ctx.strokeStyle = 'rgba(100, 100, 100, 0.5)';
+                    ctx.lineWidth = 1;
+                    ctx.beginPath();
+                    ctx.moveTo(x, y - 30);
+                    const indicatorLen = 30;
+                    ctx.lineTo(x + Math.cos(aimAngle) * indicatorLen, (y - 30) + Math.sin(aimAngle) * indicatorLen);
+                    ctx.stroke();
+                }
+            },
+
+            drawTrajectory(ctx) {
+                // Always show trajectory when not actively throwing
+                if (this.snowball.active) return;
+
+                // Get the bezier trajectory arc
+                const trajectory = this.calculateTrajectoryArc();
+                const points = trajectory.points;
+
+                // Draw dotted arc line
+                ctx.strokeStyle = 'rgba(100, 100, 100, 0.5)';
+                ctx.lineWidth = 2;
+                ctx.setLineDash([8, 8]);
+
+                ctx.beginPath();
+                for (let i = 0; i < points.length; i++) {
+                    if (i === 0) {
+                        ctx.moveTo(points[i].x, points[i].y);
+                    } else {
+                        ctx.lineTo(points[i].x, points[i].y);
+                    }
+                }
+                ctx.stroke();
+                ctx.setLineDash([]);
+
+                // Crosshair at exact target position (where snowball WILL land)
+                const target = trajectory.end;
+                ctx.strokeStyle = 'rgba(200, 50, 50, 0.8)';
+                ctx.lineWidth = 2;
+
+                // Crosshair lines
+                ctx.beginPath();
+                ctx.moveTo(target.x - 15, target.y);
+                ctx.lineTo(target.x + 15, target.y);
+                ctx.moveTo(target.x, target.y - 15);
+                ctx.lineTo(target.x, target.y + 15);
+                ctx.stroke();
+
+                // Circle around target
+                ctx.beginPath();
+                ctx.arc(target.x, target.y, 10, 0, Math.PI * 2);
+                ctx.stroke();
+
+                // Inner dot
+                ctx.fillStyle = 'rgba(200, 50, 50, 0.6)';
+                ctx.beginPath();
+                ctx.arc(target.x, target.y, 3, 0, Math.PI * 2);
+                ctx.fill();
+            },
+
+            drawSnowball(ctx) {
+                if (!this.snowball.active) return;
+
+                ctx.fillStyle = '#fff';
+                ctx.beginPath();
+                ctx.arc(this.snowball.x, this.snowball.y, 10, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.strokeStyle = '#ddd';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+            },
+
+            drawParticles(ctx) {
+                ctx.fillStyle = '#fff';
+                for (const p of this.particles) {
+                    const alpha = p.life / 800;
+                    ctx.fillStyle = `rgba(255, 255, 255, ${alpha})`;
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+            },
+
+            drawHUD(ctx) {
+                const state = gameManager.gameStates.snowball;
+
+                // Top bar
+                ctx.fillStyle = 'rgba(0, 0, 0, 0.6)';
+                ctx.fillRect(0, 0, 800, 50);
+
+                // Timer
+                const seconds = Math.ceil(this.timeRemaining / 1000);
+                ctx.fillStyle = seconds <= 10 ? '#e74c3c' : '#fff';
+                ctx.font = 'bold 24px Arial';
+                ctx.textAlign = 'left';
+                ctx.fillText(`⏱️ ${seconds}s`, 20, 35);
+
+                // Snowmen hit progress
+                ctx.fillStyle = '#fff';
+                ctx.textAlign = 'center';
+                ctx.fillText(`⛄ ${this.snowmenHitThisRound} / ${this.requiredHits}`, 400, 35);
+
+                // Snowballs remaining
+                ctx.fillStyle = '#74b9ff';
+                ctx.textAlign = 'right';
+                ctx.fillText(`❄️ ${state.resources}`, 780, 35);
+
+                // Control hints
+                ctx.fillStyle = '#fff';
+                ctx.font = '14px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText('← → aim  |  ↑ ↓ loft  |  SPACE power', 400, 590);
+            },
+
+            drawPowerMeter(ctx) {
+                const x = 730;
+                const y = 420;
+                const width = 25;
+                const height = 120;
+
+                // Background
+                ctx.fillStyle = 'rgba(0, 0, 0, 0.6)';
+                ctx.fillRect(x - 5, y - 5, width + 10, height + 30);
+
+                // Meter background
+                ctx.fillStyle = '#333';
+                ctx.fillRect(x, y, width, height);
+
+                // Power fill
+                const fillHeight = this.slingshot.power * height;
+                const gradient = ctx.createLinearGradient(x, y + height, x, y);
+                gradient.addColorStop(0, '#27ae60');
+                gradient.addColorStop(0.5, '#f1c40f');
+                gradient.addColorStop(1, '#e74c3c');
+                ctx.fillStyle = gradient;
+                ctx.fillRect(x, y + height - fillHeight, width, fillHeight);
+
+                // Border
+                ctx.strokeStyle = '#fff';
+                ctx.lineWidth = 2;
+                ctx.strokeRect(x, y, width, height);
+
+                // Label
+                ctx.fillStyle = '#fff';
+                ctx.font = 'bold 12px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText('POWER', x + width/2, y + height + 18);
+            },
+
+            cleanup() {
+                this.gameRunning = false;
+                if (this.animationId) {
+                    cancelAnimationFrame(this.animationId);
+                }
+            }
+        };
+
         // Add keyboard listener for fieldgoal game
         document.addEventListener('keydown', (e) => {
             if (currentGameType === 'fieldgoal') {
@@ -7054,6 +10014,25 @@
         document.addEventListener('keyup', (e) => {
             if (currentGameType === 'minigolf') {
                 minigolfGame.handleKeyUp(e);
+            }
+        });
+
+        // Add keyboard listeners for motorcycle game
+        document.addEventListener('keydown', (e) => {
+            if (currentGameType === 'motorcycle') {
+                motorcycleGame.handleKeyDown(e);
+            }
+            if (currentGameType === 'snowball') {
+                snowballGame.handleKeyDown(e);
+            }
+        });
+
+        document.addEventListener('keyup', (e) => {
+            if (currentGameType === 'motorcycle') {
+                motorcycleGame.handleKeyUp(e);
+            }
+            if (currentGameType === 'snowball') {
+                snowballGame.handleKeyUp(e);
             }
         });
 

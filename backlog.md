@@ -1,59 +1,64 @@
 # Math Adventure Hub - Feature Backlog
 
+> **Last Updated:** January 2026
+> **Current State:** 8 games, 9 math modes, unified hub architecture
+
+---
+
 ## High Priority
 
 ### Gameplay Features
-- [ ] **Difficulty progression** - Math problems get harder as rounds increase (currently static)
-- [ ] **Problem type selection** - Let players choose problem types (addition, subtraction, dice, coins) from settings menu
-- [ ] **Difficulty selection** - Easy/Medium/Hard selector on character selection screen
-- [ ] **Multiplication and division modes** - Add these problem types to the rotation
-- [ ] **Timer adjustment** - Option to change math phase duration (30s, 60s, 90s)
+(No pending items)
 
 ### Progress & Persistence
 - [ ] **Local storage save** - Save high scores and progress between sessions
 - [ ] **Player profiles** - Multiple player support with separate progress tracking
-- [ ] **Achievement system** - Unlock badges for milestones (100 problems solved, perfect round, etc.)
-- [ ] **Statistics tracking** - Track accuracy rate, favorite game, total problems solved
+- [ ] **Statistics tracking** - A "My Adventure" page showing player statistics: A table of high scores and total scores for each Mode (columns) and Difficulty (Rows). 1-3 Stars should be below each high score (1 star: high score 1-9, 2 stars: high score 10-19, 3 stars: high score 20+) and total score (1 star: total score 1-49, 2 stars: total score 50-99, 3 stars: total score 100+)
 
 ### Audio & Feedback
 - [ ] **Background music** - Add optional background music for each game theme
 - [ ] **More sound effects** - Distinct sounds for each game's actions (cannon fire, train whistle, pickaxe, airplane engine)
-- [ ] **Voice feedback** - Optional spoken "Correct!" / "Try again" for younger players
 
 ## Medium Priority
 
 ### UI/UX Improvements
 - [ ] **Fullscreen mode** - Button to enter fullscreen for distraction-free play
-- [ ] **Keyboard shortcuts help** - Overlay showing controls for each game
-- [ ] **Pause functionality** - Ability to pause during action phases
-- [ ] **Tutorial mode** - First-time walkthrough for each game explaining mechanics
 - [ ] **Animated transitions** - Smoother transitions between phases
 
 ### Game-Specific Enhancements
 
 #### Castle Game
 - [ ] **Moving targets** - Targets that drift or bob more dramatically
-- [ ] **Target types** - Different point values for different targets
-- [ ] **Wind effect** - Random wind affecting projectile trajectory
-- [ ] **Castle damage system** - Visual damage to castle when missing targets
+- [ ] **Indestructable objects** - floating brick walls, as added difficulty in later rounds, that require specific cannon arcs to destroy the targets.
 
 #### Express Game
-- [ ] **Obstacles** - Fallen trees, tunnels, bridges to navigate
-- [ ] **Cargo collection** - Pick up bonus items along the track
-- [ ] **Weather effects** - Rain, snow affecting train physics
-- [ ] **Multiple track paths** - Choose different routes
+- [ ] **Friction adjustment** - there's something wrong with the friction in the game. The first level can be completed without any boosts at all. Let's see how we can adjust the game physics to make the game more fun.
 
 #### Miner Game
 - [ ] **Rock types** - Different rocks requiring multiple hits
-- [ ] **Power-ups** - Temporary dig boost, magnet for coins
+- [ ] **Power-ups** - Temporary dig boost, magnet for coins, TNT
 - [ ] **Underground creatures** - Friendly moles, obstacles to avoid
 - [ ] **Gem varieties** - Different gem types worth different points
 
 #### Plane Game
-- [ ] **Obstacles** - Birds, clouds, hot air balloons to avoid
-- [ ] **Altitude bonuses** - Points for maintaining certain altitudes
-- [ ] **Multiple landing zones** - Different distance targets
-- [ ] **Upgradeable planes** - Unlock planes with better stats
+- [ ] **Physics adjustment** - Create physics penalty for flying too high out of frame
+- [ ] **Landing zones** - Endpoint with green/orange/red zones; bonus points for green landing
+
+#### Field Goals Game
+- [ ] **Wind effects** - Variable wind affecting kick trajectory
+- [ ] **Distance variation** - Kicks from different yard lines
+
+#### Mini Golf Game
+- [ ] **Course obstacles** - Walls, bumpers, water hazards
+- [ ] **Multiple holes** - Progress through a course of holes
+
+#### Racer Game
+- [ ] **Track variety** - Different track layouts and obstacles
+- [ ] **Opponent racers** - AI competitors to race against
+
+#### Snowball Game
+- [ ] **Moving targets** - Snowmen that move or dodge
+- [ ] **Obstacle variety** - Trees, fences blocking shots
 
 ### Math Problem Enhancements
 - [ ] **Word problems** - Simple word problems for older kids
@@ -61,7 +66,6 @@
 - [ ] **Comparison problems** - Greater than, less than
 - [ ] **Sequence completion** - "2, 4, 6, ?" patterns
 - [ ] **Time telling** - Clock reading problems
-- [ ] **Money making change** - "You have $1, item costs 75¢, change = ?"
 
 ## Low Priority
 
@@ -86,7 +90,7 @@
 - [ ] **More character options** - Additional color/character choices per game
 - [ ] **Seasonal themes** - Holiday-themed visuals (Halloween, Christmas, etc.)
 - [ ] **Unlockable cosmetics** - Earn new looks through gameplay
-- [ ] **Story mode** - Connected narrative across all four games
+- [ ] **Story mode** - Connected narrative across all games
 
 ## Bug Fixes & Polish
 - [ ] **Consistent styling** - Ensure all games have matching UI patterns
@@ -97,7 +101,26 @@
 ---
 
 ## Completed Features
-- [x] **Math Field Goals game** - Football-themed 5th game with timing-based power/direction meters
+
+### Games (8 total)
+- [x] **Math Castle** - Castle defense with cannon trajectory shooting
+- [x] **Math Express** - Train conductor with speed/brake control
+- [x] **Math Miner** - Grid-based mining and coin collection
+- [x] **Math Plane** - Paper airplane flight physics
+- [x] **Math Field Goals** - Football kicking with direction/power meters
+- [x] **Math Mini Golf** - Putting with power control
+- [x] **Math Racer** - Motorcycle racing with turbo boosts
+- [x] **Snowball Math** - Slingshot aiming at snowmen
+
+### Math Modes (9 total)
+- [x] Addition, Subtraction, Multiplication, Division
+- [x] Dice mode - Count dice pips
+- [x] Coin mode - Count coin values
+- [x] Making Change mode - Calculate change from $1
+- [x] Fractions mode
+- [x] 100 Mode - Problems in format "100 - X = ?"
+
+### Features & Fixes
 - [x] DEV button to skip to arcade game with 10 points
 - [x] SKIP button in math phase to end timer early
 - [x] Fix Express game "Next Round" button
@@ -107,3 +130,4 @@
 - [x] Audio context resume on first interaction
 - [x] Stop game loops when returning to hub
 - [x] Remove station overlay on new round start
+- [x] Standardized point displays across games (visual indicators with grouping by 5s)
