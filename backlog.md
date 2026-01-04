@@ -1,7 +1,7 @@
 # Math Adventure Hub - Feature Backlog
 
 > **Last Updated:** January 2026
-> **Current State:** 8 games, 9 math modes, unified hub architecture
+> **Current State:** 8 games, 9 math modes, player profiles, unified hub architecture
 
 ---
 
@@ -11,9 +11,7 @@
 (No pending items)
 
 ### Progress & Persistence
-- [ ] **Local storage save** - Save high scores and progress between sessions
-- [ ] **Player profiles** - Multiple player support with separate progress tracking
-- [ ] **Statistics tracking** - A "My Adventure" page showing player statistics: A table of high scores and total scores for each Mode (columns) and Difficulty (Rows). 1-3 Stars should be below each high score (1 star: high score 1-9, 2 stars: high score 10-19, 3 stars: high score 20+) and total score (1 star: total score 1-49, 2 stars: total score 50-99, 3 stars: total score 100+)
+(No pending items)
 
 ### Audio & Feedback
 - [ ] **Background music** - Add optional background music for each game theme
@@ -121,6 +119,8 @@
 - [x] 100 Mode - Problems in format "100 - X = ?"
 
 ### Features & Fixes
+- [x] Local storage save - High scores and progress persist between sessions
+- [x] Statistics tracking - "My Adventure" page with Math Progress and Game Progress tabs
 - [x] DEV button to skip to arcade game with 10 points
 - [x] SKIP button in math phase to end timer early
 - [x] Fix Express game "Next Round" button
@@ -131,3 +131,4 @@
 - [x] Stop game loops when returning to hub
 - [x] Remove station overlay on new round start
 - [x] Standardized point displays across games (visual indicators with grouping by 5s)
+- [x] Player profiles - Multiple player support with separate progress tracking, avatar selection, profile switching

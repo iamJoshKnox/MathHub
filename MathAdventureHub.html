@@ -29,6 +29,7 @@
         /* Hub Styles */
         .hub-container {
             text-align: center;
+            position: relative;
         }
 
         .hub-header {
@@ -1266,13 +1267,382 @@
             display: block;
             margin-bottom: 4px;
         }
+
+        /* ===== PROFILE SELECTOR ===== */
+        .profile-selector-topleft {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            z-index: 100;
+        }
+
+        /* Profile display for game screens */
+        .profile-display-game {
+            position: absolute;
+            top: 18px;
+            right: 20px;
+            z-index: 100;
+        }
+
+        .profile-display-game .profile-button {
+            padding: 8px 14px;
+            font-size: 0.95em;
+        }
+
+        .profile-display-game .profile-button #gameProfileAvatar {
+            font-size: 1.3em;
+        }
+
+        .profile-display-game.playing .profile-button {
+            pointer-events: none;
+            opacity: 0.8;
+        }
+
+        .profile-display-game.playing .dropdown-arrow {
+            display: none;
+        }
+
+        .profile-button {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            border-radius: 25px;
+            color: white;
+            font-size: 1.1em;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .profile-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .profile-button #currentProfileAvatar {
+            font-size: 1.5em;
+        }
+
+        .dropdown-arrow {
+            font-size: 0.8em;
+            margin-left: 5px;
+        }
+
+        .profile-dropdown {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+            min-width: 220px;
+            z-index: 1000;
+            overflow: hidden;
+            margin-top: 8px;
+        }
+
+        .profile-dropdown.show {
+            display: block;
+        }
+
+        .profile-dropdown-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            cursor: pointer;
+            transition: background 0.2s;
+            border-bottom: 1px solid #eee;
+        }
+
+        .profile-dropdown-item:hover {
+            background: #f5f5f5;
+        }
+
+        .profile-dropdown-item.active {
+            background: #e8f4fd;
+        }
+
+        .profile-dropdown-item .profile-avatar {
+            font-size: 1.5em;
+        }
+
+        .profile-dropdown-item .profile-name {
+            flex: 1;
+            font-weight: 500;
+            color: #333;
+        }
+
+        .profile-dropdown-item .check-mark {
+            color: #27ae60;
+            font-weight: bold;
+        }
+
+        .profile-dropdown-divider {
+            height: 1px;
+            background: #ddd;
+            margin: 0;
+        }
+
+        .profile-dropdown-manage {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 16px;
+            cursor: pointer;
+            color: #666;
+            transition: background 0.2s;
+        }
+
+        .profile-dropdown-manage:hover {
+            background: #f5f5f5;
+        }
+
+        /* ===== MODALS ===== */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal.show {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            max-width: 400px;
+            width: 90%;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        .modal-content-small {
+            max-width: 320px;
+            text-align: center;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .modal-header h3 {
+            margin: 0;
+            font-size: 1.3em;
+            color: #333;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.5em;
+            cursor: pointer;
+            color: #999;
+            padding: 0;
+            line-height: 1;
+        }
+
+        .modal-close:hover {
+            color: #333;
+        }
+
+        .modal-action-button {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            border-radius: 10px;
+            color: white;
+            font-size: 1.1em;
+            cursor: pointer;
+            margin-top: 16px;
+            transition: transform 0.2s;
+        }
+
+        .modal-action-button:hover {
+            transform: scale(1.02);
+        }
+
+        /* Profile List in Manager */
+        .profile-list {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .profile-list-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            margin-bottom: 10px;
+        }
+
+        .profile-list-item .profile-avatar {
+            font-size: 2em;
+        }
+
+        .profile-list-item .profile-avatar.clickable {
+            cursor: pointer;
+            padding: 5px;
+            border-radius: 8px;
+            transition: background 0.2s, transform 0.2s;
+        }
+
+        .profile-list-item .profile-avatar.clickable:hover {
+            background: #e8f4fd;
+            transform: scale(1.1);
+        }
+
+        .profile-list-item .profile-name {
+            flex: 1;
+            font-weight: 500;
+            font-size: 1.1em;
+        }
+
+        .delete-profile-btn {
+            background: none;
+            border: none;
+            font-size: 1.3em;
+            cursor: pointer;
+            color: #e74c3c;
+            padding: 5px;
+            opacity: 0.7;
+            transition: opacity 0.2s;
+        }
+
+        .delete-profile-btn:hover {
+            opacity: 1;
+        }
+
+        /* Create Profile Form */
+        .profile-form {
+            margin-bottom: 10px;
+        }
+
+        .profile-form label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #555;
+        }
+
+        .profile-form input[type="text"] {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            font-size: 1em;
+            margin-bottom: 16px;
+            box-sizing: border-box;
+        }
+
+        .profile-form input[type="text"]:focus {
+            border-color: #667eea;
+            outline: none;
+        }
+
+        .avatar-grid {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 8px;
+        }
+
+        .avatar-option {
+            font-size: 1.8em;
+            padding: 8px;
+            border: 3px solid transparent;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: center;
+        }
+
+        .avatar-option:hover {
+            background: #f0f0f0;
+        }
+
+        .avatar-option.selected {
+            border-color: #667eea;
+            background: #e8f4fd;
+        }
+
+        /* Delete Confirm Modal */
+        .delete-warning {
+            color: #e74c3c;
+            font-size: 0.9em;
+            margin-top: 5px;
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 12px;
+            margin-top: 20px;
+        }
+
+        .modal-button-danger {
+            flex: 1;
+            padding: 12px;
+            background: #e74c3c;
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-size: 1em;
+            cursor: pointer;
+        }
+
+        .modal-button-danger:hover {
+            background: #c0392b;
+        }
+
+        .modal-button-cancel {
+            flex: 1;
+            padding: 12px;
+            background: #bdc3c7;
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-size: 1em;
+            cursor: pointer;
+        }
+
+        .modal-button-cancel:hover {
+            background: #95a5a6;
+        }
     </style>
 </head>
 <body>
     <!-- Game Hub -->
     <div id="gameHub" class="container hub-container">
+        <!-- Profile Selector (Top Left) -->
+        <div class="profile-selector-topleft">
+            <button class="profile-button" onclick="toggleProfileDropdown()">
+                <span id="currentProfileAvatar">🦊</span>
+                <span id="currentProfileName">Player 1</span>
+                <span class="dropdown-arrow">▼</span>
+            </button>
+            <div id="profileDropdown" class="profile-dropdown">
+                <!-- Populated dynamically -->
+            </div>
+        </div>
+
         <div class="hub-header">
-            <h1 class="hub-title">🎯 Math Adventure Hub</h1>
+            <h1 class="hub-title">Math Adventure Hub</h1>
             <p class="hub-subtitle">Choose your mathematical adventure!</p>
         </div>
 
@@ -1425,7 +1795,18 @@
 
         <!-- Shared Selection Screen -->
         <div id="gameSelectionScreen" class="phase-transition" style="text-align: center; position: relative;">
-            <button id="devModeBtn" onclick="startDevMode()" style="position: absolute; top: 10px; right: 10px; padding: 5px 8px; font-size: 0.7em; background: #95a5a6; color: white; border: none; border-radius: 3px; cursor: pointer; opacity: 0.7;">DEV</button>
+            <!-- Profile Display (Selection Screen) -->
+            <div id="sharedProfileDisplay" class="profile-display-game">
+                <button class="profile-button" onclick="toggleGameProfileDropdown('shared')">
+                    <span id="sharedProfileAvatar">🦊</span>
+                    <span id="sharedProfileName">Player 1</span>
+                    <span class="dropdown-arrow">▼</span>
+                </button>
+                <div id="sharedProfileDropdown" class="profile-dropdown">
+                    <!-- Populated dynamically -->
+                </div>
+            </div>
+            <button id="devModeBtn" onclick="startDevMode()" style="position: absolute; bottom: 10px; right: 10px; padding: 5px 8px; font-size: 0.7em; background: #95a5a6; color: white; border: none; border-radius: 3px; cursor: pointer; opacity: 0.7;">DEV</button>
             <h2 class="phase-title" id="selectionTitle">🏰 Math Castle</h2>
             <p id="selectionPrompt">Choose the castle you will defend!</p>
 
@@ -1445,7 +1826,14 @@
 
         <!-- Shared Math Phase -->
         <div id="gameMathPhase" class="math-phase hidden" style="position: relative;">
-            <button id="skipTimerBtn" onclick="skipMathTimer()" style="position: absolute; top: 10px; right: 10px; padding: 5px 8px; font-size: 0.7em; background: #95a5a6; color: white; border: none; border-radius: 3px; cursor: pointer; opacity: 0.7;">SKIP</button>
+            <!-- Profile Display (Math Phase - non-interactive) -->
+            <div id="mathPhaseProfileDisplay" class="profile-display-game playing">
+                <button class="profile-button">
+                    <span class="gameProfileAvatar">🦊</span>
+                    <span class="gameProfileName">Player 1</span>
+                </button>
+            </div>
+            <button id="skipTimerBtn" onclick="skipMathTimer()" style="position: absolute; bottom: 10px; right: 10px; padding: 5px 8px; font-size: 0.7em; background: #95a5a6; color: white; border: none; border-radius: 3px; cursor: pointer; opacity: 0.7;">SKIP</button>
             <div class="phase-header">
                 <h2 class="phase-title" id="mathPhaseTitle">🧮 Math Battle - Round <span id="mathRoundNumber">1</span></h2>
                 <div class="timer" id="mathTimer">60</div>
@@ -1512,6 +1900,14 @@
     <!-- Math Castle Game -->
     <div id="castleGame" class="container game-container">
         <button class="back-button" onclick="returnToHub()">← Back to Hub</button>
+
+        <!-- Profile Display -->
+        <div id="castleProfileDisplay" class="profile-display-game playing">
+            <button class="profile-button">
+                <span class="gameProfileAvatar">🦊</span>
+                <span class="gameProfileName">Player 1</span>
+            </button>
+        </div>
 
         <!-- Cannon Phase (Action Phase) -->
         <div id="castleCannonPhase" class="action-phase hidden" style="position: relative;">
@@ -1598,6 +1994,14 @@
     <div id="expressGame" class="container game-container">
         <button class="back-button" onclick="returnToHub()">← Back to Hub</button>
 
+        <!-- Profile Display -->
+        <div class="profile-display-game playing">
+            <button class="profile-button">
+                <span class="gameProfileAvatar">🦊</span>
+                <span class="gameProfileName">Player 1</span>
+            </button>
+        </div>
+
         <!-- Train Phase (Action Phase) -->
         <div id="expressTrainPhase" class="action-phase hidden" style="position: relative;">
             <div class="phase-header">
@@ -1655,6 +2059,14 @@
     <div id="minerGame" class="container game-container">
         <button class="back-button" onclick="returnToHub()">← Back to Hub</button>
 
+        <!-- Profile Display (Playing Mode) -->
+        <div class="profile-display-game playing">
+            <button class="profile-button">
+                <span class="gameProfileAvatar">🦊</span>
+                <span class="gameProfileName">Player 1</span>
+            </button>
+        </div>
+
         <!-- Mining Phase (Action Phase) -->
         <div id="minerMiningPhase" class="action-phase hidden">
             <div class="phase-header">
@@ -1673,6 +2085,14 @@
     <!-- Math Plane Game -->
     <div id="planeGame" class="container game-container">
         <button class="back-button" onclick="returnToHub()">← Back to Hub</button>
+
+        <!-- Profile Display (Playing Mode) -->
+        <div class="profile-display-game playing">
+            <button class="profile-button">
+                <span class="gameProfileAvatar">🦊</span>
+                <span class="gameProfileName">Player 1</span>
+            </button>
+        </div>
 
         <!-- Flight Phase (Action Phase) -->
         <div id="planeFlightPhase" class="action-phase hidden">
@@ -1703,6 +2123,14 @@
     <!-- Field Goal Game Container -->
     <div id="fieldgoalGame" class="container game-container">
         <button class="back-button" onclick="returnToHub()">← Back to Hub</button>
+
+        <!-- Profile Display (Playing Mode) -->
+        <div class="profile-display-game playing">
+            <button class="profile-button">
+                <span class="gameProfileAvatar">🦊</span>
+                <span class="gameProfileName">Player 1</span>
+            </button>
+        </div>
 
         <!-- Kick Phase (Action Phase) -->
         <div id="fieldgoalKickPhase" class="action-phase hidden">
@@ -1739,6 +2167,14 @@
     <div id="minigolfGame" class="container game-container" style="display: none;">
         <button class="back-button" onclick="returnToHub()">← Back to Hub</button>
 
+        <!-- Profile Display (Playing Mode) -->
+        <div class="profile-display-game playing">
+            <button class="profile-button">
+                <span class="gameProfileAvatar">🦊</span>
+                <span class="gameProfileName">Player 1</span>
+            </button>
+        </div>
+
         <!-- Putt Phase (Action Phase) -->
         <div id="minigolfPuttPhase" class="action-phase hidden">
             <div class="minigolf-game-area">
@@ -1762,6 +2198,14 @@
     <div id="motorcycleGame" class="container game-container" style="display: none;">
         <button class="back-button" onclick="returnToHub()">← Back to Hub</button>
 
+        <!-- Profile Display (Playing Mode) -->
+        <div class="profile-display-game playing">
+            <button class="profile-button">
+                <span class="gameProfileAvatar">🦊</span>
+                <span class="gameProfileName">Player 1</span>
+            </button>
+        </div>
+
         <!-- Race Phase (Action Phase) -->
         <div id="motorcycleRacePhase" class="action-phase hidden">
             <canvas id="motorcycleCanvas" class="game-canvas" width="800" height="600"></canvas>
@@ -1772,6 +2216,14 @@
     <!-- Snowball Game Container -->
     <div id="snowballGame" class="container game-container" style="display: none;">
         <button class="back-button" onclick="returnToHub()">← Back to Hub</button>
+
+        <!-- Profile Display (Playing Mode) -->
+        <div class="profile-display-game playing">
+            <button class="profile-button">
+                <span class="gameProfileAvatar">🦊</span>
+                <span class="gameProfileName">Player 1</span>
+            </button>
+        </div>
 
         <!-- Throw Phase (Action Phase) -->
         <div id="snowballThrowPhase" class="action-phase hidden">
@@ -2737,27 +3189,79 @@
         // ===== STORAGE MANAGER =====
         const storageManager = {
             STORAGE_KEY: 'mathAdventureStats',
-            VERSION: 1,
+            VERSION: 2,
+            AVATARS: ['🦊', '🐱', '🐶', '🦁', '🐼', '🐨', '🐸', '🐰', '🐻', '🐯', '🐷', '🐵'],
 
             // Get default empty stats object
             getDefaultStats() {
                 return { highScore: 0, totalScore: 0, highestLevel: 0, totalLevels: 0 };
             },
 
-            // Load stats from localStorage
+            // Generate unique profile ID
+            generateProfileId() {
+                return 'profile_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+            },
+
+            // Migrate v1 data to v2 format
+            migrateFromV1(oldData) {
+                const profileId = this.generateProfileId();
+                return {
+                    version: 2,
+                    activeProfileId: profileId,
+                    profiles: {
+                        [profileId]: {
+                            id: profileId,
+                            name: 'Player 1',
+                            avatar: '🦊',
+                            created: Date.now(),
+                            stats: oldData.stats || {}
+                        }
+                    }
+                };
+            },
+
+            // Get default v2 data structure with one profile
+            getDefaultData() {
+                const profileId = this.generateProfileId();
+                return {
+                    version: 2,
+                    activeProfileId: profileId,
+                    profiles: {
+                        [profileId]: {
+                            id: profileId,
+                            name: 'Player 1',
+                            avatar: '🦊',
+                            created: Date.now(),
+                            stats: {}
+                        }
+                    }
+                };
+            },
+
+            // Load stats from localStorage (with migration support)
             load() {
                 try {
                     const data = localStorage.getItem(this.STORAGE_KEY);
                     if (data) {
                         const parsed = JSON.parse(data);
-                        if (parsed.version === this.VERSION) {
+                        // Already v2
+                        if (parsed.version === 2) {
                             return parsed;
+                        }
+                        // Migrate from v1
+                        if (parsed.version === 1) {
+                            const migrated = this.migrateFromV1(parsed);
+                            this.save(migrated);
+                            return migrated;
                         }
                     }
                 } catch (e) {
                     console.warn('Failed to load stats:', e);
                 }
-                return { version: this.VERSION, stats: {} };
+                // No data or invalid - create default
+                const defaultData = this.getDefaultData();
+                this.save(defaultData);
+                return defaultData;
             },
 
             // Save stats to localStorage
@@ -2769,23 +3273,94 @@
                 }
             },
 
+            // Get active profile
+            getActiveProfile() {
+                const data = this.load();
+                return data.profiles[data.activeProfileId];
+            },
+
+            // Get all profiles as array
+            getAllProfiles() {
+                const data = this.load();
+                return Object.values(data.profiles).sort((a, b) => a.created - b.created);
+            },
+
+            // Create a new profile
+            createProfile(name, avatar) {
+                const data = this.load();
+                const profileId = this.generateProfileId();
+                data.profiles[profileId] = {
+                    id: profileId,
+                    name: name.trim() || 'Player',
+                    avatar: avatar || '🦊',
+                    created: Date.now(),
+                    stats: {}
+                };
+                data.activeProfileId = profileId;
+                this.save(data);
+                return profileId;
+            },
+
+            // Switch to a different profile
+            switchProfile(profileId) {
+                const data = this.load();
+                if (data.profiles[profileId]) {
+                    data.activeProfileId = profileId;
+                    this.save(data);
+                    return true;
+                }
+                return false;
+            },
+
+            // Delete a profile
+            deleteProfile(profileId) {
+                const data = this.load();
+                const profileIds = Object.keys(data.profiles);
+                // Cannot delete the last profile
+                if (profileIds.length <= 1) {
+                    return false;
+                }
+                if (data.profiles[profileId]) {
+                    delete data.profiles[profileId];
+                    // If deleted profile was active, switch to another
+                    if (data.activeProfileId === profileId) {
+                        data.activeProfileId = Object.keys(data.profiles)[0];
+                    }
+                    this.save(data);
+                    return true;
+                }
+                return false;
+            },
+
+            // Update a profile's avatar
+            updateProfileAvatar(profileId, newAvatar) {
+                const data = this.load();
+                if (data.profiles[profileId]) {
+                    data.profiles[profileId].avatar = newAvatar;
+                    this.save(data);
+                    return true;
+                }
+                return false;
+            },
+
             // Get stat key for a game/mode/difficulty combination
             getStatKey(game, mode, difficulty) {
                 return `${game}_${mode}_${difficulty}`;
             },
 
-            // Get stats for a specific combination
+            // Get stats for a specific combination (from active profile)
             getStats(game, mode, difficulty) {
-                const data = this.load();
+                const profile = this.getActiveProfile();
                 const key = this.getStatKey(game, mode, difficulty);
-                return data.stats[key] || this.getDefaultStats();
+                return profile.stats[key] || this.getDefaultStats();
             },
 
-            // Update stats after a game ends
+            // Update stats after a game ends (for active profile)
             updateStats(game, mode, difficulty, score, level) {
                 const data = this.load();
+                const profile = data.profiles[data.activeProfileId];
                 const key = this.getStatKey(game, mode, difficulty);
-                const current = data.stats[key] || this.getDefaultStats();
+                const current = profile.stats[key] || this.getDefaultStats();
 
                 // Update math progress stats
                 if (score > current.highScore) {
@@ -2799,13 +3374,13 @@
                 }
                 current.totalLevels += level;
 
-                data.stats[key] = current;
+                profile.stats[key] = current;
                 this.save(data);
             },
 
-            // Get all stats
+            // Get all stats (from active profile)
             getAllStats() {
-                return this.load().stats;
+                return this.getActiveProfile().stats;
             },
 
             // Get stars for a score/level based on type
@@ -3337,6 +3912,9 @@
 
         function showMyAdventure() {
             sounds.playButtonClick();
+            // Update title with profile name
+            const profile = storageManager.getActiveProfile();
+            document.querySelector('.adventure-title').textContent = `📊 ${profile.name}'s Adventure`;
             document.getElementById('gameHub').style.display = 'none';
             document.getElementById('myAdventureScreen').style.display = 'block';
             renderMathProgress();
@@ -3477,6 +4055,298 @@
                 tbody.appendChild(row);
             });
         }
+
+        // ===== PROFILE MANAGEMENT FUNCTIONS =====
+
+        // State for profile creation/editing
+        let selectedAvatar = '🦊';
+        let profileToDelete = null;
+
+        // Update profile display in hub and all game screens
+        function updateProfileDisplay() {
+            const profile = storageManager.getActiveProfile();
+            if (profile) {
+                // Update hub profile display
+                document.getElementById('currentProfileAvatar').textContent = profile.avatar;
+                document.getElementById('currentProfileName').textContent = profile.name;
+
+                // Update shared game container profile
+                const sharedAvatar = document.getElementById('sharedProfileAvatar');
+                const sharedName = document.getElementById('sharedProfileName');
+                if (sharedAvatar) sharedAvatar.textContent = profile.avatar;
+                if (sharedName) sharedName.textContent = profile.name;
+
+                // Update all game profile displays (class-based)
+                document.querySelectorAll('.gameProfileAvatar').forEach(el => {
+                    el.textContent = profile.avatar;
+                });
+                document.querySelectorAll('.gameProfileName').forEach(el => {
+                    el.textContent = profile.name;
+                });
+            }
+        }
+
+        // Toggle profile dropdown
+        function toggleProfileDropdown() {
+            const dropdown = document.getElementById('profileDropdown');
+            if (dropdown.classList.contains('show')) {
+                hideProfileDropdown();
+            } else {
+                renderProfileDropdown();
+                dropdown.classList.add('show');
+            }
+        }
+
+        // Hide profile dropdown
+        function hideProfileDropdown() {
+            document.getElementById('profileDropdown').classList.remove('show');
+        }
+
+        // Toggle game profile dropdown (for shared container on game selection screens)
+        function toggleGameProfileDropdown(containerId) {
+            const dropdown = document.getElementById(containerId + 'ProfileDropdown');
+            if (dropdown.classList.contains('show')) {
+                hideGameProfileDropdown(containerId);
+            } else {
+                renderGameProfileDropdown(containerId);
+                dropdown.classList.add('show');
+            }
+        }
+
+        // Hide game profile dropdown
+        function hideGameProfileDropdown(containerId) {
+            const dropdown = document.getElementById(containerId + 'ProfileDropdown');
+            if (dropdown) dropdown.classList.remove('show');
+        }
+
+        // Render game profile dropdown items
+        function renderGameProfileDropdown(containerId) {
+            const profiles = storageManager.getAllProfiles();
+            const activeProfile = storageManager.getActiveProfile();
+            const dropdown = document.getElementById(containerId + 'ProfileDropdown');
+
+            let html = '';
+            profiles.forEach(profile => {
+                const isActive = profile.id === activeProfile.id;
+                html += `
+                    <div class="profile-dropdown-item ${isActive ? 'active' : ''}" onclick="switchToProfileFromGame('${profile.id}', '${containerId}')">
+                        <span class="profile-avatar">${profile.avatar}</span>
+                        <span class="profile-name">${profile.name}</span>
+                        ${isActive ? '<span class="check-mark">✓</span>' : ''}
+                    </div>
+                `;
+            });
+
+            html += '<div class="profile-dropdown-divider"></div>';
+            html += `
+                <div class="profile-dropdown-manage" onclick="showProfileManager()">
+                    <span>⚙️</span>
+                    <span>Manage Players</span>
+                </div>
+            `;
+
+            dropdown.innerHTML = html;
+        }
+
+        // Switch profile from game selection screen
+        function switchToProfileFromGame(profileId, containerId) {
+            storageManager.switchProfile(profileId);
+            updateProfileDisplay();
+            hideGameProfileDropdown(containerId);
+            sounds.playCorrect();
+        }
+
+        // Render profile dropdown items
+        function renderProfileDropdown() {
+            const profiles = storageManager.getAllProfiles();
+            const activeProfile = storageManager.getActiveProfile();
+            const dropdown = document.getElementById('profileDropdown');
+
+            let html = '';
+            profiles.forEach(profile => {
+                const isActive = profile.id === activeProfile.id;
+                html += `
+                    <div class="profile-dropdown-item ${isActive ? 'active' : ''}" onclick="switchToProfile('${profile.id}')">
+                        <span class="profile-avatar">${profile.avatar}</span>
+                        <span class="profile-name">${profile.name}</span>
+                        ${isActive ? '<span class="check-mark">✓</span>' : ''}
+                    </div>
+                `;
+            });
+
+            html += '<div class="profile-dropdown-divider"></div>';
+            html += `
+                <div class="profile-dropdown-manage" onclick="showProfileManager()">
+                    <span>⚙️</span>
+                    <span>Manage Players</span>
+                </div>
+            `;
+
+            dropdown.innerHTML = html;
+        }
+
+        // Switch to a different profile
+        function switchToProfile(profileId) {
+            storageManager.switchProfile(profileId);
+            updateProfileDisplay();
+            hideProfileDropdown();
+            sounds.playCorrect();
+        }
+
+        // Show profile manager modal
+        function showProfileManager() {
+            hideProfileDropdown();
+            renderProfileList();
+            document.getElementById('profileManagerModal').classList.add('show');
+        }
+
+        // Hide profile manager modal
+        function hideProfileManager() {
+            document.getElementById('profileManagerModal').classList.remove('show');
+        }
+
+        // Render list of profiles in manager
+        function renderProfileList() {
+            const profiles = storageManager.getAllProfiles();
+            const canDelete = profiles.length > 1;
+            const list = document.getElementById('profileList');
+
+            let html = '';
+            profiles.forEach(profile => {
+                html += `
+                    <div class="profile-list-item">
+                        <span class="profile-avatar clickable" onclick="showEditAvatar('${profile.id}', '${profile.avatar}')" title="Click to change avatar">${profile.avatar}</span>
+                        <span class="profile-name">${profile.name}</span>
+                        ${canDelete ? `<button class="delete-profile-btn" onclick="showDeleteConfirm('${profile.id}', '${profile.name}')">🗑️</button>` : ''}
+                    </div>
+                `;
+            });
+
+            list.innerHTML = html;
+        }
+
+        // State for avatar editing
+        let editingProfileId = null;
+
+        // Show avatar edit modal
+        function showEditAvatar(profileId, currentAvatar) {
+            editingProfileId = profileId;
+            selectedAvatar = currentAvatar;
+            renderAvatarGrid('editAvatarGrid');
+            document.getElementById('editAvatarModal').classList.add('show');
+        }
+
+        // Hide avatar edit modal
+        function hideEditAvatar() {
+            editingProfileId = null;
+            document.getElementById('editAvatarModal').classList.remove('show');
+        }
+
+        // Save edited avatar
+        function saveEditedAvatar() {
+            if (editingProfileId && selectedAvatar) {
+                storageManager.updateProfileAvatar(editingProfileId, selectedAvatar);
+                updateProfileDisplay();
+                renderProfileList();
+                hideEditAvatar();
+                sounds.playCorrect();
+            }
+        }
+
+        // Show create profile modal
+        function showCreateProfile() {
+            hideProfileDropdown();
+            hideProfileManager();
+            selectedAvatar = '🦊';
+            document.getElementById('profileNameInput').value = '';
+            renderAvatarGrid();
+            document.getElementById('createProfileModal').classList.add('show');
+            document.getElementById('profileNameInput').focus();
+        }
+
+        // Hide create profile modal
+        function hideCreateProfile() {
+            document.getElementById('createProfileModal').classList.remove('show');
+        }
+
+        // Render avatar selection grid
+        function renderAvatarGrid(gridId = 'avatarGrid') {
+            const grid = document.getElementById(gridId);
+            let html = '';
+            storageManager.AVATARS.forEach(avatar => {
+                const isSelected = avatar === selectedAvatar;
+                html += `<div class="avatar-option ${isSelected ? 'selected' : ''}" onclick="selectAvatar('${avatar}', '${gridId}')">${avatar}</div>`;
+            });
+            grid.innerHTML = html;
+        }
+
+        // Select an avatar
+        function selectAvatar(avatar, gridId = 'avatarGrid') {
+            selectedAvatar = avatar;
+            renderAvatarGrid(gridId);
+        }
+
+        // Submit new profile
+        function submitProfile() {
+            const name = document.getElementById('profileNameInput').value.trim();
+            if (!name) {
+                document.getElementById('profileNameInput').focus();
+                return;
+            }
+
+            storageManager.createProfile(name, selectedAvatar);
+            updateProfileDisplay();
+            hideCreateProfile();
+            sounds.playCorrect();
+        }
+
+        // Show delete confirmation modal
+        function showDeleteConfirm(profileId, profileName) {
+            profileToDelete = profileId;
+            document.getElementById('deleteProfileName').textContent = profileName;
+            document.getElementById('deleteConfirmModal').classList.add('show');
+        }
+
+        // Hide delete confirmation modal
+        function hideDeleteConfirm() {
+            profileToDelete = null;
+            document.getElementById('deleteConfirmModal').classList.remove('show');
+        }
+
+        // Confirm and delete profile
+        function confirmDeleteProfile() {
+            if (profileToDelete) {
+                storageManager.deleteProfile(profileToDelete);
+                updateProfileDisplay();
+                renderProfileList();
+                hideDeleteConfirm();
+                sounds.playButtonClick();
+            }
+        }
+
+        // Close modals when clicking outside
+        document.addEventListener('click', function(e) {
+            // Close profile dropdown if clicking outside
+            const dropdown = document.getElementById('profileDropdown');
+            const profileButton = document.querySelector('.profile-button');
+            if (dropdown && dropdown.classList.contains('show')) {
+                if (!dropdown.contains(e.target) && !profileButton.contains(e.target)) {
+                    hideProfileDropdown();
+                }
+            }
+        });
+
+        // Close modals with Escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                hideProfileDropdown();
+                hideProfileManager();
+                hideCreateProfile();
+                hideDeleteConfirm();
+            }
+        });
+
+        // ===== END PROFILE MANAGEMENT =====
 
         // Shared function for visual point displays with gap for grouping by 5s
         function updatePointsDisplay(displayId, points, pointClass, animate = false) {
@@ -10038,6 +10908,69 @@
 
         // Initialize the hub as active when page loads
         document.getElementById('gameHub').classList.add('active');
+
+        // Initialize profile display
+        updateProfileDisplay();
     </script>
+
+    <!-- Profile Manager Modal -->
+    <div id="profileManagerModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>👥 Manage Players</h3>
+                <button class="modal-close" onclick="hideProfileManager()">✕</button>
+            </div>
+            <div id="profileList" class="profile-list">
+                <!-- Populated dynamically -->
+            </div>
+            <button class="modal-action-button" onclick="showCreateProfile()">+ Create New Player</button>
+        </div>
+    </div>
+
+    <!-- Create Profile Modal -->
+    <div id="createProfileModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="profileModalTitle">✨ New Player</h3>
+                <button class="modal-close" onclick="hideCreateProfile()">✕</button>
+            </div>
+            <div class="profile-form">
+                <label for="profileNameInput">Name:</label>
+                <input type="text" id="profileNameInput" placeholder="Enter name..." maxlength="20">
+                <label>Choose Avatar:</label>
+                <div class="avatar-grid" id="avatarGrid">
+                    <!-- Populated dynamically -->
+                </div>
+            </div>
+            <button id="profileSubmitBtn" class="modal-action-button" onclick="submitProfile()">Create Player</button>
+        </div>
+    </div>
+
+    <!-- Delete Confirm Modal -->
+    <div id="deleteConfirmModal" class="modal">
+        <div class="modal-content modal-content-small">
+            <p>Delete <strong><span id="deleteProfileName"></span></strong>?</p>
+            <p class="delete-warning">This cannot be undone.</p>
+            <div class="modal-buttons">
+                <button class="modal-button-danger" onclick="confirmDeleteProfile()">Delete</button>
+                <button class="modal-button-cancel" onclick="hideDeleteConfirm()">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Avatar Modal -->
+    <div id="editAvatarModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>🎨 Change Avatar</h3>
+                <button class="modal-close" onclick="hideEditAvatar()">✕</button>
+            </div>
+            <div class="modal-body">
+                <p style="margin-bottom: 15px;">Choose a new avatar:</p>
+                <div class="avatar-grid" id="editAvatarGrid"></div>
+            </div>
+            <button class="modal-button-primary" onclick="saveEditedAvatar()">Save Avatar</button>
+        </div>
+    </div>
 </body>
 </html>
