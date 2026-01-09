@@ -5,25 +5,32 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Math Adventure Hub</title>
     <style>
-        body {
+        html, body {
             margin: 0;
-            padding: 20px;
+            padding: 0;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        body {
+            padding: 10px 20px;
             font-family: 'Comic Sans MS', cursive, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             display: flex;
             flex-direction: column;
             align-items: center;
-            min-height: 100vh;
+            box-sizing: border-box;
         }
 
         .container {
             background: white;
             border-radius: 20px;
-            padding: 30px;
+            padding: 20px 30px;
             box-shadow: 0 15px 40px rgba(0,0,0,0.15);
             max-width: 1000px;
             width: 100%;
-            margin-bottom: 20px;
+            max-height: calc(100vh - 20px);
+            overflow-y: auto;
         }
 
         /* Hub Styles */
@@ -1287,6 +1294,7 @@
         .profile-display-game .profile-button {
             padding: 8px 14px;
             font-size: 0.95em;
+            position: relative;
         }
 
         .profile-display-game .profile-button #gameProfileAvatar {
@@ -1300,6 +1308,25 @@
 
         .profile-display-game.playing .dropdown-arrow {
             display: none;
+        }
+
+        /* DEV mode indicator */
+        .dev-indicator {
+            display: none;
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: #e74c3c;
+            color: white;
+            font-size: 0.6em;
+            font-weight: bold;
+            padding: 2px 6px;
+            border-radius: 3px;
+            z-index: 10;
+        }
+
+        .dev-indicator.active {
+            display: block;
         }
 
         .profile-button {
@@ -1801,6 +1828,7 @@
                     <span id="sharedProfileAvatar">🦊</span>
                     <span id="sharedProfileName">Player 1</span>
                     <span class="dropdown-arrow">▼</span>
+                    <span class="dev-indicator">DEV</span>
                 </button>
                 <div id="sharedProfileDropdown" class="profile-dropdown">
                     <!-- Populated dynamically -->
@@ -1831,6 +1859,7 @@
                 <button class="profile-button">
                     <span class="gameProfileAvatar">🦊</span>
                     <span class="gameProfileName">Player 1</span>
+                    <span class="dev-indicator">DEV</span>
                 </button>
             </div>
             <button id="skipTimerBtn" onclick="skipMathTimer()" style="position: absolute; bottom: 10px; right: 10px; padding: 5px 8px; font-size: 0.7em; background: #95a5a6; color: white; border: none; border-radius: 3px; cursor: pointer; opacity: 0.7;">SKIP</button>
@@ -1906,6 +1935,7 @@
             <button class="profile-button">
                 <span class="gameProfileAvatar">🦊</span>
                 <span class="gameProfileName">Player 1</span>
+                <span class="dev-indicator">DEV</span>
             </button>
         </div>
 
@@ -1931,7 +1961,7 @@
                             <path d="M 110 55 A 50 50 0 0 0 60 5" stroke="#3498db" stroke-width="6" fill="none"/>
                             <circle cx="60" cy="55" r="5" fill="#2c3e50"/>
                         </svg>
-                        <div id="castleAngleNeedle" style="position: absolute; bottom: 10px; left: 60px; transform-origin: bottom center; width: 3px; height: 45px; background: #2c3e50; transform: translateX(-50%) rotate(-45deg); border-radius: 2px;"></div>
+                        <div id="castleAngleNeedle" style="position: absolute; bottom: 10px; left: 60px; transform-origin: bottom center; width: 3px; height: 45px; background: #2c3e50; transform: translateX(-50%) rotate(45deg); border-radius: 2px;"></div>
                     </div>
                     <div style="text-align: center;">
                         <div style="font-weight: bold; font-size: 0.8em; color: #7f8c8d;">ANGLE</div>
@@ -1999,6 +2029,7 @@
             <button class="profile-button">
                 <span class="gameProfileAvatar">🦊</span>
                 <span class="gameProfileName">Player 1</span>
+                <span class="dev-indicator">DEV</span>
             </button>
         </div>
 
@@ -2064,6 +2095,7 @@
             <button class="profile-button">
                 <span class="gameProfileAvatar">🦊</span>
                 <span class="gameProfileName">Player 1</span>
+                <span class="dev-indicator">DEV</span>
             </button>
         </div>
 
@@ -2091,6 +2123,7 @@
             <button class="profile-button">
                 <span class="gameProfileAvatar">🦊</span>
                 <span class="gameProfileName">Player 1</span>
+                <span class="dev-indicator">DEV</span>
             </button>
         </div>
 
@@ -2129,6 +2162,7 @@
             <button class="profile-button">
                 <span class="gameProfileAvatar">🦊</span>
                 <span class="gameProfileName">Player 1</span>
+                <span class="dev-indicator">DEV</span>
             </button>
         </div>
 
@@ -2172,6 +2206,7 @@
             <button class="profile-button">
                 <span class="gameProfileAvatar">🦊</span>
                 <span class="gameProfileName">Player 1</span>
+                <span class="dev-indicator">DEV</span>
             </button>
         </div>
 
@@ -2203,6 +2238,7 @@
             <button class="profile-button">
                 <span class="gameProfileAvatar">🦊</span>
                 <span class="gameProfileName">Player 1</span>
+                <span class="dev-indicator">DEV</span>
             </button>
         </div>
 
@@ -2222,6 +2258,7 @@
             <button class="profile-button">
                 <span class="gameProfileAvatar">🦊</span>
                 <span class="gameProfileName">Player 1</span>
+                <span class="dev-indicator">DEV</span>
             </button>
         </div>
 
@@ -3521,31 +3558,26 @@
             });
         }
 
-        // Start dev mode (skip math phase)
+        // Update DEV mode indicator visibility across all profile displays
+        function updateDevIndicator() {
+            const state = currentGameType ? gameManager.gameStates[currentGameType] : null;
+            const isDevMode = state && state.devMode;
+
+            document.querySelectorAll('.dev-indicator').forEach(el => {
+                el.classList.toggle('active', isDevMode);
+            });
+        }
+
+        // Start dev mode (follow normal flow but with base resources)
         function startDevMode() {
             sounds.playButtonClick();
-            const config = gameConfigs[currentGameType];
             const state = gameManager.gameStates[currentGameType];
 
             state.devMode = true;
-            state.resources = 10;  // Give some resources for testing
-            state.phase = 'action';
+            state.resources = 10;  // Base resources in dev mode
 
-            // Initialize the game object
-            const gameObj = config.gameObject();
-            if (gameObj && gameObj.init) {
-                gameObj.init();
-            }
-
-            // Hide shared container, show game-specific container
-            document.getElementById('sharedGameContainer').style.display = 'none';
-            document.getElementById('sharedGameContainer').classList.remove('active');
-
-            const gameElement = document.getElementById(currentGameType + 'Game');
-            gameElement.classList.add('active');
-            gameElement.style.display = 'block';
-
-            config.startAction();
+            updateDevIndicator();  // Show DEV badge
+            startMathPhase();      // Follow normal flow
         }
 
         // Start the math phase
@@ -3561,8 +3593,8 @@
             }
 
             state.phase = 'math';
-            // Only reset resources on round 1; preserve bonus resources from previous rounds
-            if (state.round === 1) {
+            // Only reset resources on round 1 if not in dev mode (dev mode starts with base resources)
+            if (state.round === 1 && !state.devMode) {
                 state.resources = 0;
             }
 
@@ -3768,20 +3800,17 @@
         // Start next round
         function startNextRound() {
             sounds.playButtonClick();
-            const config = gameConfigs[currentGameType];
             const state = gameManager.gameStates[currentGameType];
             state.round++;
 
             document.getElementById('roundCompleteScreen').classList.add('hidden');
 
-            // In dev mode, skip math phase and go directly to action phase
-            // Resources carry over from the previous round
+            // In dev mode, add base resources for the next round
             if (state.devMode) {
-                state.phase = 'action';
-                config.startAction();
-            } else {
-                startMathPhase();
+                state.resources += 10;
             }
+
+            startMathPhase();  // Always go through math phase
         }
 
         // Show game over screen
@@ -3789,14 +3818,16 @@
             const config = gameConfigs[currentGameType];
             const state = gameManager.gameStates[currentGameType];
 
-            // Save stats to localStorage
-            storageManager.updateStats(
-                currentGameType,
-                gameManager.mathSettings.problemType,
-                gameManager.mathSettings.difficulty,
-                state.score,
-                state.round
-            );
+            // Save stats to localStorage (skip in dev mode)
+            if (!state.devMode) {
+                storageManager.updateStats(
+                    currentGameType,
+                    gameManager.mathSettings.problemType,
+                    gameManager.mathSettings.difficulty,
+                    state.score,
+                    state.round
+                );
+            }
 
             // Hide game container, show shared container
             const gameElement = document.getElementById(currentGameType + 'Game');
@@ -3853,6 +3884,9 @@
             state.resources = 0;
             state.phase = 'start';
             state.devMode = false;
+
+            // Hide DEV indicator
+            updateDevIndicator();
 
             // Reset game-specific stats
             if (currentGameType === 'castle') state.totalTargetsDestroyed = 0;
@@ -4808,6 +4842,32 @@
             const currentGame = currentGameType || gameManager.currentGame;
             const state = gameManager.gameStates[currentGame];
 
+            // Centralized + key handler for dev mode (works in both math and action phases)
+            if ((e.key === '+' || e.key === '=') && state.devMode) {
+                e.preventDefault();
+                state.resources++;
+
+                // Update display based on current phase
+                if (state.phase === 'math') {
+                    updateResourceDisplay();
+                } else {
+                    // Update game-specific resource display
+                    switch (currentGame) {
+                        case 'castle':
+                            castleGame.updateCannonDisplay();
+                            break;
+                        case 'miner':
+                            minerGame.updateMiningDisplay();
+                            break;
+                        case 'plane':
+                            planeGame.updateFlightDisplay();
+                            break;
+                        // Other games update display in their game loops
+                    }
+                }
+                return;
+            }
+
             if (state.phase === 'math') {
                 if (e.key >= '0' && e.key <= '9') {
                     // Use shared input system (addNumber handles sound and auto-submit)
@@ -5214,14 +5274,6 @@
                     case 'D':
                         this.movePlayer(1, 0);
                         break;
-                    case '=':
-                    case '+':
-                        // Dev mode: add dig points
-                        if (gameManager.gameStates.miner.devMode) {
-                            gameManager.gameStates.miner.resources += 5;
-                            this.updateMiningDisplay();
-                        }
-                        break;
                 }
             }
         };
@@ -5242,13 +5294,69 @@
                 height: 20,
                 angle: 0
             },
-            background: { clouds: [], trees: [] },
+            background: {
+                clouds: [],
+                trees: [],      // Deciduous trees (forest, hills)
+                pines: [],      // Pine trees (mountains)
+                hills: [],      // Rolling hills
+                mountains: [],  // Mountain peaks
+                mesas: [],      // Desert mesas
+                cacti: []       // Desert cacti
+            },
             flightRunning: false,
             launched: false,
             mathTimer: 60,
             mathInterval: null,
             distance: 0,
-            targetDistance: 200,
+            targetDistance: 600,
+
+            // Landing zone configuration (symmetric around target)
+            // Layout: RED - ORANGE - GREEN(trashcan) - ORANGE - RED
+            landingZones: {
+                redWidth: 60,       // Each side
+                orangeWidth: 40,    // Each side
+                greenWidth: 30,     // Center zone (half size of red)
+                trashcanWidth: 10,  // Bullseye in center of green
+                redBonus: 0,        // "YOU LANDED!"
+                orangeBonus: 100,   // +100 distance
+                greenBonus: 500,    // +500 distance
+                trashcanBonus: 250  // Extra bonus for hitting trashcan
+            },
+
+            // Biome configuration for dynamic backgrounds
+            // Each biome spans 600 distance units, backgrounds stop before landing zone
+            biomeConfigs: {
+                forest: {
+                    trees: { count: 12, spacing: 50, heightRange: [30, 50] },
+                    clouds: { count: 8, yRange: [20, 80] },
+                    groundColor: '#27ae60'
+                },
+                hills: {
+                    hills: { count: 4, heightRange: [40, 80], widthRange: [150, 300] },
+                    trees: { count: 6, spacing: 100, heightRange: [25, 40] },
+                    clouds: { count: 6, yRange: [10, 60] },
+                    groundColor: '#9ACD32',
+                    hillColor: '#6B8E23'
+                },
+                mountains: {
+                    mountains: { count: 3, heightRange: [80, 140], widthRange: [200, 400] },
+                    pines: { count: 8, spacing: 75, heightRange: [35, 55] },
+                    clouds: { count: 4, yRange: [5, 40] },
+                    groundColor: '#8FBC8F',
+                    mountainColor: '#708090'
+                },
+                desert: {
+                    mesas: { count: 2, heightRange: [50, 90], widthRange: [150, 250] },
+                    cacti: { count: 8, spacing: 75, heightRange: [20, 40] },
+                    clouds: { count: 2, yRange: [15, 50] },
+                    groundColor: '#DEB887',
+                    mesaColor: '#CD853F'
+                }
+            },
+
+            // Biome sequence: Forest -> Hills -> Mountains -> Desert (repeats)
+            biomeSequence: ['forest', 'hills', 'mountains', 'desert'],
+            biomeLength: 600, // Each biome spans 600 distance units
 
             init() {
                 this.canvas = document.getElementById('planeGameCanvas');
@@ -5260,25 +5368,188 @@
             },
 
             initializeBackground() {
+                // Clear all background arrays
                 this.background.clouds = [];
                 this.background.trees = [];
+                this.background.pines = [];
+                this.background.hills = [];
+                this.background.mountains = [];
+                this.background.mesas = [];
+                this.background.cacti = [];
+            },
 
-                // Create clouds
-                for (let i = 0; i < 8; i++) {
-                    this.background.clouds.push({
-                        x: Math.random() * 1500,
-                        y: 20 + Math.random() * 60,
-                        width: 40 + Math.random() * 40,
-                        height: 20 + Math.random() * 15
-                    });
+            // Get the biome type for a given distance
+            getBiomeForDistance(distance) {
+                const biomeIndex = Math.floor(distance / this.biomeLength);
+                return this.biomeSequence[biomeIndex % this.biomeSequence.length];
+            },
+
+            // Generate all biomes up to target distance (excluding landing zone)
+            generateBiomes(targetDistance) {
+                this.initializeBackground();
+
+                // Calculate landing zone start (backgrounds stop before landing zone)
+                const zones = this.landingZones;
+                const zoneRadius = zones.greenWidth / 2 + zones.orangeWidth + zones.redWidth;
+                const backgroundEndDistance = targetDistance - zoneRadius;
+
+                // Generate each biome section
+                let currentDistance = 0;
+                while (currentDistance < backgroundEndDistance) {
+                    const biomeType = this.getBiomeForDistance(currentDistance);
+                    const biomeEnd = Math.min(
+                        currentDistance + this.biomeLength,
+                        backgroundEndDistance
+                    );
+
+                    this.generateBiomeSection(biomeType, currentDistance, biomeEnd);
+                    currentDistance += this.biomeLength;
+                }
+            },
+
+            // Parallax factors for each element type (slower = further back)
+            parallaxFactors: {
+                clouds: 0.3,
+                mountains: 0.3,
+                mesas: 0.4,
+                hills: 0.5,
+                pines: 0.6,
+                trees: 0.7,
+                cacti: 0.7
+            },
+
+            // Generate background elements for a specific biome section
+            generateBiomeSection(biomeType, startDistance, endDistance) {
+                const config = this.biomeConfigs[biomeType];
+                const pixelScale = 4; // distance units to pixels
+                const baseStartX = startDistance * pixelScale;
+                const baseEndX = endDistance * pixelScale;
+                const baseSectionWidth = baseEndX - baseStartX;
+
+                // Helper to calculate x position with parallax compensation
+                // Elements with slower parallax need smaller x values to appear at the right screen position
+                const getParallaxX = (baseX, parallax) => baseX * parallax;
+
+                // Generate clouds for this section (parallax 0.3)
+                if (config.clouds) {
+                    const parallax = this.parallaxFactors.clouds;
+                    const startX = getParallaxX(baseStartX, parallax);
+                    const sectionWidth = getParallaxX(baseSectionWidth, parallax);
+                    const cloudCount = config.clouds.count;
+                    for (let i = 0; i < cloudCount; i++) {
+                        this.background.clouds.push({
+                            x: startX + Math.random() * sectionWidth,
+                            y: config.clouds.yRange[0] + Math.random() * (config.clouds.yRange[1] - config.clouds.yRange[0]),
+                            width: 40 + Math.random() * 40,
+                            height: 20 + Math.random() * 15,
+                            biome: biomeType
+                        });
+                    }
                 }
 
-                // Create trees
-                for (let i = 0; i < 10; i++) {
-                    this.background.trees.push({
-                        x: 100 + i * 150 + Math.random() * 50,
-                        height: 30 + Math.random() * 20
-                    });
+                // Generate trees (deciduous) for forest and hills (parallax 0.7)
+                if (config.trees) {
+                    const parallax = this.parallaxFactors.trees;
+                    const startX = getParallaxX(baseStartX, parallax);
+                    const sectionWidth = getParallaxX(baseSectionWidth, parallax);
+                    const treeCount = config.trees.count;
+                    const spacing = config.trees.spacing * pixelScale * parallax;
+                    for (let i = 0; i < treeCount; i++) {
+                        const baseX = startX + (i / treeCount) * sectionWidth;
+                        this.background.trees.push({
+                            x: baseX + (Math.random() - 0.5) * spacing,
+                            height: config.trees.heightRange[0] + Math.random() * (config.trees.heightRange[1] - config.trees.heightRange[0]),
+                            biome: biomeType
+                        });
+                    }
+                }
+
+                // Generate hills (parallax 0.5)
+                if (config.hills) {
+                    const parallax = this.parallaxFactors.hills;
+                    const startX = getParallaxX(baseStartX, parallax);
+                    const sectionWidth = getParallaxX(baseSectionWidth, parallax);
+                    const hillCount = config.hills.count;
+                    for (let i = 0; i < hillCount; i++) {
+                        const width = config.hills.widthRange[0] + Math.random() * (config.hills.widthRange[1] - config.hills.widthRange[0]);
+                        this.background.hills.push({
+                            x: startX + (i / hillCount) * sectionWidth + Math.random() * (sectionWidth / hillCount),
+                            width: width,
+                            height: config.hills.heightRange[0] + Math.random() * (config.hills.heightRange[1] - config.hills.heightRange[0]),
+                            color: config.hillColor,
+                            biome: biomeType
+                        });
+                    }
+                }
+
+                // Generate mountains (parallax 0.3)
+                if (config.mountains) {
+                    const parallax = this.parallaxFactors.mountains;
+                    const startX = getParallaxX(baseStartX, parallax);
+                    const sectionWidth = getParallaxX(baseSectionWidth, parallax);
+                    const mountainCount = config.mountains.count;
+                    for (let i = 0; i < mountainCount; i++) {
+                        const width = config.mountains.widthRange[0] + Math.random() * (config.mountains.widthRange[1] - config.mountains.widthRange[0]);
+                        this.background.mountains.push({
+                            x: startX + (i / mountainCount) * sectionWidth + Math.random() * (sectionWidth / mountainCount),
+                            width: width,
+                            height: config.mountains.heightRange[0] + Math.random() * (config.mountains.heightRange[1] - config.mountains.heightRange[0]),
+                            color: config.mountainColor,
+                            biome: biomeType
+                        });
+                    }
+                }
+
+                // Generate pine trees (parallax 0.6)
+                if (config.pines) {
+                    const parallax = this.parallaxFactors.pines;
+                    const startX = getParallaxX(baseStartX, parallax);
+                    const sectionWidth = getParallaxX(baseSectionWidth, parallax);
+                    const pineCount = config.pines.count;
+                    const spacing = config.pines.spacing * pixelScale * parallax;
+                    for (let i = 0; i < pineCount; i++) {
+                        const baseX = startX + (i / pineCount) * sectionWidth;
+                        this.background.pines.push({
+                            x: baseX + (Math.random() - 0.5) * spacing,
+                            height: config.pines.heightRange[0] + Math.random() * (config.pines.heightRange[1] - config.pines.heightRange[0]),
+                            biome: biomeType
+                        });
+                    }
+                }
+
+                // Generate mesas (parallax 0.4)
+                if (config.mesas) {
+                    const parallax = this.parallaxFactors.mesas;
+                    const startX = getParallaxX(baseStartX, parallax);
+                    const sectionWidth = getParallaxX(baseSectionWidth, parallax);
+                    const mesaCount = config.mesas.count;
+                    for (let i = 0; i < mesaCount; i++) {
+                        const width = config.mesas.widthRange[0] + Math.random() * (config.mesas.widthRange[1] - config.mesas.widthRange[0]);
+                        this.background.mesas.push({
+                            x: startX + (i / mesaCount) * sectionWidth + Math.random() * (sectionWidth / mesaCount),
+                            width: width,
+                            height: config.mesas.heightRange[0] + Math.random() * (config.mesas.heightRange[1] - config.mesas.heightRange[0]),
+                            color: config.mesaColor,
+                            biome: biomeType
+                        });
+                    }
+                }
+
+                // Generate cacti (parallax 0.7)
+                if (config.cacti) {
+                    const parallax = this.parallaxFactors.cacti;
+                    const startX = getParallaxX(baseStartX, parallax);
+                    const sectionWidth = getParallaxX(baseSectionWidth, parallax);
+                    const cactiCount = config.cacti.count;
+                    const spacing = config.cacti.spacing * pixelScale * parallax;
+                    for (let i = 0; i < cactiCount; i++) {
+                        const baseX = startX + (i / cactiCount) * sectionWidth;
+                        this.background.cacti.push({
+                            x: baseX + (Math.random() - 0.5) * spacing,
+                            height: config.cacti.heightRange[0] + Math.random() * (config.cacti.heightRange[1] - config.cacti.heightRange[0]),
+                            biome: biomeType
+                        });
+                    }
                 }
             },
 
@@ -5317,9 +5588,12 @@
                 this.airplane.angle = 0;
 
                 this.distance = 0;
-                this.targetDistance = state.round * 200;
+                this.targetDistance = state.round * 600;
                 this.launched = false;
                 this.flightRunning = true;
+
+                // Generate biomes based on target distance
+                this.generateBiomes(this.targetDistance);
 
                 // Update UI
                 document.getElementById('planeFlightRoundNumber').textContent = state.round;
@@ -5332,23 +5606,24 @@
 
             useWind() {
                 const state = gameManager.gameStates.plane;
-                if (state.resources <= 0) {
-                    sounds.playIncorrect();
-                    return;
-                }
-
-                state.resources--;
-                sounds.playWhoosh();
 
                 if (!this.launched) {
-                    // First use: launch
+                    // First use: launch (FREE - no wind cost)
                     this.launched = true;
                     this.airplane.velocityX = 7;
                     this.airplane.velocityY = -2;
                     this.airplane.onGround = false;
                     document.getElementById('planeLaunchIndicator').style.display = 'none';
+                    sounds.playWhoosh();
                 } else {
-                    // Subsequent: boost
+                    // Subsequent: boost (costs wind point)
+                    if (state.resources <= 0) {
+                        sounds.playIncorrect();
+                        return;
+                    }
+                    state.resources--;
+                    sounds.playWhoosh();
+
                     const speedFactor = Math.max(0.5, 1 - (this.airplane.speed / 15));
                     this.airplane.velocityX += 3.5 * speedFactor;
                     this.airplane.velocityY -= 0.3;
@@ -5371,10 +5646,10 @@
                 document.getElementById('planeDistanceDisplay').textContent = Math.floor(this.distance);
                 document.getElementById('planeAltitudeDisplay').textContent = Math.floor(this.airplane.altitude);
 
-                // Hide launch indicator if out of wind or already launched
+                // Hide launch indicator after launch (launch is free, so show even with 0 resources)
                 const indicator = document.getElementById('planeLaunchIndicator');
                 if (indicator) {
-                    indicator.style.display = (!this.launched && state.resources > 0) ? 'block' : 'none';
+                    indicator.style.display = this.launched ? 'none' : 'block';
                 }
             },
 
@@ -5399,6 +5674,18 @@
                 // Air resistance
                 this.airplane.velocityX *= 0.997;
                 this.airplane.velocityY *= 0.985;
+
+                // High altitude penalty - thin air above canvas
+                if (this.airplane.y < 0) {
+                    const penaltyDepth = Math.min(100, Math.abs(this.airplane.y));
+                    const penaltyFactor = penaltyDepth / 100; // 0 to 1
+
+                    // Extra gravity (thin air = less lift)
+                    this.airplane.velocityY += 0.3 * penaltyFactor;
+
+                    // Reduced horizontal momentum (turbulence)
+                    this.airplane.velocityX *= (1 - 0.02 * penaltyFactor);
+                }
 
                 // Clamp velocities
                 this.airplane.velocityX = Math.min(12, Math.max(-2, this.airplane.velocityX));
@@ -5429,16 +5716,24 @@
                 // Update distance
                 this.distance = Math.floor(this.airplane.x / 4);
 
-                // Check for landing at target
-                if (this.distance >= this.targetDistance && this.airplane.onGround) {
+                // Calculate zone boundaries (symmetric around target)
+                const zones = this.landingZones;
+                const zoneRadius = zones.greenWidth / 2 + zones.orangeWidth + zones.redWidth;
+                const zoneStart = this.targetDistance - zoneRadius;
+                const zoneEnd = this.targetDistance + zoneRadius;
+
+                // Check for landing within zone area
+                if (this.airplane.onGround && this.distance >= zoneStart && this.distance <= zoneEnd) {
                     this.landAtTarget();
                     return;
                 }
 
-                // Check for game over (stopped on ground)
+                // Check for game over (stopped on ground outside zones or out of resources)
                 const state = gameManager.gameStates.plane;
-                if (this.airplane.onGround && this.airplane.speed < 0.5 && state.resources <= 0 && this.launched) {
-                    this.endFlightPhase();
+                if (this.airplane.onGround && this.airplane.speed < 0.5 && this.launched) {
+                    if (state.resources <= 0 || this.distance > zoneEnd) {
+                        this.endFlightPhase();
+                    }
                 }
             },
 
@@ -5446,12 +5741,42 @@
                 this.flightRunning = false;
                 const state = gameManager.gameStates.plane;
 
-                state.totalDistance += this.distance;
+                // Determine landing zone and bonus
+                const zone = this.getLandingZone();
+                const bonus = this.getLandingBonus(zone);
+
+                // Store for display
+                state.lastLandingZone = zone;
+                state.lastLandingBonus = bonus;
+
+                // Add base distance + bonus to total
+                state.totalDistance += this.distance + bonus;
+
+                // Determine landing message
+                let landingMessage;
+                switch(zone) {
+                    case 'trashcan':
+                        landingMessage = 'BULLSEYE! +750m';
+                        break;
+                    case 'green':
+                        landingMessage = 'PERFECT LANDING! +500m';
+                        break;
+                    case 'orange':
+                        landingMessage = 'GREAT LANDING! +100m';
+                        break;
+                    case 'red':
+                        landingMessage = 'YOU LANDED!';
+                        break;
+                    default:
+                        landingMessage = 'MISSED THE ZONE';
+                }
 
                 // Use shared round complete screen
                 setTimeout(() => {
                     showRoundComplete({
+                        'Landing': landingMessage,
                         'Distance Flown': Math.round(this.distance) + 'm',
+                        'Bonus Distance': bonus > 0 ? '+' + bonus + 'm' : '0m',
                         'Total Distance': Math.floor(state.totalDistance) + 'm'
                     });
                 }, 1000);
@@ -5480,7 +5805,7 @@
                 ctx.fillStyle = gradient;
                 ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
 
-                // Draw clouds (parallax)
+                // Draw clouds (parallax 0.3x - far background)
                 ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
                 for (const cloud of this.background.clouds) {
                     const cloudX = cloud.x - cameraX * 0.3;
@@ -5493,7 +5818,39 @@
                     }
                 }
 
-                // Draw trees (parallax)
+                // Draw mountains (parallax 0.3x - far background)
+                for (const mountain of this.background.mountains) {
+                    const mountainX = mountain.x - cameraX * 0.3;
+                    if (mountainX > -mountain.width && mountainX < this.canvas.width + mountain.width) {
+                        this.drawMountain(ctx, mountainX, mountain.width, mountain.height, mountain.color);
+                    }
+                }
+
+                // Draw mesas (parallax 0.4x - mid background)
+                for (const mesa of this.background.mesas) {
+                    const mesaX = mesa.x - cameraX * 0.4;
+                    if (mesaX > -mesa.width && mesaX < this.canvas.width + mesa.width) {
+                        this.drawMesa(ctx, mesaX, mesa.width, mesa.height, mesa.color);
+                    }
+                }
+
+                // Draw hills (parallax 0.5x - mid background)
+                for (const hill of this.background.hills) {
+                    const hillX = hill.x - cameraX * 0.5;
+                    if (hillX > -hill.width && hillX < this.canvas.width + hill.width) {
+                        this.drawHill(ctx, hillX, hill.width, hill.height, hill.color);
+                    }
+                }
+
+                // Draw pine trees (parallax 0.6x - near background)
+                for (const pine of this.background.pines) {
+                    const pineX = pine.x - cameraX * 0.6;
+                    if (pineX > -50 && pineX < this.canvas.width + 50) {
+                        this.drawPineTree(ctx, pineX, pine.height);
+                    }
+                }
+
+                // Draw deciduous trees (parallax 0.7x - near background)
                 for (const tree of this.background.trees) {
                     const treeX = tree.x - cameraX * 0.7;
                     if (treeX > -50 && treeX < this.canvas.width + 50) {
@@ -5508,15 +5865,27 @@
                     }
                 }
 
+                // Draw cacti (parallax 0.7x - near background)
+                for (const cactus of this.background.cacti) {
+                    const cactusX = cactus.x - cameraX * 0.7;
+                    if (cactusX > -50 && cactusX < this.canvas.width + 50) {
+                        this.drawCactus(ctx, cactusX, cactus.height);
+                    }
+                }
+
                 // Draw ground
                 ctx.fillStyle = '#8B4513';
                 ctx.fillRect(0, 250, this.canvas.width, 50);
                 ctx.fillStyle = '#27ae60';
                 ctx.fillRect(0, 250, this.canvas.width, 5);
 
-                // Draw target (trash can)
+                // Draw target and landing zones
                 const targetX = this.targetDistance * 4 - cameraX;
-                if (targetX > -50 && targetX < this.canvas.width + 50) {
+                // Calculate total zone half-width for proper culling
+                const zones = this.landingZones;
+                const zoneHalfWidth = (zones.greenWidth / 2 + zones.orangeWidth + zones.redWidth) * 4;
+                // Show zones if any part is visible on screen
+                if (targetX + zoneHalfWidth > 0 && targetX - zoneHalfWidth < this.canvas.width) {
                     this.drawTarget(ctx, targetX, 235);
                 }
 
@@ -5536,25 +5905,123 @@
                         ctx.stroke();
                     }
                 }
+
+                // Draw altitude warning when too high
+                if (this.airplane.y < 30 && this.launched) {
+                    const warningIntensity = Math.min(1, (30 - this.airplane.y) / 30);
+
+                    // Red border overlay
+                    ctx.strokeStyle = `rgba(231, 76, 60, ${0.3 + warningIntensity * 0.5})`;
+                    ctx.lineWidth = 4 + warningIntensity * 4;
+                    ctx.strokeRect(2, 2, this.canvas.width - 4, this.canvas.height - 4);
+
+                    // Warning text
+                    if (this.airplane.y < 0) {
+                        ctx.fillStyle = `rgba(231, 76, 60, ${0.7 + Math.sin(Date.now() / 100) * 0.3})`;
+                        ctx.font = 'bold 24px Arial';
+                        ctx.textAlign = 'center';
+                        ctx.fillText('TOO HIGH!', this.canvas.width / 2, 40);
+                    }
+                }
+            },
+
+            getLandingZone() {
+                const zones = this.landingZones;
+                // Distance from target center (can be negative or positive)
+                const distFromCenter = Math.abs(this.distance - this.targetDistance);
+
+                // Check zones from center outward (symmetric layout)
+                const halfTrashcan = zones.trashcanWidth / 2;
+                const halfGreen = zones.greenWidth / 2;
+                const orangeEdge = halfGreen + zones.orangeWidth;
+                const redEdge = orangeEdge + zones.redWidth;
+
+                if (distFromCenter <= halfTrashcan) {
+                    return 'trashcan';  // Bullseye!
+                } else if (distFromCenter <= halfGreen) {
+                    return 'green';
+                } else if (distFromCenter <= orangeEdge) {
+                    return 'orange';
+                } else if (distFromCenter <= redEdge) {
+                    return 'red';
+                } else {
+                    return 'miss';  // Outside all zones
+                }
+            },
+
+            getLandingBonus(zone) {
+                const zones = this.landingZones;
+                switch(zone) {
+                    case 'trashcan': return zones.greenBonus + zones.trashcanBonus;
+                    case 'green': return zones.greenBonus;
+                    case 'orange': return zones.orangeBonus;
+                    case 'red': return zones.redBonus;
+                    default: return 0;  // Miss - no bonus
+                }
             },
 
             drawTarget(ctx, x, y) {
-                // Trash can / landing zone
-                ctx.fillStyle = '#27ae60';
+                const zones = this.landingZones;
+                const zoneHeight = 15;
+                const groundY = 250;
+                const pixelScale = 4; // distance units to pixels
+
+                // Calculate zone boundaries (symmetric around target center x)
+                const halfGreen = (zones.greenWidth / 2) * pixelScale;
+                const orangeWidth = zones.orangeWidth * pixelScale;
+                const redWidth = zones.redWidth * pixelScale;
+
+                // Calculate fade-in opacity based on distance to target
+                const distanceToTarget = this.targetDistance - this.distance;
+                const fadeStartDistance = 200; // Start fading in at 200 units away
+                const opacity = Math.min(1, Math.max(0, 1 - (distanceToTarget / fadeStartDistance)));
+
+                if (opacity <= 0) return; // Don't draw if too far away
+
+                // Draw zones from left to right: RED - ORANGE - GREEN - ORANGE - RED
+                // Left red zone
+                ctx.fillStyle = `rgba(231, 76, 60, ${0.7 * opacity})`;
+                ctx.fillRect(x - halfGreen - orangeWidth - redWidth, groundY - zoneHeight, redWidth, zoneHeight);
+
+                // Left orange zone
+                ctx.fillStyle = `rgba(243, 156, 18, ${0.7 * opacity})`;
+                ctx.fillRect(x - halfGreen - orangeWidth, groundY - zoneHeight, orangeWidth, zoneHeight);
+
+                // Center green zone
+                ctx.fillStyle = `rgba(46, 204, 113, ${0.8 * opacity})`;
+                ctx.fillRect(x - halfGreen, groundY - zoneHeight, halfGreen * 2, zoneHeight);
+
+                // Right orange zone
+                ctx.fillStyle = `rgba(243, 156, 18, ${0.7 * opacity})`;
+                ctx.fillRect(x + halfGreen, groundY - zoneHeight, orangeWidth, zoneHeight);
+
+                // Right red zone
+                ctx.fillStyle = `rgba(231, 76, 60, ${0.7 * opacity})`;
+                ctx.fillRect(x + halfGreen + orangeWidth, groundY - zoneHeight, redWidth, zoneHeight);
+
+                // Draw trashcan in center of green zone
+                this.drawTrashcan(ctx, x, groundY - zoneHeight, opacity);
+            },
+
+            drawTrashcan(ctx, x, y, opacity) {
+                // Trashcan body
+                ctx.fillStyle = `rgba(39, 174, 96, ${opacity})`;
                 ctx.beginPath();
-                ctx.arc(x, y + 15, 25, 0, Math.PI * 2);
+                ctx.arc(x, y + 2, 18, 0, Math.PI * 2);
                 ctx.fill();
 
-                ctx.fillStyle = '#2ecc71';
-                ctx.fillRect(x - 15, y, 30, 30);
+                ctx.fillStyle = `rgba(46, 204, 113, ${opacity})`;
+                ctx.fillRect(x - 12, y - 18, 24, 20);
 
-                ctx.fillStyle = '#27ae60';
-                ctx.fillRect(x - 18, y - 5, 36, 8);
+                // Lid
+                ctx.fillStyle = `rgba(39, 174, 96, ${opacity})`;
+                ctx.fillRect(x - 14, y - 22, 28, 6);
 
-                ctx.fillStyle = 'white';
-                ctx.font = 'bold 12px Arial';
+                // Label
+                ctx.fillStyle = `rgba(255, 255, 255, ${opacity})`;
+                ctx.font = 'bold 10px Arial';
                 ctx.textAlign = 'center';
-                ctx.fillText('GOAL', x, y + 20);
+                ctx.fillText('GOAL', x, y - 6);
             },
 
             drawAirplane(ctx, x, y) {
@@ -5586,6 +6053,127 @@
                 ctx.restore();
             },
 
+            // Draw a rolling hill
+            drawHill(ctx, x, width, height, color) {
+                ctx.fillStyle = color;
+                ctx.beginPath();
+                ctx.moveTo(x - width / 2, 250);
+                ctx.quadraticCurveTo(x, 250 - height, x + width / 2, 250);
+                ctx.fill();
+            },
+
+            // Draw a mountain with snow cap
+            drawMountain(ctx, x, width, height, color) {
+                const groundY = 250;
+
+                // Mountain body
+                ctx.fillStyle = color;
+                ctx.beginPath();
+                ctx.moveTo(x - width / 2, groundY);
+                ctx.lineTo(x, groundY - height);
+                ctx.lineTo(x + width / 2, groundY);
+                ctx.closePath();
+                ctx.fill();
+
+                // Snow cap (top 25%)
+                const snowHeight = height * 0.25;
+                const snowWidth = width * 0.3;
+                ctx.fillStyle = '#FFFFFF';
+                ctx.beginPath();
+                ctx.moveTo(x - snowWidth / 2, groundY - height + snowHeight);
+                ctx.lineTo(x, groundY - height);
+                ctx.lineTo(x + snowWidth / 2, groundY - height + snowHeight);
+                ctx.closePath();
+                ctx.fill();
+            },
+
+            // Draw a pine tree (triangular)
+            drawPineTree(ctx, x, height) {
+                const groundY = 250;
+
+                // Trunk
+                ctx.fillStyle = '#654321';
+                ctx.fillRect(x - 4, groundY - height * 0.3, 8, height * 0.3);
+
+                // Triangular foliage (3 layers)
+                ctx.fillStyle = '#1a5c1a';
+                const layerCount = 3;
+                for (let i = 0; i < layerCount; i++) {
+                    const layerY = groundY - height * 0.3 - (i * height * 0.25);
+                    const layerWidth = 25 - (i * 5);
+                    ctx.beginPath();
+                    ctx.moveTo(x - layerWidth, layerY);
+                    ctx.lineTo(x, layerY - height * 0.3);
+                    ctx.lineTo(x + layerWidth, layerY);
+                    ctx.closePath();
+                    ctx.fill();
+                }
+            },
+
+            // Draw a mesa (flat-topped rock formation)
+            drawMesa(ctx, x, width, height, color) {
+                const groundY = 250;
+
+                // Mesa body with slightly angled sides
+                ctx.fillStyle = color;
+                ctx.beginPath();
+                ctx.moveTo(x - width / 2 - 20, groundY);
+                ctx.lineTo(x - width / 2, groundY - height);
+                ctx.lineTo(x + width / 2, groundY - height);
+                ctx.lineTo(x + width / 2 + 20, groundY);
+                ctx.closePath();
+                ctx.fill();
+
+                // Darker top edge
+                ctx.fillStyle = 'rgba(0, 0, 0, 0.2)';
+                ctx.fillRect(x - width / 2, groundY - height, width, 5);
+
+                // Horizontal stripes for layering effect
+                ctx.strokeStyle = 'rgba(139, 69, 19, 0.3)';
+                ctx.lineWidth = 2;
+                for (let i = 1; i < 4; i++) {
+                    const stripeY = groundY - height + (i * height / 4);
+                    ctx.beginPath();
+                    ctx.moveTo(x - width / 2 - 10 + (i * 5), stripeY);
+                    ctx.lineTo(x + width / 2 + 10 - (i * 5), stripeY);
+                    ctx.stroke();
+                }
+            },
+
+            // Draw a cactus
+            drawCactus(ctx, x, height) {
+                const groundY = 250;
+
+                // Main trunk
+                ctx.fillStyle = '#228B22';
+                ctx.fillRect(x - 6, groundY - height, 12, height);
+
+                // Rounded top
+                ctx.beginPath();
+                ctx.arc(x, groundY - height, 6, 0, Math.PI, true);
+                ctx.fill();
+
+                // Left arm
+                if (height > 25) {
+                    const armY = groundY - height * 0.6;
+                    ctx.fillRect(x - 18, armY, 12, 6);
+                    ctx.fillRect(x - 18, armY - height * 0.25, 6, height * 0.25 + 6);
+                    ctx.beginPath();
+                    ctx.arc(x - 15, armY - height * 0.25, 3, 0, Math.PI, true);
+                    ctx.fill();
+                }
+
+                // Right arm
+                if (height > 30) {
+                    const armY = groundY - height * 0.45;
+                    ctx.fillRect(x + 6, armY, 12, 6);
+                    ctx.fillRect(x + 12, armY - height * 0.2, 6, height * 0.2 + 6);
+                    ctx.beginPath();
+                    ctx.arc(x + 15, armY - height * 0.2, 3, 0, Math.PI, true);
+                    ctx.fill();
+                }
+            },
+
             gameLoop() {
                 if (!this.flightRunning) return;
 
@@ -5607,14 +6195,6 @@
                     case 'Enter':
                         e.preventDefault();
                         this.airBrake();
-                        break;
-                    case '=':
-                    case '+':
-                        // Dev mode: add wind points
-                        if (gameManager.gameStates.plane.devMode) {
-                            gameManager.gameStates.plane.resources += 5;
-                            this.updateFlightDisplay();
-                        }
                         break;
                 }
             }
@@ -5711,6 +6291,7 @@
                 // Reset for new round
                 this.projectiles = [];
                 this.particles = [];
+                this.walls = [];
                 this.roundTargetsDestroyed = 0;
                 this.cannon.angle = 45;
                 this.cannon.power = 50;
@@ -5719,6 +6300,11 @@
                 const numTargets = Math.min(state.round + 2, 8);
                 this.generateTargets(numTargets);
 
+                // Generate walls for round 7+
+                if (state.round >= 7) {
+                    this.generateWalls(state.round);
+                }
+
                 document.getElementById('castleCannonRound').textContent = state.round;
                 this.updateCannonControls();
                 this.gameLoop();
@@ -5726,8 +6312,13 @@
 
             generateTargets(numTargets) {
                 this.targets = [];
+                const state = gameManager.gameStates.castle;
+                const round = state.round;
                 const minX = 350, maxX = 750;
                 const minY = 80, maxY = 260;
+
+                // Determine if targets should move (round 4+)
+                const hasMovement = round >= 4;
 
                 for (let i = 0; i < numTargets; i++) {
                     let x, y, validPosition = false, attempts = 0;
@@ -5744,10 +6335,43 @@
                         attempts++;
                     }
 
+                    // Movement properties based on round
+                    let moveType = 'static';
+                    let moveSpeed = 0;
+                    let moveRange = 0;
+
+                    if (hasMovement) {
+                        moveType = Math.random() < 0.5 ? 'horizontal' : 'vertical';
+                        moveSpeed = 0.5 + (round - 4) * 0.15;  // Gets faster in later rounds
+                        moveRange = 30 + (round - 4) * 5;      // Wider range in later rounds
+                    }
+
                     this.targets.push({
-                        x, y, radius: 22 + Math.random() * 6,
-                        hit: false, bobOffset: Math.random() * Math.PI * 2
+                        x, y,
+                        baseX: x,
+                        baseY: y,
+                        radius: 22 + Math.random() * 6,
+                        hit: false,
+                        bobOffset: Math.random() * Math.PI * 2,
+                        moveType,
+                        moveSpeed,
+                        moveRange,
+                        movePhase: Math.random() * Math.PI * 2
                     });
+                }
+            },
+
+            generateWalls(round) {
+                const numWalls = Math.min(round - 6, 3);  // 1 wall at round 7, max 3
+
+                for (let i = 0; i < numWalls; i++) {
+                    // Position walls between cannon and targets
+                    const x = 250 + i * 80;  // Stagger horizontally
+                    const y = 100 + Math.random() * 150;
+                    const width = 15;
+                    const height = 60 + Math.random() * 40;
+
+                    this.walls.push({ x, y, width, height });
                 }
             },
 
@@ -5816,9 +6440,9 @@
                 if (targetsEl) targetsEl.textContent = this.targets.filter(t => !t.hit).length;
 
                 // Update angle needle (0° = horizontal right, 90° = vertical up)
-                // Needle rotation: 0° angle = 0deg rotation, 90° angle = -90deg rotation
+                // Needle rotation: 0° angle = +90deg (right), 90° angle = 0deg (up)
                 if (angleNeedle) {
-                    const angleRotation = -this.cannon.angle;
+                    const angleRotation = 90 - this.cannon.angle;
                     angleNeedle.style.transform = `translateX(-50%) rotate(${angleRotation}deg)`;
                 }
 
@@ -5854,12 +6478,6 @@
                         e.preventDefault(); this.adjustPower(5); break;
                     case ' ': case 'Enter':
                         e.preventDefault(); this.fireCannon(); break;
-                    case '=': case '+':
-                        if (gameManager.gameStates.castle.devMode) {
-                            gameManager.gameStates.castle.resources += 5;
-                            this.updateCannonDisplay(); this.updateCannonControls();
-                        }
-                        break;
                 }
             },
 
@@ -5873,6 +6491,21 @@
                     proj.x += proj.vx;
                     proj.y += proj.vy;
                     proj.vy += proj.gravity;
+
+                    // Check wall collisions (before targets)
+                    let hitWall = false;
+                    for (const wall of this.walls) {
+                        if (proj.x > wall.x && proj.x < wall.x + wall.width &&
+                            proj.y > wall.y && proj.y < wall.y + wall.height) {
+                            // Hit wall - create brick particles, remove projectile
+                            this.createBrickParticles(proj.x, proj.y);
+                            sounds.playButtonClick();
+                            this.projectiles.splice(i, 1);
+                            hitWall = true;
+                            break;
+                        }
+                    }
+                    if (hitWall) continue;
 
                     // Check target collisions
                     for (const target of this.targets) {
@@ -5931,6 +6564,20 @@
                     p.vy += 0.25;
                     p.life--;
                     if (p.life <= 0) this.particles.splice(i, 1);
+                }
+            },
+
+            createBrickParticles(x, y) {
+                for (let i = 0; i < 8; i++) {
+                    const angle = Math.random() * Math.PI * 2;
+                    const speed = 2 + Math.random() * 3;
+                    this.particles.push({
+                        x, y,
+                        vx: Math.cos(angle) * speed,
+                        vy: Math.sin(angle) * speed - 2,
+                        life: 20 + Math.random() * 10,
+                        color: ['#a0522d', '#8b4513', '#d2b48c'][Math.floor(Math.random() * 3)]
+                    });
                 }
             },
 
@@ -6035,11 +6682,30 @@
                 // Castle
                 this.drawCastle(ctx, time);
 
-                // Targets (with bobbing)
+                // Walls (round 7+)
+                for (const wall of this.walls) {
+                    this.drawWall(ctx, wall);
+                }
+
+                // Targets (with movement and bobbing)
                 for (const target of this.targets) {
                     if (!target.hit) {
-                        const bobY = target.y + Math.sin(time * 2 + target.bobOffset) * 3;
-                        this.drawTarget(ctx, target.x, bobY, target.radius);
+                        let drawX = target.baseX;
+                        let drawY = target.baseY;
+
+                        // Apply movement based on type
+                        if (target.moveType === 'horizontal') {
+                            drawX = target.baseX + Math.sin(time * target.moveSpeed + target.movePhase) * target.moveRange;
+                            target.x = drawX;  // Update for collision detection
+                        } else if (target.moveType === 'vertical') {
+                            drawY = target.baseY + Math.sin(time * target.moveSpeed + target.movePhase) * target.moveRange;
+                            target.y = drawY;  // Update for collision detection
+                        }
+
+                        // Add subtle bob on top of movement
+                        drawY += Math.sin(time * 2 + target.bobOffset) * 3;
+
+                        this.drawTarget(ctx, drawX, drawY, target.radius);
                     }
                 }
 
@@ -6217,6 +6883,30 @@
                 ctx.beginPath();
                 ctx.arc(x, y, radius * 0.15, 0, Math.PI * 2);
                 ctx.fill();
+            },
+
+            drawWall(ctx, wall) {
+                // Brick pattern
+                const brickHeight = 12;
+                const brickWidth = wall.width;
+                const rows = Math.floor(wall.height / brickHeight);
+
+                for (let row = 0; row < rows; row++) {
+                    const y = wall.y + row * brickHeight;
+
+                    // Alternate brick colors
+                    ctx.fillStyle = row % 2 === 0 ? '#a0522d' : '#8b4513';
+                    ctx.fillRect(wall.x, y, brickWidth, brickHeight - 1);
+
+                    // Mortar lines
+                    ctx.fillStyle = '#d2b48c';
+                    ctx.fillRect(wall.x, y + brickHeight - 1, brickWidth, 1);
+                }
+
+                // Border
+                ctx.strokeStyle = '#5d3a1a';
+                ctx.lineWidth = 2;
+                ctx.strokeRect(wall.x, wall.y, wall.width, wall.height);
             }
         };
 
@@ -8175,13 +8865,6 @@
                     e.preventDefault();
                     this.handleKick();
                 }
-
-                // Dev mode
-                if (e.key === '=' || e.key === '+') {
-                    if (gameManager.gameStates.fieldgoal.devMode) {
-                        gameManager.gameStates.fieldgoal.resources += 5;
-                    }
-                }
             }
         };
 
@@ -8222,8 +8905,96 @@
                 maxPower: 12
             },
 
-            // Course walls
+            // Course obstacles
             walls: [],
+            bumpers: [],      // { x, y, radius }
+            sandTraps: [],    // { x, y, width, height }
+
+            // Ball-in-hole animation state
+            sinkingBall: {
+                active: false,
+                startX: 0,
+                startY: 0,
+                angle: 0,
+                progress: 0
+            },
+
+            // 18 Course definitions
+            courses: [
+                // === BEGINNER (1-6) ===
+                // Hole 1: Straight Shot
+                { ball: {x:400,y:520}, hole: {x:400,y:100}, walls: [], bumpers: [], sandTraps: [] },
+                // Hole 2: Slight Left
+                { ball: {x:400,y:520}, hole: {x:250,y:100}, walls: [], bumpers: [], sandTraps: [] },
+                // Hole 3: Slight Right
+                { ball: {x:400,y:520}, hole: {x:550,y:100}, walls: [], bumpers: [], sandTraps: [] },
+                // Hole 4: First Wall
+                { ball: {x:400,y:520}, hole: {x:400,y:100},
+                  walls: [{x1:300,y1:300,x2:500,y2:300}], bumpers: [], sandTraps: [] },
+                // Hole 5: The Corridor
+                { ball: {x:200,y:520}, hole: {x:200,y:100},
+                  walls: [{x1:300,y1:100,x2:300,y2:450}], bumpers: [], sandTraps: [] },
+                // Hole 6: Bumper Intro
+                { ball: {x:400,y:520}, hole: {x:400,y:100},
+                  walls: [], bumpers: [{x:400,y:300,radius:25}], sandTraps: [] },
+
+                // === INTERMEDIATE (7-12) ===
+                // Hole 7: Zigzag
+                { ball: {x:200,y:520}, hole: {x:600,y:100},
+                  walls: [{x1:350,y1:200,x2:350,y2:400}, {x1:450,y1:300,x2:450,y2:500}],
+                  bumpers: [], sandTraps: [] },
+                // Hole 8: Bumper Bounce
+                { ball: {x:400,y:520}, hole: {x:400,y:100},
+                  walls: [], bumpers: [{x:300,y:300,radius:25},{x:500,y:300,radius:25}], sandTraps: [] },
+                // Hole 9: The L-Shape
+                { ball: {x:600,y:520}, hole: {x:200,y:100},
+                  walls: [{x1:350,y1:100,x2:350,y2:350}, {x1:350,y1:350,x2:600,y2:350}],
+                  bumpers: [], sandTraps: [] },
+                // Hole 10: Sand Intro
+                { ball: {x:400,y:520}, hole: {x:400,y:100},
+                  walls: [], bumpers: [], sandTraps: [{x:350,y:250,width:100,height:100}] },
+                // Hole 11: Bumper Alley
+                { ball: {x:400,y:520}, hole: {x:400,y:100},
+                  walls: [],
+                  bumpers: [{x:300,y:300,radius:20},{x:400,y:300,radius:20},{x:500,y:300,radius:20}],
+                  sandTraps: [] },
+                // Hole 12: Split Path
+                { ball: {x:400,y:520}, hole: {x:400,y:100},
+                  walls: [{x1:400,y1:200,x2:400,y2:400}],
+                  bumpers: [], sandTraps: [] },
+
+                // === ADVANCED (13-18) ===
+                // Hole 13: Sand Trap Run
+                { ball: {x:200,y:520}, hole: {x:600,y:100},
+                  walls: [], bumpers: [],
+                  sandTraps: [{x:300,y:200,width:200,height:60},{x:400,y:350,width:200,height:60}] },
+                // Hole 14: Pinball
+                { ball: {x:400,y:520}, hole: {x:400,y:100},
+                  walls: [],
+                  bumpers: [{x:250,y:200,radius:22},{x:550,y:200,radius:22},
+                            {x:300,y:350,radius:22},{x:500,y:350,radius:22}],
+                  sandTraps: [] },
+                // Hole 15: The Maze
+                { ball: {x:150,y:520}, hole: {x:650,y:100},
+                  walls: [{x1:250,y1:100,x2:250,y2:350},{x1:400,y1:250,x2:400,y2:520},
+                          {x1:550,y1:100,x2:550,y2:400}],
+                  bumpers: [], sandTraps: [] },
+                // Hole 16: Beach Hazard
+                { ball: {x:400,y:520}, hole: {x:400,y:150},
+                  walls: [], bumpers: [],
+                  sandTraps: [{x:300,y:100,width:200,height:150}] },
+                // Hole 17: Obstacle Course
+                { ball: {x:600,y:520}, hole: {x:200,y:100},
+                  walls: [{x1:350,y1:200,x2:350,y2:350}],
+                  bumpers: [{x:500,y:250,radius:20},{x:250,y:400,radius:20}],
+                  sandTraps: [{x:400,y:400,width:80,height:80}] },
+                // Hole 18: Championship
+                { ball: {x:400,y:520}, hole: {x:600,y:80},
+                  walls: [{x1:200,y1:200,x2:350,y2:200},{x1:450,y1:350,x2:600,y2:350},
+                          {x1:300,y1:100,x2:300,y2:200}],
+                  bumpers: [{x:400,y:250,radius:25},{x:550,y:450,radius:20}],
+                  sandTraps: [{x:450,y:150,width:80,height:80}] }
+            ],
 
             // Game tracking
             strokesUsed: 0,
@@ -8248,29 +9019,28 @@
             },
 
             setupHole(round) {
-                // Position ball at starting location
-                this.ball.x = 400;
-                this.ball.y = 520;
+                // Get course index (1-18, then repeat)
+                const courseIndex = ((round - 1) % 18);
+                const course = this.courses[courseIndex];
+
+                // Position ball from course definition
+                this.ball.x = course.ball.x;
+                this.ball.y = course.ball.y;
                 this.ball.vx = 0;
                 this.ball.vy = 0;
                 this.ball.moving = false;
 
-                // Position hole (varies by round for difficulty)
-                const holePositions = [
-                    { x: 400, y: 100 },  // Round 1: straight shot
-                    { x: 300, y: 120 },  // Round 2: left
-                    { x: 500, y: 120 },  // Round 3: right
-                    { x: 250, y: 100 },  // Round 4: far left
-                    { x: 550, y: 100 },  // Round 5: far right
-                    { x: 400, y: 80 },   // Round 6: straight, far
-                    { x: 300, y: 80 },   // Round 7+: varies
-                ];
-                const posIndex = Math.min(round - 1, holePositions.length - 1);
-                this.hole.x = holePositions[posIndex].x;
-                this.hole.y = holePositions[posIndex].y;
+                // Position hole from course definition
+                this.hole.x = course.hole.x;
+                this.hole.y = course.hole.y;
 
-                // Generate walls based on round
-                this.walls = this.generateWalls(round);
+                // Load obstacles from course definition
+                this.walls = this.generateBorderWalls().concat(course.walls || []);
+                this.bumpers = course.bumpers || [];
+                this.sandTraps = course.sandTraps || [];
+
+                // Reset animation state
+                this.sinkingBall.active = false;
 
                 // Reset putter and power
                 this.putter.angle = -Math.PI / 2;
@@ -8278,28 +9048,96 @@
                 this.power.charging = false;
             },
 
-            generateWalls(round) {
-                const walls = [];
-
-                // Border walls (always present)
+            generateBorderWalls() {
                 const left = 100, right = 700, top = 50, bottom = 570;
-                walls.push({ x1: left, y1: top, x2: right, y2: top });     // Top
-                walls.push({ x1: left, y1: bottom, x2: right, y2: bottom }); // Bottom
-                walls.push({ x1: left, y1: top, x2: left, y2: bottom });   // Left
-                walls.push({ x1: right, y1: top, x2: right, y2: bottom }); // Right
+                return [
+                    { x1: left, y1: top, x2: right, y2: top },       // Top
+                    { x1: left, y1: bottom, x2: right, y2: bottom }, // Bottom
+                    { x1: left, y1: top, x2: left, y2: bottom },     // Left
+                    { x1: right, y1: top, x2: right, y2: bottom }    // Right
+                ];
+            },
 
-                // Add obstacles based on round
-                if (round >= 3) {
-                    walls.push({ x1: 250, y1: 250, x2: 400, y2: 250 }); // Horizontal obstacle
+            checkBumperCollisions() {
+                for (const bumper of this.bumpers) {
+                    const dx = this.ball.x - bumper.x;
+                    const dy = this.ball.y - bumper.y;
+                    const dist = Math.sqrt(dx * dx + dy * dy);
+                    const minDist = this.ball.radius + bumper.radius;
+
+                    if (dist < minDist && dist > 0) {
+                        // Normalize and bounce
+                        const nx = dx / dist;
+                        const ny = dy / dist;
+
+                        // Push ball out
+                        this.ball.x = bumper.x + nx * minDist;
+                        this.ball.y = bumper.y + ny * minDist;
+
+                        // Reflect velocity with boost (bumper effect)
+                        const dot = this.ball.vx * nx + this.ball.vy * ny;
+                        this.ball.vx = (this.ball.vx - 2 * dot * nx) * 1.1;
+                        this.ball.vy = (this.ball.vy - 2 * dot * ny) * 1.1;
+
+                        sounds.playButtonClick();
+                    }
                 }
-                if (round >= 5) {
-                    walls.push({ x1: 400, y1: 350, x2: 550, y2: 350 }); // Second horizontal
+            },
+
+            checkSandTrap() {
+                for (const trap of this.sandTraps) {
+                    if (this.ball.x > trap.x &&
+                        this.ball.x < trap.x + trap.width &&
+                        this.ball.y > trap.y &&
+                        this.ball.y < trap.y + trap.height) {
+                        // Heavy friction in sand
+                        this.ball.vx *= 0.92;
+                        this.ball.vy *= 0.92;
+                        return true;
+                    }
                 }
-                if (round >= 7) {
-                    walls.push({ x1: 300, y1: 150, x2: 300, y2: 250 }); // Vertical wall
+                return false;
+            },
+
+            startSinkAnimation() {
+                this.sinkingBall.active = true;
+                this.sinkingBall.startX = this.ball.x;
+                this.sinkingBall.startY = this.ball.y;
+                this.sinkingBall.angle = Math.atan2(
+                    this.ball.y - this.hole.y,
+                    this.ball.x - this.hole.x
+                );
+                this.sinkingBall.progress = 0;
+                this.ball.moving = true;
+            },
+
+            updateSinkAnimation() {
+                this.sinkingBall.progress += 0.03;
+
+                if (this.sinkingBall.progress >= 1) {
+                    // Animation complete - ball is in hole
+                    this.ball.x = this.hole.x;
+                    this.ball.y = this.hole.y;
+                    this.sinkingBall.active = false;
+                    this.ballInHole();
+                    return;
                 }
 
-                return walls;
+                // Spiral parameters
+                const p = this.sinkingBall.progress;
+                const startDist = Math.sqrt(
+                    Math.pow(this.sinkingBall.startX - this.hole.x, 2) +
+                    Math.pow(this.sinkingBall.startY - this.hole.y, 2)
+                );
+
+                // Shrinking radius with rotation
+                const currentRadius = startDist * (1 - p);
+                const rotations = 1.5;
+                const currentAngle = this.sinkingBall.angle + (p * rotations * Math.PI * 2);
+
+                // Update ball position along spiral
+                this.ball.x = this.hole.x + Math.cos(currentAngle) * currentRadius;
+                this.ball.y = this.hole.y + Math.sin(currentAngle) * currentRadius;
             },
 
             gameLoop() {
@@ -8333,16 +9171,26 @@
             },
 
             updateBallPhysics() {
+                // Check for spiral animation
+                if (this.sinkingBall.active) {
+                    this.updateSinkAnimation();
+                    return;
+                }
+
                 // Apply velocity
                 this.ball.x += this.ball.vx;
                 this.ball.y += this.ball.vy;
 
-                // Apply friction
-                this.ball.vx *= 0.985;
-                this.ball.vy *= 0.985;
+                // Apply friction (reduced if in sand)
+                const inSand = this.checkSandTrap();
+                if (!inSand) {
+                    this.ball.vx *= 0.985;
+                    this.ball.vy *= 0.985;
+                }
 
-                // Wall collisions
+                // Collisions
                 this.checkWallCollisions();
+                this.checkBumperCollisions();
 
                 // Check if ball stopped
                 const speed = Math.sqrt(this.ball.vx * this.ball.vx + this.ball.vy * this.ball.vy);
@@ -8353,13 +9201,13 @@
                     this.checkHoleResult();
                 }
 
-                // Check if ball in hole while moving slowly
+                // Check if ball entering hole (start spiral animation)
                 if (speed < 3) {
                     const dx = this.ball.x - this.hole.x;
                     const dy = this.ball.y - this.hole.y;
                     const dist = Math.sqrt(dx * dx + dy * dy);
                     if (dist < this.hole.radius) {
-                        this.ballInHole();
+                        this.startSinkAnimation();
                     }
                 }
             },
@@ -8534,14 +9382,25 @@
                 // Draw grass background
                 this.drawGreen(ctx);
 
+                // Draw sand traps (under everything)
+                this.drawSandTraps(ctx);
+
                 // Draw walls/obstacles
                 this.drawWalls(ctx);
+
+                // Draw bumpers
+                this.drawBumpers(ctx);
 
                 // Draw hole
                 this.drawHole(ctx);
 
-                // Draw ball
-                this.drawBall(ctx, state.ballColor);
+                // Draw ball (smaller if sinking)
+                if (this.sinkingBall.active) {
+                    const scale = 1 - (this.sinkingBall.progress * 0.5);
+                    this.drawBall(ctx, state.ballColor, scale);
+                } else {
+                    this.drawBall(ctx, state.ballColor);
+                }
 
                 // Draw putter (only when ball not moving)
                 if (!this.ball.moving) {
@@ -8585,6 +9444,49 @@
                 }
             },
 
+            drawSandTraps(ctx) {
+                for (const trap of this.sandTraps) {
+                    // Sand fill
+                    ctx.fillStyle = '#D2B48C';
+                    ctx.fillRect(trap.x, trap.y, trap.width, trap.height);
+
+                    // Border
+                    ctx.strokeStyle = '#8B7355';
+                    ctx.lineWidth = 2;
+                    ctx.strokeRect(trap.x, trap.y, trap.width, trap.height);
+                }
+            },
+
+            drawBumpers(ctx) {
+                for (const bumper of this.bumpers) {
+                    // Outer ring (red)
+                    ctx.fillStyle = '#e74c3c';
+                    ctx.beginPath();
+                    ctx.arc(bumper.x, bumper.y, bumper.radius, 0, Math.PI * 2);
+                    ctx.fill();
+
+                    // Inner highlight (orange)
+                    ctx.fillStyle = '#f39c12';
+                    ctx.beginPath();
+                    ctx.arc(bumper.x, bumper.y, bumper.radius * 0.6, 0, Math.PI * 2);
+                    ctx.fill();
+
+                    // Shine effect
+                    ctx.fillStyle = 'rgba(255,255,255,0.4)';
+                    ctx.beginPath();
+                    ctx.arc(bumper.x - bumper.radius * 0.3, bumper.y - bumper.radius * 0.3,
+                            bumper.radius * 0.3, 0, Math.PI * 2);
+                    ctx.fill();
+
+                    // Border
+                    ctx.strokeStyle = '#c0392b';
+                    ctx.lineWidth = 2;
+                    ctx.beginPath();
+                    ctx.arc(bumper.x, bumper.y, bumper.radius, 0, Math.PI * 2);
+                    ctx.stroke();
+                }
+            },
+
             drawHole(ctx) {
                 // Hole shadow/cup
                 ctx.fillStyle = '#000';
@@ -8610,20 +9512,21 @@
                 ctx.fill();
             },
 
-            drawBall(ctx, colorId) {
+            drawBall(ctx, colorId, scale = 1) {
                 const colors = { white: '#ffffff', orange: '#ff6b35' };
                 const color = colors[colorId] || '#ffffff';
+                const r = this.ball.radius * scale;
 
                 // Ball shadow
                 ctx.fillStyle = 'rgba(0,0,0,0.3)';
                 ctx.beginPath();
-                ctx.ellipse(this.ball.x + 2, this.ball.y + 2, this.ball.radius, this.ball.radius * 0.6, 0, 0, Math.PI * 2);
+                ctx.ellipse(this.ball.x + 2 * scale, this.ball.y + 2 * scale, r, r * 0.6, 0, 0, Math.PI * 2);
                 ctx.fill();
 
                 // Ball
                 ctx.fillStyle = color;
                 ctx.beginPath();
-                ctx.arc(this.ball.x, this.ball.y, this.ball.radius, 0, Math.PI * 2);
+                ctx.arc(this.ball.x, this.ball.y, r, 0, Math.PI * 2);
                 ctx.fill();
                 ctx.strokeStyle = '#333';
                 ctx.lineWidth = 1;
@@ -8632,7 +9535,7 @@
                 // Highlight
                 ctx.fillStyle = 'rgba(255,255,255,0.6)';
                 ctx.beginPath();
-                ctx.arc(this.ball.x - 2, this.ball.y - 2, 3, 0, Math.PI * 2);
+                ctx.arc(this.ball.x - 2 * scale, this.ball.y - 2 * scale, 3 * scale, 0, Math.PI * 2);
                 ctx.fill();
             },
 
@@ -9709,7 +10612,7 @@
 
                 // Distance: 50px (min) to 500px (max) based on power
                 const minDistance = 50;
-                const maxDistance = 500;
+                const maxDistance = 400;
                 const distance = minDistance + this.slingshot.power * (maxDistance - minDistance);
 
                 // Use slingshot.y - 30 to match the actual launch point in calculateTrajectoryArc()
@@ -9854,9 +10757,9 @@
                     return;
                 }
 
-                // Check collision with snowmen ONLY at landing (t >= 1)
-                // This prevents hits when snowball passes over a snowman but lands beyond
+                // At landing (t >= 1), check if we hit a snowman at the landing spot
                 if (this.snowball.t >= 1) {
+                    // First check snowman collision - snowball lands where target showed
                     for (const snowman of this.snowmen) {
                         if (!snowman.hit && snowman.visible && this.difficulty.availableTargets.includes(snowman.id)) {
                             const dist = Math.hypot(this.snowball.x - snowman.x, this.snowball.y - snowman.y);
@@ -9867,44 +10770,11 @@
                             }
                         }
                     }
-                }
 
-                // Only check collisions after the ball has reached the apex (t > 0.3)
-                // This prevents immediate collision at launch
-                if (this.snowball.t > 0.3) {
-                    // Check collision with structures (fort, igloo, tree)
-                    if (this.checkStructureCollision()) {
-                        return;
-                    }
-                }
-
-                // Fence top position
-                const fenceTop = 185;  // Top of fence (2/3 up screen = ~200, minus pointed tips)
-                const groundLevel = 400;  // Where ground starts - moved up 50px
-
-                // Only check fence/ground collision when ball is descending (past apex, t > 0.5)
-                if (this.snowball.t > 0.5) {
-                    // Check if snowball hit the fence or ground
-                    if (this.snowball.y >= fenceTop && this.snowball.y <= groundLevel) {
-                        // Hit fence area - create splat
-                        this.snowballMiss();
-                        return;
-                    }
-
-                    // Hit ground below fence
-                    if (this.snowball.y > groundLevel) {
-                        this.snowballMiss();
-                        return;
-                    }
-                }
-
-                // If trajectory completed but still above fence - ball went "over" fence into background
-                if (this.snowball.t >= 1 && this.snowball.y < fenceTop) {
-                    // Disappear silently behind fence (no splat in sky)
-                    this.snowball.active = false;
+                    // No snowman hit - ball landed and missed
+                    this.snowballMiss();
                     return;
                 }
-                // Otherwise, snowball continues flying (t > 1 extrapolates the arc)
             },
 
             checkStructureCollision() {

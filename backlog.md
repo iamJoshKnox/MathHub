@@ -25,22 +25,12 @@
 
 ### Game-Specific Enhancements
 
-#### Castle Game
-- [ ] **Moving targets** - Targets that drift or bob more dramatically
-- [ ] **Indestructable objects** - floating brick walls, as added difficulty in later rounds, that require specific cannon arcs to destroy the targets.
-
-#### Express Game
-- [ ] **Friction adjustment** - there's something wrong with the friction in the game. The first level can be completed without any boosts at all. Let's see how we can adjust the game physics to make the game more fun.
 
 #### Miner Game
 - [ ] **Rock types** - Different rocks requiring multiple hits
 - [ ] **Power-ups** - Temporary dig boost, magnet for coins, TNT
 - [ ] **Underground creatures** - Friendly moles, obstacles to avoid
 - [ ] **Gem varieties** - Different gem types worth different points
-
-#### Plane Game
-- [ ] **Physics adjustment** - Create physics penalty for flying too high out of frame
-- [ ] **Landing zones** - Endpoint with green/orange/red zones; bonus points for green landing
 
 #### Field Goals Game
 - [ ] **Wind effects** - Variable wind affecting kick trajectory
@@ -132,3 +122,8 @@
 - [x] Remove station overlay on new round start
 - [x] Standardized point displays across games (visual indicators with grouping by 5s)
 - [x] Player profiles - Multiple player support with separate progress tracking, avatar selection, profile switching
+- [x] Castle progressive difficulty - Moving targets (round 4+) and brick walls (round 7+)
+- [x] Plane Game - High altitude physics penalty (extra gravity, turbulence when flying above canvas)
+- [x] Plane Game - Landing zones with distance bonuses (red +0, orange +100m, green +500m)
+- [x] Plane Game - Increased level distances (600/1200/1800 per round)
+- [x] Plane Game - Background biomes (Forest→Hills→Mountains→Desert) with parallax scrolling
